@@ -1,7 +1,7 @@
 <?php
 $header = require_once "./template/header.php";
 $footer = require_once "./template/footer.php";
-$valid = require_once "../src/validation.php";
+$valid = require_once "./src/validation.php";
 ?>
 <!doctype html>
 <html lang="ru">
@@ -11,7 +11,7 @@ $valid = require_once "../src/validation.php";
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>title</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
 
@@ -23,22 +23,22 @@ $valid = require_once "../src/validation.php";
         <div class="table">
             <?= $valid ?>
             <div class="forms">
-                <div id="signup-inner">
-                    <br>
-                    <form id="send" action="" method="post">
-                        <p>
-                            <label for="login">Login: </label>
-                            <input id="login" type="text" name="login" value=""/>
-                        </p>
-                        <p>
-                            <label for="password">password</label>
-                            <input id="password" type="password" name="password" value=""/>
-                        </p>
-                        <p>
-                            <button id="submit" type="submit">Вход</button>
-                        </p>
-                    </form>
-                </div>
+
+                <form id="send" method="post" action="">
+
+                    <div class="form-line">
+                        <label for="login">Login: </label>
+                        <input id="login" type="text" name="login" value=""/>
+                    </div>
+
+                    <div class="form-line">
+                        <label for="password">password</label>
+                        <input id="password" type="password" name="password" value=""/>
+                    </div>
+
+                    <button id="submit" type="submit">Добавить</button>
+
+                </form>
             </div>
         </div>
     </div>
