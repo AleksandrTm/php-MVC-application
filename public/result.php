@@ -1,5 +1,7 @@
-<?php require_once "./template/footer.php" ?>
-<?php require_once "./template/header.php" ?>
+<?php
+$footer = require_once "./template/footer.php";
+$header = require_once "./template/header.php";
+?>
 <!doctype html>
 <html lang="ru">
 <head>

@@ -1,7 +1,7 @@
 <?php
 $footer = require_once "./template/footer.php";
 $header = require_once "./template/header.php";
-$valid = require_once "./src/validation.php";
+$valid = require_once "../src/validation.php";
 ?>
 <!doctype html>
 <html lang="ru">
@@ -23,42 +23,47 @@ $valid = require_once "./src/validation.php";
         <div class="table">
             <?= $valid ?>
             <div class="forms">
-                <div id="signup-inner">
-                    <p><a href="/">Главная</a><span>-></span>Добавить пользователя</p>
+                    <p><a href="/">Главная </a><span>  >  </span>Добавить пользователя</p>
                     <form id="send" method="post" action="">
-                        <p>
+
+                        <div class="form-line">
                             <label for="login">Login: </label>
                             <input id="login" type="text" name="login" value=""/>
-                        </p>
-                        <p>
+                        </div>
+
+                        <div class="form-line">
                             <label for="email">E-mail</label>
                             <input id="email" type="email" name="email" value=""/>
-                        </p>
-                        <p>
+                        </div>
+
+                        <div class="form-line">
                             <label for="password">password</label>
                             <input id="password" type="password" name="password" value=""/>
-                        </p>
-                        <p>
+                        </div>
+
+                        <div class="form-line">
                             <label for="password-с">password confirm</label>
                             <input id="password-с" type="password" name="password-с" value=""/>
-                        </p>
-                        <p>password-с
+                        </div>
+
+                        <div class="form-line">
                             <label for="full-name">ФИО</label>
                             <input id="full-name" type="text" name="full-name" value=""/>
-                        </p>
-                        <p>
+                        </div>
+
+                        <div class="form-line">
                             <label for="date">Дата рождения</label>
-                            <input id="date" type="date" name="country" value=""/>
-                        </p>
-                        <p>
+                            <input id="date" type="date" name="date" value=""/>
+                        </div>
+
+                        <div class="form-line" id="text-area">
                             <label for="about">Описание</label>
                             <textarea name="about" id="about" cols="30" rows="10"></textarea>
-                        </p>
-                        <p>
-                            <button id="submit" type="submit">Добавить</button>
-                        </p>
+                        </div>
+
+                        <button id="submit" type="submit">Добавить</button>
+
                     </form>
-                </div>
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
 <?php
-$footer = require_once "./template/footer.php";
-$header = require_once "./template/header.php";
+$footer = require_once "./public/template/footer.php";
+$header = require_once "./public/template/header.php";
 $dataUser = require_once "./src/viewUser.php";
 ?>
 <!doctype html>
@@ -11,7 +11,7 @@ $dataUser = require_once "./src/viewUser.php";
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>title</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="public/css/style.css">
 </head>
 <body>
 <div class="wrapper">
@@ -20,9 +20,11 @@ $dataUser = require_once "./src/viewUser.php";
     <!-- Конец Шаблона: header -->
     <div class="container">
         <div class="table">
-            <a href="./add-user.php" class="table-link">
-                <img src="./img/add.png" alt="Add">
-            </a>
+            <div class="table-head">
+                <a href="public/add-user.php" class="table-link">
+                    <img src="public/img/add.png" alt="Add">
+                </a>
+            </div>
             <?php foreach ($dataUser as $user): ?>
                 <?php echo $user; ?>
             <?php endforeach; ?>
