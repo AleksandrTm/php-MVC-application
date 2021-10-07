@@ -43,13 +43,13 @@ $valid = require_once "./src/validation.php";
                     </div>
 
                     <div class="form-line">
-                        <label for="password-с">password confirm</label>
-                        <input id="password-с" type="password" name="password-с" value=""/>
+                        <label for="passwordConfirm">password confirm</label>
+                        <input id="passwordConfirm" type="password" name="passwordConfirm" value=""/>
                     </div>
 
                     <div class="form-line">
-                        <label for="full-name">ФИО</label>
-                        <input id="full-name" type="text" name="full-name" value=""/>
+                        <label for="fullName">ФИО</label>
+                        <input id="fullName" type="text" name="fullName" value=""/>
                     </div>
 
                     <div class="form-line">
@@ -62,7 +62,7 @@ $valid = require_once "./src/validation.php";
                         <textarea name="about" id="about" cols="30" rows="10"></textarea>
                     </div>
 
-                    <button id="submit" type="submit">Добавить</button>
+                    <button id="submit" type="submit">Сохранить</button>
 
                 </form>
             </div>

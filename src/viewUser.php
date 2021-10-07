@@ -7,7 +7,7 @@ for ($i = 0; $i <= 10; $i++) {
                 
             <p>User Full name id: $i</p>
             <div class=\"add-delete\">
-                <a href=\"/edit-user.php?id=$i\" class=\"table-link\">
+                <a href=\"/edit-user.php\" class=\"table-link\">
                     <img src=\"./img/remove.png\" alt=\"Edit\">
                 </a>
                 <a href=\"#\" class=\"table-link\">
