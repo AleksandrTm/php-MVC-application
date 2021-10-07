@@ -21,9 +21,11 @@ $valid = require_once "./src/validation.php";
     <!-- Конец Шаблона: header -->
     <div class="container">
         <div class="table">
+            <?= $valid ?>
             <div class="forms">
                 <p><a href="/">Главная </a><span>  >  </span>Редактировать пользователя</p>
                 <form id="send" method="post" action="">
+                    <input type="hidden" name="type-form" value="edit-user">
 
                     <div class="form-line">
                         <label for="login">Login: </label>

@@ -23,18 +23,19 @@ $valid = require_once "./src/validation.php";
         <div class="table">
             <?= $valid ?>
             <div class="forms">
-                    <p><a href="/">Главная </a><span>  >  </span>Добавить пользователя</p>
-                    <form id="send" method="post" action="">
+                <p><a href="/">Главная </a><span>  >  </span>Добавить пользователя</p>
+                <form id="send" method="post" action="">
+                    <input type="hidden" name="type-form" value="add-user">
 
-                        <div class="form-line">
-                            <label for="login">Login: </label>
-                            <input id="login" type="text" name="login" value=""/>
-                        </div>
+                    <div class="form-line">
+                        <label for="login">Login: </label>
+                        <input id="login" type="text" name="login" value=""/>
+                    </div>
 
-                        <div class="form-line">
-                            <label for="email">E-mail</label>
-                            <input id="email" type="email" name="email" value=""/>
-                        </div>
+                    <div class="form-line">
+                        <label for="email">E-mail</label>
+                        <input id="email" type="email" name="email" value=""/>
+                    </div>
 
                         <div class="form-line">
                             <label for="password">password</label>

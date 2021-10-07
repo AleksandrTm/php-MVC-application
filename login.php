@@ -1,6 +1,6 @@
 <?php
-$header = require_once "./template/header.php";
 $footer = require_once "./template/footer.php";
+$header = require_once "./template/header.php";
 $valid = require_once "./src/validation.php";
 ?>
 <!doctype html>
@@ -23,8 +23,8 @@ $valid = require_once "./src/validation.php";
         <div class="table">
             <?= $valid ?>
             <div class="forms">
-
                 <form id="send" method="post" action="">
+                    <input type="hidden" name="type-form" value="login">
 
                     <div class="form-line">
                         <label for="login">Login: </label>

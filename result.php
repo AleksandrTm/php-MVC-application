@@ -1,6 +1,7 @@
 <?php
 $footer = require_once "./template/footer.php";
 $header = require_once "./template/header.php";
+$valid = require_once "./src/validation.php";
 ?>
 <!doctype html>
 <html lang="ru">
