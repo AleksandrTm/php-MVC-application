@@ -126,10 +126,10 @@ function valid_add_user()
         return $check_date;
     }
     if (!($check_fullName === true)) {
-        return $check_login;
+        return $check_fullName;
     }
     if (!($check_about === true)) {
-        return $check_login;
+        return $check_about;
     }
 
     return "
@@ -179,10 +179,10 @@ function valid_edit_user()
         return $check_date;
     }
     if (!($check_fullName === true)) {
-        return $check_login;
+        return $check_fullName;
     }
     if (!($check_about === true)) {
-        return $check_login;
+        return $check_about;
     }
 
     return "
@@ -214,13 +214,13 @@ function field_date($date)
     return true;
 }
 
-function field_fullName($about)
+function field_fullName($fullName)
     /*
-     * Валидация input=about
+     * Валидация input=fullName
      * с использованием preg_match()
      */
 {
-    if (!(preg_match("/^([а-яА-Я]{1,20})([ ]{1})([а-яА-Я]{1,20})([ ]{0,1})([а-яА-Я]{1,20})$/", $about))) {
+    if (!(preg_match("/^([а-яА-Я]{1,20})([ ]{1})([а-яА-Я]{1,20})([ ]{0,1})([а-яА-Я]{1,20})$/", $fullName))) {
         return "Укажите корректно ФИО";
     }
     return true;
