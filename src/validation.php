@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // передаем в валидатор форму
     return validation($_POST['type-form']);
 }
-// Нет ответа от POST, ничего не отдаем.
+// Нет ответа от POST, отдаем null.
 return null;
 
 
@@ -32,7 +32,7 @@ function validation($typeForm)
     }
 }
 
-function valid_login(): string
+function valid_login()
     /*
      * Валидация входа на сайт
      */
@@ -95,12 +95,57 @@ function valid_registration()
 
 function valid_add_user()
 {
+    $login = $_POST['login'];
+    $password = $_POST['password'];
+    $passwordConfirm = $_POST['passwordConfirm'];
+    $email = $_POST['email'];
+    $fullName = $_POST['fullName'];
+    $date = $_POST['date'];
+    $about = $_POST['about'];
 
+    $check_login = field_login($login);
+    $check_pass = field_password($password);
+    $check_email = field_email($email);
+    $check_fullName = field_fullName($fullName);
+    $check_date = field_date($date);
+    $check_about = field_about($about);
+
+    if (!($check_login === true)) {
+        return $check_login;
+    }
+    if (!($check_pass === true)) {
+        return $check_pass;
+    }
+    if (!($passwordConfirm == $password)) {
+        return "Пароли должны совпадать";
+    }
+    if (!($check_email === true)) {
+        return $check_email;
+    }
+    if (!($check_date === true)) {
+        return $check_date;
+    }
+    if (!($check_fullName === true)) {
+        return $check_login;
+    }
+    if (!($check_about === true)) {
+        return $check_login;
+    }
+
+    return "
+        <div class='accept-reg'>Пользователь успешно добавлен</div><br>
+        Логин: $login<br>
+        Пароль: $password<br>
+        Почта: $email<br>
+        ФИО: $fullName<br>
+        Дата: $date<br>
+        Описание: $about<br>
+        ";
 }
 
 function valid_edit_user()
     /*
-     * Валидация регистрации нового пользователя
+     * Валидация редактирования пользователя
      */
 {
     $login = $_POST['login'];
@@ -115,7 +160,8 @@ function valid_edit_user()
     $check_pass = field_password($password);
     $check_email = field_email($email);
     $check_fullName = field_fullName($fullName);
-    $check_about = field_about($email);
+    $check_date = field_date($date);
+    $check_about = field_about($about);
 
     if (!($check_login === true)) {
         return $check_login;
@@ -129,15 +175,42 @@ function valid_edit_user()
     if (!($check_email === true)) {
         return $check_email;
     }
+    if (!($check_date === true)) {
+        return $check_date;
+    }
+    if (!($check_fullName === true)) {
+        return $check_login;
+    }
+    if (!($check_about === true)) {
+        return $check_login;
+    }
 
     return "
         <div class='accept-reg'>Редактирование успешно</div><br>
         Логин: $login<br>
         Пароль: $password<br>
         Почта: $email<br>
+        ФИО: $fullName<br>
         Дата: $date<br>
         Описание: $about<br>
         ";
+}
+function field_date($date)
+    /*
+     * Валидация input=date
+     * с использованием:
+     * explode() для разбития строки
+     * checkdate() проверки корректности даты
+     */
+{
+    if (!(gettype($date) == "integer")) {
+        return true;
+    }
+    $dataMDY = explode("-", $date);
+    if (!(checkdate($dataMDY[0], $dataMDY[1], $dataMDY[2]))) {
+        return "Дата не корректная";
+    }
+    return true;
 }
 
 function field_fullName($about)
@@ -146,7 +219,7 @@ function field_fullName($about)
      * с использованием preg_match()
      */
 {
-    if (!(preg_match("/^([а-яА-Я]{1,20})([ ]{1})([а-яА-Я]{1,20})([ ]{0,1})$/", $about))) {
+    if (!(preg_match("/^([а-яА-Я]{1,20})([ ]{1})([а-яА-Я]{1,20})([ ]{0,1})([а-яА-Я]{1,20})$/", $about))) {
         return "Укажите корректно ФИО";
     }
     return true;
@@ -158,7 +231,7 @@ function field_login($login)
      * с использованием preg_match()
      */
 {
-    if ((empty($login))) {
+    if (empty($login)) {
         return "Поле логин не может быть пустым";
     }
     if (!(preg_match("/^.{5,16}$/", $login))) {
@@ -179,11 +252,12 @@ function field_password($password)
     if (empty($password)) {
         return "Поле пароль не может быть пустым";
     }
-    if (!(preg_match("/^[a-zA-Z0-9_-]{8,16}$/", $password))) {
-        return "Пароль должен содержать от 8 до 16 латинских символов, цифр и знаков - _";
+    if (!(preg_match("/^[a-zA-Z0-9@#$%]{8,20}$/", $password))) {
+        return "Пароль должен содержать от 8 до 20 латинских символов, цифр и знаков @#$%";
     }
-    if (!(preg_match("/^a-z{1,16}A-Z{1,16}0-9{1,16}$/", $password))) {
-        return "Пароль должен содержать хотя бы одну цифру, одну строчную и одну заглавную латинскую букву";
+    if (!(preg_match("/((?=.*[@#$%])(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z]).{8,20})/", $password))) {
+        return "Пароль должен содержать хотя бы одну цифру, одну строчную,
+        одну заглавную латинскую букву, а так же один из символов: @#$%";
     }
     return true;
 }
@@ -194,11 +268,14 @@ function field_email($email)
      * с использованием filter_var()
      */
 {
+    if (empty($email)) {
+        return "Поле e-mail не может быть пустым";
+    }
     $check = filter_var($email, FILTER_VALIDATE_EMAIL);
     if (!$check) {
         return "Не корректный email";
     }
-    return $check;
+    return true;
 }
 
 function field_about($about)
@@ -207,7 +284,7 @@ function field_about($about)
      * с использованием preg_match()
      */
 {
-    if (!(preg_match("/^.{0,200}$/", $about))) {
+    if (!(preg_match("/^[a-zA-Z0-9]{0,200}$/", $about))) {
         return "Описание не может быть более 200 символов";
     }
     return true;

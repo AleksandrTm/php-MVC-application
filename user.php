@@ -33,6 +33,3 @@ $dataUser = require_once "./src/viewUser.php";
     <!-- Начала Шаблона: footer -->
     <?= $footer ?>
     <!-- Конец Шаблона: footer -->
-</div>
-</body>
-</html>

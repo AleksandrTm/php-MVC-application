@@ -32,7 +32,3 @@ $valid = require_once "./src/validation.php";
         <!-- Начала Шаблона: footer -->
         <?= $footer ?>
         <!-- Конец Шаблона: footer -->
-    </div>
-
-</body>
-</html>

@@ -11,7 +11,6 @@ $valid = require_once "./src/validation.php";
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Регистрация</title>
-    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <div class="wrapper">
@@ -41,8 +40,8 @@ $valid = require_once "./src/validation.php";
                     </div>
 
                     <div class="form-line">
-                        <label for="password-с">password confirm</label>
-                        <input id="password-с" type="password" name="password-с" value=""/>
+                        <label for="passwordConfirm">password confirm</label>
+                        <input id="passwordConfirm" type="password" name="passwordConfirm" value=""/>
                     </div>
 
                     <button id="submit" type="submit">Регистрация</button>

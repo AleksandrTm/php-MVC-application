@@ -11,7 +11,7 @@ $valid = require_once "./src/validation.php";
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>title</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.css"
 </head>
 <body>
 
@@ -43,13 +43,13 @@ $valid = require_once "./src/validation.php";
                         </div>
 
                         <div class="form-line">
-                            <label for="password-с">password confirm</label>
-                            <input id="password-с" type="password" name="password-с" value=""/>
+                            <label for="passwordConfirm">password confirm</label>
+                            <input id="passwordConfirm" type="password" name="passwordConfirm" value=""/>
                         </div>
 
                         <div class="form-line">
-                            <label for="full-name">ФИО</label>
-                            <input id="full-name" type="text" name="full-name" value=""/>
+                            <label for="fullName">ФИО</label>
+                            <input id="fullName" type="text" name="fullName" value=""/>
                         </div>
 
                         <div class="form-line">
@@ -68,14 +68,6 @@ $valid = require_once "./src/validation.php";
             </div>
         </div>
     </div>
-
-
-    <footer>
-        <div class="footer">
-            <p>footer rights &copy; Aleksandr</p>
-        </div>
-    </footer>
-</div>
-
-</body>
-</html>
+    <!-- Начала Шаблона: footer -->
+    <?= $footer ?>
+    <!-- Конец Шаблона: footer -->
