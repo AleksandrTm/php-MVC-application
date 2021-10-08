@@ -20,19 +20,19 @@ function validation($typeForm)
 {
     switch ($typeForm) {
         case "login":
-            return valid_login();
+            return validLogin();
         case "registration":
-            return valid_registration();
+            return validRegistration();
         case "edit-user":
-            return valid_edit_user();
+            return validEditUser();
         case "add-user":
-            return valid_add_user();
+            return validAddUser();
         default:
             return "ошибка получения формы";
     }
 }
 
-function valid_login()
+function validLogin()
     /*
      * Валидация входа на сайт
      */
@@ -40,14 +40,14 @@ function valid_login()
     $login = $_POST['login'];
     $password = $_POST['password'];
 
-    $check_login = field_login($login);
-    $check_pass = field_password($password);
+    $checkLogin = fieldLogin($login);
+    $checkPass = fieldPassword($password);
 
-    if (!($check_login === true)) {
-        return $check_login;
+    if (!($checkLogin === true)) {
+        return $checkLogin;
     }
-    if (!($check_pass === true)) {
-        return $check_pass;
+    if (!($checkPass === true)) {
+        return $checkPass;
     }
 
     return "
@@ -58,7 +58,7 @@ function valid_login()
 
 }
 
-function valid_registration()
+function validRegistration()
     /*
      * Валидация регистрации нового пользователя
      */
@@ -68,21 +68,21 @@ function valid_registration()
     $passwordConfirm = $_POST['passwordConfirm'];
     $email = $_POST['email'];
 
-    $check_login = field_login($login);
-    $check_pass = field_password($password);
-    $check_email = field_email($email);
+    $checkLogin = fieldLogin($login);
+    $checkPass = fieldPassword($password);
+    $checkEmail = fieldEmail($email);
 
-    if (!($check_login === true)) {
-        return $check_login;
+    if (!($checkLogin === true)) {
+        return $checkLogin;
     }
-    if (!($check_pass === true)) {
-        return $check_pass;
+    if (!($checkPass === true)) {
+        return $checkPass;
     }
     if (!($passwordConfirm == $password)) {
         return "Пароли должны совпадать";
     }
-    if (!($check_email === true)) {
-        return $check_email;
+    if (!($checkEmail === true)) {
+        return $checkEmail;
     }
 
     return "
@@ -93,7 +93,10 @@ function valid_registration()
         ";
 }
 
-function valid_add_user()
+function validAddUser()
+    /*
+     * Валидация добавление нового пользователя
+     */
 {
     $login = $_POST['login'];
     $password = $_POST['password'];
@@ -103,12 +106,12 @@ function valid_add_user()
     $date = $_POST['date'];
     $about = $_POST['about'];
 
-    $check_login = field_login($login);
-    $check_pass = field_password($password);
-    $check_email = field_email($email);
-    $check_fullName = field_fullName($fullName);
-    $check_date = field_date($date);
-    $check_about = field_about($about);
+    $check_login = fieldLogin($login);
+    $check_pass = fieldPassword($password);
+    $check_email = fieldEmail($email);
+    $check_fullName = fieldFullName($fullName);
+    $check_date = fieldDate($date);
+    $check_about = fieldAbout($about);
 
     if (!($check_login === true)) {
         return $check_login;
@@ -143,7 +146,7 @@ function valid_add_user()
         ";
 }
 
-function valid_edit_user()
+function validEditUser()
     /*
      * Валидация редактирования пользователя
      */
@@ -156,33 +159,33 @@ function valid_edit_user()
     $date = $_POST['date'];
     $about = $_POST['about'];
 
-    $check_login = field_login($login);
-    $check_pass = field_password($password);
-    $check_email = field_email($email);
-    $check_fullName = field_fullName($fullName);
-    $check_date = field_date($date);
-    $check_about = field_about($about);
+    $checkLogin = fieldLogin($login);
+    $checkPass = fieldPassword($password);
+    $checkEmail = fieldEmail($email);
+    $checkFullName = fieldFullName($fullName);
+    $checkDate = fieldDate($date);
+    $checkAbout = fieldAbout($about);
 
-    if (!($check_login === true)) {
-        return $check_login;
+    if (!($checkLogin === true)) {
+        return $checkLogin;
     }
-    if (!($check_pass === true)) {
-        return $check_pass;
+    if (!($checkPass === true)) {
+        return $checkPass;
     }
     if (!($passwordConfirm == $password)) {
         return "Пароли должны совпадать";
     }
-    if (!($check_email === true)) {
-        return $check_email;
+    if (!($checkEmail === true)) {
+        return $checkEmail;
     }
-    if (!($check_date === true)) {
-        return $check_date;
+    if (!($checkDate === true)) {
+        return $checkDate;
     }
-    if (!($check_fullName === true)) {
-        return $check_fullName;
+    if (!($checkFullName === true)) {
+        return $checkFullName;
     }
-    if (!($check_about === true)) {
-        return $check_about;
+    if (!($checkAbout === true)) {
+        return $checkAbout;
     }
 
     return "
@@ -196,7 +199,7 @@ function valid_edit_user()
         ";
 }
 
-function field_date($date)
+function fieldDate($date)
     /*
      * Валидация input=date
      * с использованием:
@@ -214,7 +217,7 @@ function field_date($date)
     return true;
 }
 
-function field_fullName($fullName)
+function fieldFullName($fullName)
     /*
      * Валидация input=fullName
      * с использованием preg_match()
@@ -226,7 +229,7 @@ function field_fullName($fullName)
     return true;
 }
 
-function field_login($login)
+function fieldLogin($login)
     /*
      * Валидация input=login
      * с использованием preg_match()
@@ -244,7 +247,7 @@ function field_login($login)
     return true;
 }
 
-function field_password($password)
+function fieldPassword($password)
     /*
      * Валидация input=password
      * с использованием preg_match()
@@ -264,7 +267,7 @@ function field_password($password)
     return true;
 }
 
-function field_email($email)
+function fieldEmail($email)
     /*
      * Валидация input=email
      * с использованием filter_var()
@@ -280,7 +283,7 @@ function field_email($email)
     return true;
 }
 
-function field_about($about)
+function fieldAbout($about)
     /*
      * Валидация input=about
      * с использованием preg_match()
