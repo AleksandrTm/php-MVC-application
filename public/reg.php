@@ -1,7 +1,7 @@
 <?php
 $footer = require_once "./template/footer.php";
 $header = require_once "./template/header.php";
-$valid = require_once "./src/validation.php";
+$valid = require_once "../src/validation.php";
 ?>
 <!doctype html>
 <html lang="ru">
@@ -10,11 +10,10 @@ $valid = require_once "./src/validation.php";
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>title</title>
-    <link rel="stylesheet" href="/localsite.ru/css/style.css"
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
 <div class="wrapper">
     <!-- Начала Шаблона: header -->
     <?= $header ?>
@@ -23,10 +22,9 @@ $valid = require_once "./src/validation.php";
         <div class="table">
             <?= $valid ?>
             <div class="forms">
-                <p><a href="/">Главная </a><span>  >  </span>Добавить пользователя</p>
+                <h2>Регистрация</h2>
                 <form id="send" method="post" action="">
-                    <input type="hidden" name="type-form" value="add-user">
-
+                    <input type="hidden" name="type-form" value="registration">
                     <div class="form-line">
                         <label for="login">Login: </label>
                         <input id="login" type="text" name="login" value="" required/>
@@ -52,17 +50,7 @@ $valid = require_once "./src/validation.php";
                         <input id="fullName" type="text" name="fullName" value=""/>
                     </div>
 
-                    <div class="form-line">
-                        <label for="date">Дата рождения</label>
-                        <input id="date" type="date" name="date" value=""/>
-                    </div>
-
-                    <div class="form-line" id="text-area">
-                        <label for="about">Описание</label>
-                        <textarea name="about" id="about" cols="30" rows="10"></textarea>
-                    </div>
-
-                    <button id="submit" type="submit">Добавить</button>
+                    <button id="submit" type="submit">Регистрация</button>
 
                 </form>
             </div>

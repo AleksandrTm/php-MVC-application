@@ -1,7 +1,7 @@
 <?php
-$footer = require_once __DIR__ . '/../views/template/footer.php';
-$header = require_once __DIR__ . '/../views/template/header.php';
-$dataUser = require_once __DIR__ . '/../src/viewUser.php';
+$footer = require_once 'template/footer.php';
+$header = require_once 'template/header.php';
+$dataUser = require_once '../src/viewUser.php';
 ?>
 <!doctype html>
 <html lang="ru">
@@ -11,7 +11,7 @@ $dataUser = require_once __DIR__ . '/../src/viewUser.php';
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>title</title>
-    <link rel="stylesheet" type="text/css" href="../resource/css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 <div class="wrapper">
@@ -22,7 +22,7 @@ $dataUser = require_once __DIR__ . '/../src/viewUser.php';
         <div class="table">
             <div class="table-head">
                 <a href="add-user.php" class="table-link">
-                    <img src="../resource/img/add.png" alt="Add">
+                    <img src="img/add.png" alt="Add">
                 </a>
             </div>
             <?php foreach ($dataUser as $user): ?>

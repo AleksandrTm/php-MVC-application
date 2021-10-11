@@ -1,7 +1,7 @@
 <?php
 $footer = require_once "./template/footer.php";
 $header = require_once "./template/header.php";
-$valid = require_once "./src/validation.php";
+$valid = require_once "../src/validation.php";
 ?>
 <!doctype html>
 <html lang="ru">
@@ -10,10 +10,11 @@ $valid = require_once "./src/validation.php";
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Регистрация</title>
-    <link rel="stylesheet" href="../resource/css/style.css">
+    <title>title</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
 <div class="wrapper">
     <!-- Начала Шаблона: header -->
     <?= $header ?>
@@ -22,17 +23,12 @@ $valid = require_once "./src/validation.php";
         <div class="table">
             <?= $valid ?>
             <div class="forms">
-                <h2>Регистрация</h2>
                 <form id="send" method="post" action="">
-                    <input type="hidden" name="type-form" value="registration">
+                    <input type="hidden" name="type-form" value="login">
+
                     <div class="form-line">
                         <label for="login">Login: </label>
                         <input id="login" type="text" name="login" value="" required/>
-                    </div>
-
-                    <div class="form-line">
-                        <label for="email">E-mail</label>
-                        <input id="email" type="email" name="email" value="" required/>
                     </div>
 
                     <div class="form-line">
@@ -40,12 +36,7 @@ $valid = require_once "./src/validation.php";
                         <input id="password" type="password" name="password" value="" required/>
                     </div>
 
-                    <div class="form-line">
-                        <label for="passwordConfirm">password confirm</label>
-                        <input id="passwordConfirm" type="password" name="passwordConfirm" value="" required/>
-                    </div>
-
-                    <button id="submit" type="submit">Регистрация</button>
+                    <button id="submit" type="submit">Добавить</button>
 
                 </form>
             </div>

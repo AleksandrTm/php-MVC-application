@@ -3,6 +3,7 @@
  *  Временная функциональная реализация
  *  Объектная хранится в файле Valid.php
  */
+include_once('../src/File.php');
 
 // проверяем получен POST запрос или нет.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -13,10 +14,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 return null;
 
 
-function validation($typeForm)
-    /*
-     *  Определяем кокой тип формы получен для дальнейшей валидации и обработки
-     */
+/**
+ *  Определяем кокой тип формы получен для дальнейшей валидации и обработки
+ */
+function validation($typeForm): string
 {
     switch ($typeForm) {
         case "login":
@@ -32,10 +33,10 @@ function validation($typeForm)
     }
 }
 
-function validLogin()
-    /*
-     * Валидация входа на сайт
-     */
+/**
+ * Валидация входа на сайт
+ */
+function validLogin(): string
 {
     $login = $_POST['login'];
     $password = $_POST['password'];
@@ -58,19 +59,21 @@ function validLogin()
 
 }
 
-function validRegistration()
-    /*
-     * Валидация регистрации нового пользователя
-     */
+/**
+ * Валидация регистрации нового пользователя
+ */
+function validRegistration(): string
 {
     $login = $_POST['login'];
     $password = $_POST['password'];
     $passwordConfirm = $_POST['passwordConfirm'];
     $email = $_POST['email'];
+    $fullName = $_POST['fullName'];
 
     $checkLogin = fieldLogin($login);
     $checkPass = fieldPassword($password);
     $checkEmail = fieldEmail($email);
+    $check_fullName = fieldFullName($fullName);
 
     if (!($checkLogin === true)) {
         return $checkLogin;
@@ -84,6 +87,9 @@ function validRegistration()
     if (!($checkEmail === true)) {
         return $checkEmail;
     }
+    if (!($check_fullName === true)) {
+        return $check_fullName;
+    }
 
     return "
         <div class='accept-reg'>Регистрация успешна</div><br>
@@ -93,10 +99,10 @@ function validRegistration()
         ";
 }
 
-function validAddUser()
-    /*
-     * Валидация добавление нового пользователя
-     */
+/**
+ * Валидация добавление нового пользователя
+ */
+function validAddUser(): string
 {
     $login = $_POST['login'];
     $password = $_POST['password'];
@@ -134,7 +140,7 @@ function validAddUser()
     if (!($check_about === true)) {
         return $check_about;
     }
-
+    addUser($login, $password, $email, $fullName, $date, $about);
     return "
         <div class='accept-reg'>Пользователь успешно добавлен</div><br>
         Логин: $login<br>
@@ -144,12 +150,13 @@ function validAddUser()
         Дата: $date<br>
         Описание: $about<br>
         ";
+
 }
 
-function validEditUser()
-    /*
-     * Валидация редактирования пользователя
-     */
+/**
+ * Валидация редактирования пользователя
+ */
+function validEditUser(): string
 {
     $login = $_POST['login'];
     $password = $_POST['password'];
@@ -199,13 +206,13 @@ function validEditUser()
         ";
 }
 
-function fieldDate($date)
-    /*
-     * Валидация input=date
-     * с использованием:
-     * explode() для разбития строки
-     * checkdate() проверки корректности даты
-     */
+/**
+ * Валидация input=date
+ * с использованием:
+ * explode() для разбития строки
+ * checkdate() проверки корректности даты
+ */
+function fieldDate($date): bool
 {
     if (!(gettype($date) == "integer")) {
         return true;
@@ -214,26 +221,29 @@ function fieldDate($date)
     if (!(checkdate($dataMDY[0], $dataMDY[1], $dataMDY[2]))) {
         return "Дата не корректная";
     }
+    if ($dataMDY[2] - date('Y') >= 18) {
+        return "Пользователь должен быть старше 18 лет";
+    }
     return true;
 }
 
-function fieldFullName($fullName)
+function fieldFullName($fullName): bool
     /*
      * Валидация input=fullName
      * с использованием preg_match()
      */
 {
-    if (!(preg_match("/^([а-яА-Я]{1,20})([ ]{1})([а-яА-Я]{1,20})([ ]{0,1})([а-яА-Я]{1,20})$/", $fullName))) {
+    if (!(preg_match("/[^А-Яа-яЁё ]/im", $fullName))) {
         return "Укажите корректно ФИО";
     }
     return true;
 }
 
-function fieldLogin($login)
-    /*
-     * Валидация input=login
-     * с использованием preg_match()
-     */
+/**
+ * Валидация input=login
+ * с использованием preg_match()
+ */
+function fieldLogin($login): bool
 {
     if (empty($login)) {
         return "Поле логин не может быть пустым";
@@ -247,11 +257,11 @@ function fieldLogin($login)
     return true;
 }
 
-function fieldPassword($password)
-    /*
-     * Валидация input=password
-     * с использованием preg_match()
-     */
+/**
+ * Валидация input=password
+ * с использованием preg_match()
+ */
+function fieldPassword($password): bool
 {
     if (empty($password)) {
         return "Поле пароль не может быть пустым";
@@ -267,11 +277,11 @@ function fieldPassword($password)
     return true;
 }
 
-function fieldEmail($email)
-    /*
-     * Валидация input=email
-     * с использованием filter_var()
-     */
+/**
+ * Валидация input=email
+ * с использованием filter_var()
+ */
+function fieldEmail($email): bool
 {
     if (empty($email)) {
         return "Поле e-mail не может быть пустым";
@@ -283,13 +293,13 @@ function fieldEmail($email)
     return true;
 }
 
-function fieldAbout($about)
-    /*
-     * Валидация input=about
-     * с использованием preg_match()
-     */
+/**
+ * Валидация input=about
+ * с использованием preg_match()
+ */
+function fieldAbout($about): bool
 {
-    if (!(preg_match("/^[a-zA-Z0-9]{0,200}$/", $about))) {
+    if (!(preg_match("/[а-яА-Яa-zA-Z0-9 ]{0,200}/", $about))) {
         return "Описание не может быть более 200 символов";
     }
     return true;

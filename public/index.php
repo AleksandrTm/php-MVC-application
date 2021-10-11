@@ -1,2 +1,2 @@
 <?php
-require_once __DIR__ . '/views/user.php';
+require_once 'user.php';
