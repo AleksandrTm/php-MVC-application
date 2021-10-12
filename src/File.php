@@ -47,5 +47,6 @@ function idUser()
     } finally {
         closedir($dir);
     }
-    return array_key_last($arrayUsers);
+    rsort($arrayUsers);
+    return array_shift($arrayUsers);
 }
