@@ -62,5 +62,3 @@ function removeUser($id)
         fclose($files);
     }
 }
-
-ы

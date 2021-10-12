@@ -29,7 +29,7 @@ function addUser(string $name, string $password, string $email, string $fullName
  * Заносим в массив пользователей,
  * сортируем по убыванию и отдаём последний элемент id пользователя
  */
-function idUser(): int
+function idUser()
 {
     $arrayUsers = [];
     $dir = null;
