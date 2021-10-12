@@ -1,5 +1,6 @@
 <?php
-include_once('../src/File.php');
+//include_once('../src/File.php');
+require_once "../src/viewUser.php";
 $arr = [];
 for ($i = 0; $i <= 10; $i++) {
     $arr[$i] = "

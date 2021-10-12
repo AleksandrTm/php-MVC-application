@@ -1,48 +1,39 @@
 <?php
-require_once "../config/config.php";
-$footer = require_once DIR_VIEWS . 'template/footer.php';
-$header = require_once DIR_VIEWS . 'template/header.php';
-$valid = require_once DIR_SRC . "validation.php";
+
+include_once "../config/Config.php";
+
+use Localsite\Configs\Config;
+
+$footer = require_once Config::DIR_VIEWS . 'template/footer.php';
+$header = require_once Config::DIR_VIEWS . 'template/header.php';
+$validation = require_once Config::DIR_SRC . "validation.php";
 ?>
-<!doctype html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>title</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
+<!-- Начала Шаблона: header -->
+<?= $header ?>
+<!-- Конец Шаблона: header -->
+<div class="container">
+    <div class="table">
+        <?= $validation ?>
+        <div class="forms">
+            <form id="send" method="post" action="">
+                <input type="hidden" name="type-form" value="login">
 
-<div class="wrapper">
-    <!-- Начала Шаблона: header -->
-    <?= $header ?>
-    <!-- Конец Шаблона: header -->
-    <div class="container">
-        <div class="table">
-            <?= $valid ?>
-            <div class="forms">
-                <form id="send" method="post" action="">
-                    <input type="hidden" name="type-form" value="login">
+                <div class="form-line">
+                    <label for="login">Login: </label>
+                    <input id="login" type="text" name="login" value="" required/>
+                </div>
 
-                    <div class="form-line">
-                        <label for="login">Login: </label>
-                        <input id="login" type="text" name="login" value="" required/>
-                    </div>
+                <div class="form-line">
+                    <label for="password">password</label>
+                    <input id="password" type="password" name="password" value="" required/>
+                </div>
 
-                    <div class="form-line">
-                        <label for="password">password</label>
-                        <input id="password" type="password" name="password" value="" required/>
-                    </div>
+                <button id="submit" type="submit">Добавить</button>
 
-                    <button id="submit" type="submit">Добавить</button>
-
-                </form>
-            </div>
+            </form>
         </div>
     </div>
-    <!-- Начала Шаблона: footer -->
-    <?= $footer ?>
-    <!-- Конец Шаблона: footer -->
+</div>
+<!-- Начала Шаблона: footer -->
+<?= $footer ?>
+<!-- Конец Шаблона: footer -->

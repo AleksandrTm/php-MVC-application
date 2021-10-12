@@ -1,9 +1,7 @@
 <?php
-/*
- *  Временная функциональная реализация
- *  Объектная хранится в файле Valid.php
- */
-include_once('../src/File.php');
+//require_once('../src/File.php');
+
+use Localsite\src\File as Files;
 
 // проверяем получен POST запрос или нет.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -102,7 +100,7 @@ function validRegistration(): string
 /**
  * Валидация добавление нового пользователя
  */
-function validAddUser(): string
+function validAddUser()
 {
     $login = $_POST['login'];
     $password = $_POST['password'];
@@ -140,7 +138,7 @@ function validAddUser(): string
     if (!($check_about === true)) {
         return $check_about;
     }
-    addUser($login, $password, $email, $fullName, $date, $about);
+    Files::addUser($login, $password, $email, $fullName, $date, $about);
     return "
         <div class='accept-reg'>Пользователь успешно добавлен</div><br>
         Логин: $login<br>

@@ -1,7 +1,9 @@
 <?php
 
-include_once "../config/config.php";
+include_once "../config/Config.php";
 include_once "../src/File.php";
+
+use Localsite\src\File as Files;
 
 class TestFile
 {
@@ -20,11 +22,11 @@ class TestFile
      */
     static function testFIleAddUser()
     {
-        addUser("Aleksandr", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-1900", "доп. инфа");
+        Files::addUser("Aleksandr", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-1900", "доп. инфа");
 
-        addUser("Александр", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-2010", "доп. инфа");
+        Files::addUser("Александр", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-2010", "доп. инфа");
 
-        addUser("Aleksandr", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-2100", "доп. инфа");
+        Files::addUser("Aleksandr", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-2100", "доп. инфа");
     }
 }
 
