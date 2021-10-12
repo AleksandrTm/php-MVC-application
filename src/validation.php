@@ -156,7 +156,7 @@ function validAddUser(): string
 /**
  * Валидация редактирования пользователя
  */
-function validEditUser(): string
+function validEditUser()
 {
     $login = $_POST['login'];
     $password = $_POST['password'];
@@ -212,28 +212,27 @@ function validEditUser(): string
  * explode() для разбития строки
  * checkdate() проверки корректности даты
  */
-function fieldDate($date): bool
+function fieldDate($date)
 {
-    if (!(gettype($date) == "integer")) {
-        return true;
-    }
-    $dataMDY = explode("-", $date);
-    if (!(checkdate($dataMDY[0], $dataMDY[1], $dataMDY[2]))) {
+    $dataYMD = explode("-", $date);
+    if (!(checkdate($dataYMD[2], $dataYMD[1], $dataYMD[0])) and !(gettype($date) == "string")) {
         return "Дата не корректная";
     }
-    if ($dataMDY[2] - date('Y') >= 18) {
+
+    if ($dataYMD[0] - date('Y') < 18) {
         return "Пользователь должен быть старше 18 лет";
     }
+
     return true;
 }
 
-function fieldFullName($fullName): bool
+function fieldFullName($fullName)
     /*
      * Валидация input=fullName
      * с использованием preg_match()
      */
 {
-    if (!(preg_match("/[^А-Яа-яЁё ]/im", $fullName))) {
+    if (!(preg_match("/[А-Яа-яЁё ]/im", $fullName))) {
         return "Укажите корректно ФИО";
     }
     return true;
@@ -243,7 +242,7 @@ function fieldFullName($fullName): bool
  * Валидация input=login
  * с использованием preg_match()
  */
-function fieldLogin($login): bool
+function fieldLogin($login)
 {
     if (empty($login)) {
         return "Поле логин не может быть пустым";
@@ -261,7 +260,7 @@ function fieldLogin($login): bool
  * Валидация input=password
  * с использованием preg_match()
  */
-function fieldPassword($password): bool
+function fieldPassword($password)
 {
     if (empty($password)) {
         return "Поле пароль не может быть пустым";
@@ -281,7 +280,7 @@ function fieldPassword($password): bool
  * Валидация input=email
  * с использованием filter_var()
  */
-function fieldEmail($email): bool
+function fieldEmail($email)
 {
     if (empty($email)) {
         return "Поле e-mail не может быть пустым";
@@ -297,7 +296,7 @@ function fieldEmail($email): bool
  * Валидация input=about
  * с использованием preg_match()
  */
-function fieldAbout($about): bool
+function fieldAbout($about)
 {
     if (!(preg_match("/[а-яА-Яa-zA-Z0-9 ]{0,200}/", $about))) {
         return "Описание не может быть более 200 символов";
