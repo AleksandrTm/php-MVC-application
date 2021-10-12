@@ -219,7 +219,7 @@ function fieldDate($date)
         return "Дата не корректная";
     }
 
-    if ($dataYMD[0] - date('Y') < 18) {
+    if (!($dataYMD[0] - date('Y') < 18)) {
         return "Пользователь должен быть старше 18 лет";
     }
 
