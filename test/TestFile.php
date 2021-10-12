@@ -3,7 +3,7 @@
 include_once "../config/config.php";
 include_once "../src/File.php";
 
-class testFile
+class TestFile
 {
     function __construct()
     {
@@ -24,6 +24,6 @@ class testFile
     }
 }
 
-$testFile = new testFile();
+$testFile = new TestFile();
 
 $testFile->testFIle();
