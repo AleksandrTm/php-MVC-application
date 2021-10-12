@@ -6,7 +6,7 @@ use Localsite\Configs\Config;
 
 $footer = require_once Config::DIR_VIEWS . 'template/footer.php';
 $header = require_once Config::DIR_VIEWS . 'template/header.php';
-$validation = require_once Config::DIR_SRC . "validation.php";
+$validation = require_once Config::DIR_SRC . "Validation.php";
 ?>
 
 <!-- Начала Шаблона: header -->
