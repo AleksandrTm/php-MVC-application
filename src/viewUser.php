@@ -8,10 +8,10 @@ for ($i = 0; $i <= 10; $i++) {
             <p>User Full name id: $i</p>
             <div class=\"add-delete\">
                 <a href=\"/edit-user.php\" class=\"table-link\">
-                    <img src=\"img/edit.png\" alt=\"Edit\">
+                    <img src=\"../img/edit.png\" alt=\"Edit\">
                 </a>
                 <a href=\"#\" class=\"table-link\">
-                    <img src=\"img/delete.png\" alt=\"Delete\">
+                    <img src=\"../img/delete.png\" alt=\"Delete\">
                 </a>
             </div>
         </div>

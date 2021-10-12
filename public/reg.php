@@ -1,7 +1,8 @@
 <?php
-$footer = require_once "./template/footer.php";
-$header = require_once "./template/header.php";
-$valid = require_once "../src/validation.php";
+require_once "../config/config.php";
+$footer = require_once DIR_VIEWS . 'template/footer.php';
+$header = require_once DIR_VIEWS . 'template/header.php';
+$valid = require_once DIR_SRC . "validation.php";
 ?>
 <!doctype html>
 <html lang="ru">
@@ -11,7 +12,7 @@ $valid = require_once "../src/validation.php";
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Регистрация</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 <div class="wrapper">

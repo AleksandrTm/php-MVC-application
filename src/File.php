@@ -1,7 +1,18 @@
 <?php
 require_once "../config/config.php";
 
-
+/**
+ *
+ * Добавление пользователя в файловую базу данных
+ *
+ * @param string $name
+ * @param string $password
+ * @param string $email
+ * @param string $fullName
+ * @param string $date
+ * @param string $about
+ *
+ */
 function addUser(string $name, string $password, string $email, string $fullName, string $date, string $about)
 {
     $files = null;
