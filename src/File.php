@@ -2,33 +2,35 @@
 
 namespace Localsite\src;
 
-require_once "../config/Config.php";
+require_once "../config/ConfigPaths.php";
 
 use Exception;
-use Localsite\Configs\Config;
+use Localsite\Configs\ConfigPaths;
 
 class File
 {
-//    function viewsUsers()
-//    {
-//        $arrayUsers = [];
-//        $dir = null;
-//        try {
-//            if ($dir = opendir(Config::DIR_BASE_USERS)) {
-//                while (($file = readdir($dir)) !== false) {
-//                    if ($file == '.' || $file == '..') {
-//                        continue;
-//                    }
-//                    $arrayUsers[] = $file;
-//                }
-//            }
-//        } catch (Exception $e) {
-//            var_dump($e);
-//        } finally {
-//            closedir($dir);
-//        }
-//
-//    }
+    static function viewsUsers(): array
+    {
+        $arrayUsers = [];
+        $dir = null;
+        try {
+            if ($dir = opendir(ConfigPaths::DIR_BASE_USERS)) {
+                while (($file = readdir($dir)) !== false) {
+                    if ($file == '.' || $file == '..') {
+                        continue;
+                    }
+                    $nameKey = "user-id-" . $file;
+                    $arrayUsers[$nameKey] = file(ConfigPaths::DIR_BASE_USERS . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                }
+            }
+        } catch (Exception $e) {
+            var_dump($e);
+        } finally {
+            closedir($dir);
+        }
+        sort($arrayUsers);
+        return $arrayUsers;
+    }
 
 
     /**
@@ -47,9 +49,9 @@ class File
     {
         $files = null;
         if (empty(File::idUser())) {
-            $userId = Config::DIR_BASE_USERS . 1;
+            $userId = ConfigPaths::DIR_BASE_USERS . 1;
         } else {
-            $userId = Config::DIR_BASE_USERS . (File::idUser() + 1);
+            $userId = ConfigPaths::DIR_BASE_USERS . (File::idUser() + 1);
         }
         try {
             $files = fopen($userId, 'w');
@@ -106,7 +108,7 @@ class File
         $arrayUsers = [];
         $dir = null;
         try {
-            if ($dir = opendir(Config::DIR_BASE_USERS)) {
+            if ($dir = opendir(ConfigPaths::DIR_BASE_USERS)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == '.' || $file == '..') {
                         continue;

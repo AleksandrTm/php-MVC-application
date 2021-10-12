@@ -1,12 +1,12 @@
 <?php
 
-include_once "../config/Config.php";
+include_once "../config/ConfigPaths.php";
 
-use Localsite\Configs\Config;
+use Localsite\Configs\ConfigPaths;
 
-$footer = require_once Config::DIR_VIEWS . 'template/footer.php';
-$header = require_once Config::DIR_VIEWS . 'template/header.php';
-$validation = require_once Config::DIR_SRC . "Validation.php";
+$footer = require_once ConfigPaths::DIR_VIEWS . 'template/footer.php';
+$header = require_once ConfigPaths::DIR_VIEWS . 'template/header.php';
+$validation = require_once ConfigPaths::DIR_SRC . "Validation.php";
 ?>
 <!-- Начала Шаблона: header -->
 <?= $header ?>
@@ -15,9 +15,9 @@ $validation = require_once Config::DIR_SRC . "Validation.php";
     <div class="table">
         <?= $validation ?>
         <div class="forms">
-            <p><a href="/">Главная </a><span>  >  </span>Редактировать пользователя</p>
+            <p><a href="/">Главная </a><span>  >  </span>Добавить пользователя</p>
             <form id="send" method="post" action="">
-                <input type="hidden" name="type-form" value="edit-user">
+                <input type="hidden" name="type-form" value="add-user">
 
                 <div class="form-line">
                     <label for="login">Login: </label>
@@ -54,12 +54,11 @@ $validation = require_once Config::DIR_SRC . "Validation.php";
                     <textarea name="about" id="about" cols="30" rows="10"></textarea>
                 </div>
 
-                <button id="submit" type="submit">Сохранить</button>
+                <button id="submit" type="submit">Добавить</button>
 
             </form>
         </div>
     </div>
-</div>
 </div>
 <!-- Начала Шаблона: footer -->
 <?= $footer ?>
