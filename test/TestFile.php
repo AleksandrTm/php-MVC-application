@@ -11,10 +11,14 @@ class TestFile
 
     /**
      * Тестирование функции addUser.
+     *
      * Создание файла с id пользователя.
-     * Запись в файл по id, информацию о пользователе.
+     *
+     * Запись в информации о пользователе в файл по id.
+     *
+     * !!! БЕЗ ВАЛИДАЦИИ !!!
      */
-    function testFIle()
+    static function testFIleAddUser()
     {
         addUser("Aleksandr", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-1900", "доп. инфа");
 
@@ -24,6 +28,4 @@ class TestFile
     }
 }
 
-$testFile = new TestFile();
-
-$testFile->testFIle();
+TestFile::testFIleAddUser();
