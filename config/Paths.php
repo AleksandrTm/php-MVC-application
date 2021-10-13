@@ -1,11 +1,11 @@
 <?php
 
-namespace Localsite\Configs;
+namespace config;
 
 /**
  * ConfigPaths: хранит пути до директорий
  */
-class ConfigPaths
+class Paths
 {
     # Путь до базы данных пользователей
     const DIR_BASE_USERS = "../database/users/";

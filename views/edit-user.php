@@ -1,12 +1,10 @@
 <?php
 
-include_once "../config/ConfigPaths.php";
+use Localsite\config\Paths;
 
-use Localsite\Configs\ConfigPaths;
-
-$footer = require_once ConfigPaths::DIR_VIEWS . 'template/footer.php';
-$header = require_once ConfigPaths::DIR_VIEWS . 'template/header.php';
-$validation = require_once ConfigPaths::DIR_SRC . "Validation.php";
+$footer = require_once Paths::DIR_VIEWS . 'template/footer.html';
+$header = require_once Paths::DIR_VIEWS . 'template/header.html';
+$validation = require_once Paths::DIR_SRC . "Validation.php";
 ?>
 <!-- Начала Шаблона: header -->
 <?= $header ?>

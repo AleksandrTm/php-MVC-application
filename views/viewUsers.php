@@ -1,26 +1,20 @@
 <?php
 
-include_once "../config/ConfigPaths.php";
-include_once "../src/File.php";
+use config\Paths;
+use src\Model\Users;
 
-use Localsite\Configs\ConfigPaths;
-use Localsite\src\File;
-
-$footer = require_once ConfigPaths::DIR_VIEWS . 'template/footer.php';
-$header = require_once ConfigPaths::DIR_VIEWS . 'template/header.php';
-$validation = require_once ConfigPaths::DIR_SRC . "Validation.php";
 ?>
 <!-- Начала Шаблона: header -->
-<?= $header ?>
+<?php include_once '../views/template/header.html'; ?>
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
         <div class="table-head">
-            <a href="add-user.php" class="table-link">
-                <img src="img/add.png" alt="Add">
+            <a href="/user/add" class="table-link">
+                <img src="../img/add.png" alt="Add">
             </a>
         </div>
-        <?php foreach (File::viewsUsers() as $user): ?>
+        <?php foreach (Users::viewsUsers() as $user): ?>
             <div class="table-row">
                 <p><?php echo $user[3]; ?></p>
                 <div class="add-delete">
@@ -36,5 +30,5 @@ $validation = require_once ConfigPaths::DIR_SRC . "Validation.php";
     </div>
 </div>
 <!-- Начала Шаблона: footer -->
-<?= $footer ?>
+<?php require_once Paths::DIR_VIEWS . 'template/footer.html'; ?>
 <!-- Конец Шаблона: footer -->

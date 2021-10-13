@@ -1,26 +1,24 @@
 <?php
 
-namespace Localsite\src;
-
-require_once "../config/ConfigPaths.php";
+namespace src\Model;
 
 use Exception;
-use Localsite\Configs\ConfigPaths;
+use config\Paths;
 
-class File
+class Users
 {
     static function viewsUsers(): array
     {
         $arrayUsers = [];
         $dir = null;
         try {
-            if ($dir = opendir(ConfigPaths::DIR_BASE_USERS)) {
+            if ($dir = opendir(Paths::DIR_BASE_USERS)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == '.' || $file == '..') {
                         continue;
                     }
                     $nameKey = "user-id-" . $file;
-                    $arrayUsers[$nameKey] = file(ConfigPaths::DIR_BASE_USERS . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                    $arrayUsers[$nameKey] = file(Paths::DIR_BASE_USERS . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
                 }
             }
         } catch (Exception $e) {
@@ -29,6 +27,7 @@ class File
             closedir($dir);
         }
         sort($arrayUsers);
+        var_dump($arrayUsers);
         return $arrayUsers;
     }
 
@@ -48,10 +47,10 @@ class File
     static function addUser(string $name, string $password, string $email, string $fullName, string $date, string $about): void
     {
         $files = null;
-        if (empty(File::idUser())) {
-            $userId = ConfigPaths::DIR_BASE_USERS . 1;
+        if (empty(Users::idUser())) {
+            $userId = Paths::DIR_BASE_USERS . 1;
         } else {
-            $userId = ConfigPaths::DIR_BASE_USERS . (File::idUser() + 1);
+            $userId = Paths::DIR_BASE_USERS . (Users::idUser() + 1);
         }
         try {
             $files = fopen($userId, 'w');
@@ -108,7 +107,7 @@ class File
         $arrayUsers = [];
         $dir = null;
         try {
-            if ($dir = opendir(ConfigPaths::DIR_BASE_USERS)) {
+            if ($dir = opendir(Paths::DIR_BASE_USERS)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == '.' || $file == '..') {
                         continue;

@@ -1,7 +1,6 @@
 <?php
-include_once "../src/File.php";
 
-use Localsite\src\File;
+use src\Model\Users;
 
 // проверяем получен POST запрос или нет.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -138,7 +137,7 @@ function validAddUser()
     if (!($check_about === true)) {
         return $check_about;
     }
-    File::addUser($login, $password, $email, $fullName, $date, $about);
+    Users::addUser($login, $password, $email, $fullName, $date, $about);
     return "
         <div class='accept-reg'>Пользователь успешно добавлен</div><br>
         Логин: $login<br>

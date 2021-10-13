@@ -1,10 +1,7 @@
 <?php
+namespace src\test;
 
-namespace Localsite\test;
-include_once "../config/ConfigPaths.php";
-include_once "../src/File.php";
-
-use Localsite\src\File;
+use src\Model\Users;
 
 class TestFile
 {
@@ -23,19 +20,20 @@ class TestFile
      */
     static function testFIleAddUser()
     {
-        File::addUser("Aleksandr", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-1900", "доп. инфа");
+        Users::addUser("Aleksandr", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-1900", "доп. инфа");
 
-        File::addUser("Александр", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-2010", "доп. инфа");
+        Users::addUser("Александр", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-2010", "доп. инфа");
 
-        File::addUser("Aleksandr", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-2100", "доп. инфа");
+        Users::addUser("Aleksandr", "password", "admin@localsite.ru", "Гребенников Александр Сергеевич", "8-12-2100", "доп. инфа");
     }
 
     /**
      * Вывод всех пользоваталей из файловой базы данных
+     * НЕ КОРРЕКТНО РАБОТАЕТ!!! РАЗОБРАТСЯ В ПРИЧИНЕ!!!
      */
     static function testViewsUsers()
     {
-        var_dump(File::viewsUsers());
+        var_dump(Users::viewsUsers());
     }
 
     /**
@@ -43,7 +41,7 @@ class TestFile
      */
     static function testIdUsers()
     {
-        var_dump(File::idUser());
+        var_dump(Users::idUser());
     }
 }
 

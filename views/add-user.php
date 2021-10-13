@@ -1,15 +1,11 @@
 <?php
 
-include_once "../config/ConfigPaths.php";
+use config\Paths;
 
-use Localsite\Configs\ConfigPaths;
-
-$footer = require_once ConfigPaths::DIR_VIEWS . 'template/footer.php';
-$header = require_once ConfigPaths::DIR_VIEWS . 'template/header.php';
-$validation = require_once ConfigPaths::DIR_SRC . "Validation.php";
+$validation = require_once Paths::DIR_SRC . "Validation.php";
 ?>
 <!-- Начала Шаблона: header -->
-<?= $header ?>
+<?php require_once Paths::DIR_VIEWS . 'template/header.html'; ?>
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
@@ -61,5 +57,5 @@ $validation = require_once ConfigPaths::DIR_SRC . "Validation.php";
     </div>
 </div>
 <!-- Начала Шаблона: footer -->
-<?= $footer ?>
+<?php require_once Paths::DIR_VIEWS . 'template/footer.html'; ?>
 <!-- Конец Шаблона: footer -->
