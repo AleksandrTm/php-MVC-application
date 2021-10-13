@@ -1,7 +1,7 @@
 <?php
-require_once "../config/Autoload.php";
+require_once "../Config/Autoload.php";
 
-use config\Paths;
+use Config\Paths;
 
 switch ($_SERVER['REQUEST_URI']) {
     case "/":

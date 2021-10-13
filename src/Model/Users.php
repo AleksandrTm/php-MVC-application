@@ -1,9 +1,9 @@
 <?php
 
-namespace src\Model;
+namespace Model;
 
 use Exception;
-use config\Paths;
+use Config\Paths;
 
 class Users
 {

@@ -1,13 +1,11 @@
 <?php
-namespace src\test;
 
-use src\Model\Users;
+namespace Test;
+
+use Model\Users;
 
 class TestFile
 {
-    function __construct()
-    {
-    }
 
     /**
      * Тестирование функции addUser.
@@ -46,5 +44,5 @@ class TestFile
 }
 
 //TestFile::testFIleAddUser();
-TestFile::testViewsUsers();
-//TestFile::testIdUsers();
+//TestFile::testViewsUsers();
+TestFile::testIdUsers();
