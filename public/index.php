@@ -1,5 +1,5 @@
 <?php
-require_once "../Config/Autoload.php";
+require_once "../src/Autoload.php";
 
 use Config\Paths;
 

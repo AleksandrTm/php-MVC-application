@@ -2,7 +2,7 @@
 
 namespace Test;
 
-use Model\Users;
+use src\Model\Users;
 
 class TestFile
 {
