@@ -2,7 +2,7 @@
 
 use config\Paths;
 
-$validation = require_once Paths::DIR_SRC . "Validation.php";
+$validation = require_once Paths::DIR_SRC . "Model/Validation.php";
 ?>
 <!-- Начала Шаблона: header -->
 <?php require_once Paths::DIR_VIEWS . 'template/header.html'; ?>

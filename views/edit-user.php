@@ -1,10 +1,10 @@
 <?php
 
-use Localsite\config\Paths;
+use config\Paths;
 
 $footer = require_once Paths::DIR_VIEWS . 'template/footer.html';
 $header = require_once Paths::DIR_VIEWS . 'template/header.html';
-$validation = require_once Paths::DIR_SRC . "Validation.php";
+$validation = require_once Paths::DIR_SRC . "Model/Validation.php";
 ?>
 <!-- Начала Шаблона: header -->
 <?= $header ?>
@@ -57,7 +57,6 @@ $validation = require_once Paths::DIR_SRC . "Validation.php";
             </form>
         </div>
     </div>
-</div>
 </div>
 <!-- Начала Шаблона: footer -->
 <?= $footer ?>
