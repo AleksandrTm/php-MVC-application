@@ -7,7 +7,7 @@ use Config\Paths;
 
 class Users
 {
-    public string $buffer;
+    public string $buffer; // общий буфер
 
     static function viewsUsers(): array
     {
@@ -122,4 +122,12 @@ class Users
         rsort($arrayUsers);
         return (int)array_shift($arrayUsers);
     }
+}
+
+/**
+ * Удаление пользователя по id
+ */
+function deleteUser()
+{
+
 }
