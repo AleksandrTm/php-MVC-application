@@ -1,6 +1,5 @@
 <?php
-
-namespace Test;
+require_once "../src/Autoload.php";
 
 use src\Model\Users;
 
