@@ -7,6 +7,8 @@ use Config\Paths;
 
 class Users
 {
+    public string $buffer;
+
     static function viewsUsers(): array
     {
         $arrayUsers = [];
@@ -14,11 +16,10 @@ class Users
         try {
             if ($dir = opendir(Paths::DIR_BASE_USERS)) {
                 while (($file = readdir($dir)) !== false) {
-                    if ($file == '.' || $file == '..') {
+                    if ($file == '.' || $file == '..' || $file == '.gitkeep') {
                         continue;
                     }
-                    $nameKey = "user-id-" . $file;
-                    $arrayUsers[$nameKey] = file(Paths::DIR_BASE_USERS . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                    $arrayUsers = [$file => file(Paths::DIR_BASE_USERS . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)];
                 }
             }
         } catch (Exception $e) {
@@ -26,8 +27,6 @@ class Users
         } finally {
             closedir($dir);
         }
-        sort($arrayUsers);
-        var_dump($arrayUsers);
         return $arrayUsers;
     }
 
@@ -121,6 +120,6 @@ class Users
             closedir($dir);
         }
         rsort($arrayUsers);
-        return (int) array_shift($arrayUsers);
+        return (int)array_shift($arrayUsers);
     }
 }
