@@ -4,6 +4,7 @@ require_once "../src/Autoload.php";
 use Config\Paths;
 
 switch ($_SERVER['REQUEST_URI']) {
+    case "/user/id/delete":
     case "/":
         require_once Paths::DIR_VIEWS . "viewUsers.php";
         break;
@@ -16,9 +17,9 @@ switch ($_SERVER['REQUEST_URI']) {
     case "/user/add":
         require_once Paths::DIR_VIEWS . "add-user.php";
         break;
-    case "/user/id/delete":
-        require_once Paths::DIR_VIEWS . "/";
-        break;
+//    case "/user/id/delete":
+//        require_once Paths::DIR_VIEWS . "/";
+//        break;
     case "/user/if/edit":
         require_once Paths::DIR_VIEWS . "edit-user.php";
         break;
