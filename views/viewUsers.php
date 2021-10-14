@@ -11,7 +11,7 @@ use src\Model\Users;
     <div class="table">
         <div class="table-head">
             <a href="/user/add" class="table-link">
-                <img src="../img/add.png" alt="Add">
+                <img src="<?php __DIR__ ?>/../img/add.png" alt="Add">
             </a>
         </div>
         <?php foreach (Users::viewsUsers() as $user): ?>
@@ -19,10 +19,10 @@ use src\Model\Users;
                 <p><?php echo $user[3]; ?></p>
                 <div class="add-delete">
                     <a href="/user/id/edit" class="table-link">
-                        <img src="../img/edit.png" alt="Edit">
+                        <img src="<?php __DIR__ ?>/../img/edit.png" alt="Edit">
                     </a>
                     <a href="/user/id/delete" class="table-link">
-                        <img src="../img/delete.png" alt="Delete">
+                        <img src="<?php __DIR__ ?>/../img/delete.png" alt="Delete">
                     </a>
                 </div>
             </div>
