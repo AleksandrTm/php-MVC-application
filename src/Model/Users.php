@@ -121,6 +121,6 @@ class Users
             closedir($dir);
         }
         rsort($arrayUsers);
-        return array_shift($arrayUsers);
+        return (int) array_shift($arrayUsers);
     }
 }
