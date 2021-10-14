@@ -5,7 +5,7 @@ use config\Paths;
 $validation = require_once Paths::DIR_SRC . "Model/Validation.php";
 ?>
 <!-- Начала Шаблона: header -->
-<?php require_once Paths::DIR_VIEWS . 'template/header.html'; ?>
+<?php include_once Paths::DIR_VIEWS . 'template/header.html'; ?>
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
@@ -57,5 +57,5 @@ $validation = require_once Paths::DIR_SRC . "Model/Validation.php";
     </div>
 </div>
 <!-- Начала Шаблона: footer -->
-<?php require_once Paths::DIR_VIEWS . 'template/footer.html'; ?>
+<?php include_once Paths::DIR_VIEWS . 'template/footer.html'; ?>
 <!-- Конец Шаблона: footer -->

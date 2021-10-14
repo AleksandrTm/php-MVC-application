@@ -30,5 +30,5 @@ use src\Model\Users;
     </div>
 </div>
 <!-- Начала Шаблона: footer -->
-<?php require_once Paths::DIR_VIEWS . 'template/footer.html'; ?>
+<?php include_once Paths::DIR_VIEWS . 'template/footer.html'; ?>
 <!-- Конец Шаблона: footer -->
