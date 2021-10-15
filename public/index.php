@@ -1,6 +1,6 @@
 <?php
-require_once "../src/Autoload.php";
+require_once "../Core/Autoload.php";
 
-use src\Core\Routes;
+use Core\Routes;
 
-Routes::getInstance()->Run();
+Routes::getInstance()->run();

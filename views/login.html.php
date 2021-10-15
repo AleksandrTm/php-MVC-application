@@ -1,15 +1,17 @@
 <?php
 
 use config\Paths;
+use Controllers\LoginController;
 
-$validation = require_once Paths::DIR_SRC . "Model/Validation.php";
 ?>
 <!-- Начала Шаблона: header -->
-<?php include_once Paths::DIR_VIEWS . 'template/header.html'; ?>
+<?php include_once Paths::DIR_VIEWS . "template/header.html"; ?>
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?= $validation ?>
+        <?=
+        $_SERVER['REQUEST_METHOD'] == "POST" ? LoginController::$info : null;
+        ?>
         <div class="forms">
             <form id="send" method="post" action="">
                 <input type="hidden" name="type-form" value="login">

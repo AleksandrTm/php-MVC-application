@@ -1,25 +1,31 @@
 <?php
 
-namespace src\Model;
+namespace Models;
 
 use Exception;
-use Config\Paths;
+use config\Paths;
+use Core\Model;
 
-class Users
+class Users extends Model
 {
-    public string $buffer; // общий буфер
-
-    static function viewsUsers(): array
+    /**
+     * @return array
+     *
+     * Отдаёт многомерный массив
+     * [[KeyIdUser => Values][KeyIdUser => Values]]
+     */
+    static function views(): array
     {
         $arrayUsers = [];
         $dir = null;
         try {
+            // Считываем файлы и каталоги по указанному пути в DIR_BASE_USERS
             if ($dir = opendir(Paths::DIR_BASE_USERS)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == '.' || $file == '..' || $file == '.gitkeep') {
                         continue;
                     }
-                    $arrayUsers = [$file => file(Paths::DIR_BASE_USERS . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)];
+                    $arrayUsers[] = [$file => file(Paths::DIR_BASE_USERS . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)];
                 }
             }
         } catch (Exception $e) {
@@ -30,26 +36,16 @@ class Users
         return $arrayUsers;
     }
 
-
     /**
-     *
      * Добавление пользователя в файловую базу данных
-     *
-     * @param string $name
-     * @param string $password
-     * @param string $email
-     * @param string $fullName
-     * @param string $date
-     * @param string $about
-     *
      */
-    static function addUser(string $name, string $password, string $email, string $fullName, string $date, string $about): void
+    static function add(string $name, string $password, string $email, string $fullName, string $date, string $about): void
     {
         $files = null;
-        if (empty(Users::idUser())) {
+        if (empty(Users::id())) {
             $userId = Paths::DIR_BASE_USERS . 1;
         } else {
-            $userId = Paths::DIR_BASE_USERS . (Users::idUser() + 1);
+            $userId = Paths::DIR_BASE_USERS . (Users::id() + 1);
         }
         try {
             $files = fopen($userId, 'w');
@@ -79,11 +75,11 @@ class Users
      * @param string $about
      *
      */
-    static function editUser(int $id, string $name, string $password, string $email, string $fullName, string $date, string $about): void
+    static function edit(int $id, string $name, string $password, string $email, string $fullName, string $date, string $about): void
     {
         $files = null;
         try {
-            $files = fopen($id, 'w');
+            $files = fopen(Paths::DIR_BASE_USERS . $id, 'w');
             fwrite($files, $name . "\n");
             fwrite($files, $password . "\n");
             fwrite($files, $email . "\n");
@@ -101,14 +97,14 @@ class Users
      * Заносим в массив пользователей,
      * сортируем по убыванию и отдаём последний id пользователя
      */
-    static function idUser(): int
+    static function id(): int
     {
         $arrayUsers = [];
         $dir = null;
         try {
             if ($dir = opendir(Paths::DIR_BASE_USERS)) {
                 while (($file = readdir($dir)) !== false) {
-                    if ($file == '.' || $file == '..') {
+                    if ($file == '.' || $file == '..' || $file == '.gitkeep') {
                         continue;
                     }
                     $arrayUsers[] = $file;
@@ -122,12 +118,16 @@ class Users
         rsort($arrayUsers);
         return (int)array_shift($arrayUsers);
     }
-}
 
-/**
- * Удаление пользователя по id
- */
-function deleteUser()
-{
-
+    /**
+     * Удаление пользователя по id
+     */
+    function deleteUser($id)
+    {
+        try {
+            unlink(Paths::DIR_BASE_USERS . $id);
+        } catch (Exception $e) {
+            var_dump($e);
+        }
+    }
 }

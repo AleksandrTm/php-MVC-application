@@ -1,15 +1,17 @@
 <?php
 
 use config\Paths;
+use Controllers\RegistrationController;
 
-$validation = require_once Paths::DIR_SRC . "Model/Validation.php";
 ?>
 <!-- Начала Шаблона: header -->
 <?php include_once Paths::DIR_VIEWS . 'template/header.html'; ?>
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?= $validation ?>
+        <?=
+        $_SERVER['REQUEST_METHOD'] == "POST" ? RegistrationController::$info : null;
+        ?>
         <div class="forms">
             <h2>Регистрация</h2>
             <form id="send" method="post" action="">
@@ -39,6 +41,16 @@ $validation = require_once Paths::DIR_SRC . "Model/Validation.php";
                 <div class="form-line">
                     <label for="fullName">ФИО</label>
                     <input id="fullName" type="text" name="fullName" value=""/>
+                </div>
+
+                <div class="form-line">
+                    <label for="date">Дата рождения</label>
+                    <input id="date" type="date" name="date" value=""/>
+                </div>
+
+                <div class="form-line" id="text-area">
+                    <label for="about">Описание</label>
+                    <textarea name="about" id="about" cols="30" rows="10"></textarea>
                 </div>
 
                 <button id="submit" type="submit">Регистрация</button>

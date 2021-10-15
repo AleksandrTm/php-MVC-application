@@ -1,19 +1,21 @@
 <?php
 
 use config\Paths;
+use Controllers\AddUsesController;
 
-$validation = require_once Paths::DIR_SRC . "Model/Validation.php";
 ?>
 <!-- Начала Шаблона: header -->
 <?php include_once Paths::DIR_VIEWS . 'template/header.html'; ?>
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?= $validation ?>
+        <?=
+        $_SERVER['REQUEST_METHOD'] == "POST" ? AddUsesController::$info : null;
+        ?>
         <div class="forms">
-            <p><a href="/">Главная </a><span>  >  </span>Редактировать пользователя</p>
+            <p><a href="/">Главная </a><span>  >  </span>Добавить пользователя</p>
             <form id="send" method="post" action="">
-                <input type="hidden" name="type-form" value="edit-user">
+                <input type="hidden" name="type-form" value="add-user">
 
                 <div class="form-line">
                     <label for="login">Login: </label>
@@ -50,7 +52,7 @@ $validation = require_once Paths::DIR_SRC . "Model/Validation.php";
                     <textarea name="about" id="about" cols="30" rows="10"></textarea>
                 </div>
 
-                <button id="submit" type="submit">Сохранить</button>
+                <button id="submit" type="submit">Добавить</button>
 
             </form>
         </div>
