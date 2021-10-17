@@ -53,10 +53,8 @@ class ValidatorForm extends ValidatorField
             return $bufferError;
         }
         if (is_null($id)) {
-            var_dump("TEST1");
             Users::add($login, $password, $email, $fullName, $date, $about);
         } else {
-            var_dump("TEST2");
             Users::edit($id, $login, $password, $email, $fullName, $date, $about);
         }
         return "
