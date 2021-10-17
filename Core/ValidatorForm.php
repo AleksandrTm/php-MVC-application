@@ -49,14 +49,10 @@ class ValidatorForm extends ValidatorField
             $bufferError .= $checkAbout . "<br>";
             $errorStatus = true;
         }
-
-        var_dump("TEST01");
         if ($errorStatus) {
             return $bufferError;
         }
-        var_dump("TEST01");
-        var_dump("TEST0");
-        if ($id == "null") {
+        if (is_null($id)) {
             var_dump("TEST1");
             Users::add($login, $password, $email, $fullName, $date, $about);
         } else {
