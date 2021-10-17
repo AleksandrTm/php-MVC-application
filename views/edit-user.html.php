@@ -9,9 +9,7 @@ use Controllers\EditUsersController;
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?=
-        $_SERVER['REQUEST_METHOD'] == "POST" ? EditUsersController::$info : null;
-        ?>
+        <?= EditUsersController::$info; ?>
         <div class="forms">
             <p><a href="/">Главная </a><span>  >  </span>Редактировать пользователя</p>
             <form id="send" method="post" action="">

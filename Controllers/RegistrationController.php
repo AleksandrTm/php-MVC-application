@@ -7,7 +7,7 @@ use Core\Validation;
 
 class RegistrationController extends Controller
 {
-    public static string $info;
+    public static ?string $info = null;
 
     public function get()
     {

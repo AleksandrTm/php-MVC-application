@@ -9,9 +9,7 @@ use Controllers\LoginController;
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?=
-        $_SERVER['REQUEST_METHOD'] == "POST" ? LoginController::$info : null;
-        ?>
+        <?= LoginController::$info; ?>
         <div class="forms">
             <form id="send" method="post" action="">
                 <input type="hidden" name="type-form" value="login">

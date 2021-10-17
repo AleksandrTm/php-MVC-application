@@ -8,7 +8,7 @@ use Core\Validation;
 
 class LoginController extends Controller
 {
-    public static string $info;
+    public static ?string $info = null;
 
     public function get()
     {

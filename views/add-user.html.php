@@ -9,9 +9,7 @@ use Controllers\AddUsesController;
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?=
-        $_SERVER['REQUEST_METHOD'] == "POST" ? AddUsesController::$info : null;
-        ?>
+        <?= AddUsesController::$info; ?>
         <div class="forms">
             <p><a href="/">Главная </a><span>  >  </span>Добавить пользователя</p>
             <form id="send" method="post" action="">

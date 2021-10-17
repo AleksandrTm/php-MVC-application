@@ -9,9 +9,7 @@ use Controllers\RegistrationController;
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?=
-        $_SERVER['REQUEST_METHOD'] == "POST" ? RegistrationController::$info : null;
-        ?>
+        <?= RegistrationController::$info; ?>
         <div class="forms">
             <h2>Регистрация</h2>
             <form id="send" method="post" action="">

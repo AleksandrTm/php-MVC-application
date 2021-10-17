@@ -7,9 +7,8 @@ use Models\Users;
 
 class DeleteUserController extends Controller
 {
-    function get($urlId)
+    function get($id)
     {
-        $id = preg_replace("/[^,.0-9]/", '', $urlId);
         $obj = new Users();
         $obj->deleteUser($id);
     }

@@ -7,7 +7,7 @@ use Core\Validation;
 
 class AddUsesController extends Controller
 {
-    public static string $info;
+    public static ?string $info = null;
 
     function get()
     {

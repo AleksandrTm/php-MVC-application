@@ -11,19 +11,11 @@ use Core\Controller;
 class ViewUsersController extends Controller
 {
     // Хранение пользователей для отдачи во views
-    public static array $arrayUsers;
+    public static ?array $arrayUsers = null;
 
-    public function main()
+    public function getUsersList()
     {
         self::$arrayUsers = Users::views();
         include_once "../views/views-users.php";
-    }
-
-    /**
-     * ИЗБЫТОЧНАЯ ФУНКЦИЯ ??? объяденить с main()
-     */
-    public static function getArrayUsers(): array
-    {
-        return self::$arrayUsers;
     }
 }

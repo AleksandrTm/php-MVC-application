@@ -8,15 +8,12 @@ use Controllers\ViewUsersController;
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?=
-        $_SERVER['REQUEST_METHOD'] == "POST" ? ViewUsersController::$arrayUsers : null;
-        ?>
         <div class="table-head">
             <a href="/user/add" class="table-link">
                 <img src="<?php __DIR__ ?>/../img/add.png" alt="Add">
             </a>
         </div>
-        <?php foreach (ViewUsersController::getArrayUsers() as $users): ?>
+        <?php foreach (ViewUsersController::$arrayUsers as $users): ?>
             <?php foreach ($users as $key => $user): ?>
                 <div class="table-row">
                     <p><?= $user[3] ?></p>
