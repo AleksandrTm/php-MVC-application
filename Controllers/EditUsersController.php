@@ -4,21 +4,24 @@ namespace Controllers;
 
 use Core\Controller;
 use Core\Validation;
+use Models\Users;
 
 class EditUsersController extends Controller
 {
-    public static ?string $info = null;
-
-    function get()
+    function get($id)
     {
-        include_once "../views/edit-user.html.php";
+        if ((new Users())->findUser($id)) {
+            include_once "../views/edit-user.html.php";
+        } else {
+            header('Location: http://localsite.ru');
+            exit();
+        }
     }
 
-    function post($urlId)
+    function post($id)
     {
-        $id = preg_replace("/[^,.0-9]/", '', $urlId);
         $obj = new Validation();
-        self::$info = $obj->mainForm($_POST['login'], $_POST['password'], $_POST['passwordConfirm'], $_POST['email'],
+        $info = $obj->mainForm($_POST['login'], $_POST['password'], $_POST['passwordConfirm'], $_POST['email'],
             $_POST['fullName'], $_POST['date'], $_POST['about'], $id);
         include_once "../views/edit-user.html.php";
     }

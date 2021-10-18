@@ -9,12 +9,10 @@ use Core\Model;
 class Users extends Model
 {
     /**
-     * @return array
-     *
-     * Отдаёт многомерный массив
+     * Отдаёт многомерный массив со всеми пользователями и данными
      * [[KeyIdUser => Values][KeyIdUser => Values]]
      */
-    static function views(): array
+    function views(): array
     {
         $arrayUsers = [];
         $dir = null;
@@ -36,25 +34,48 @@ class Users extends Model
         return $arrayUsers;
     }
 
+
     /**
-     * Добавление пользователя в файловую базу данных
+     * Используем views для получения пользователей,
+     * и отдаём массив пользователей [login, password]
      */
-    static function add(string $name, string $password, string $email, string $fullName, string $date, string $about): void
+    function userLoginPassword(): array
+    {
+        $dataUsers = [];
+        $allDataUsers = $this->views();
+
+        foreach ($allDataUsers as $users) {
+            foreach ($users as $values) {
+                $dataUsers[] = [
+                    'login' => $values[0],
+                    'password' => $values[1],
+                    'role' => $values[6] ?? $values[5]];
+            }
+        }
+
+        return $dataUsers;
+    }
+
+    /**
+     * Добавление пользователя
+     */
+    function add(string $name, string $password, string $email, string $fullName, string $date, string $about): void
     {
         $files = null;
-        if (empty(Users::id())) {
+        if (empty($this->id())) {
             $userId = Paths::DIR_BASE_USERS . 1;
         } else {
-            $userId = Paths::DIR_BASE_USERS . (Users::id() + 1);
+            $userId = Paths::DIR_BASE_USERS . ($this->id() + 1);
         }
         try {
             $files = fopen($userId, 'w');
             fwrite($files, $name . "\n");
-            fwrite($files, $password . "\n");
+            fwrite($files, password_hash($password, PASSWORD_DEFAULT) . "\n");
             fwrite($files, $email . "\n");
             fwrite($files, $fullName . "\n");
             fwrite($files, $date . "\n");
-            fwrite($files, $about);
+            fwrite($files, $about . "\n");
+            fwrite($files, 'member');
         } catch (Exception $e) {
             var_dump($e);
         } finally {
@@ -65,39 +86,35 @@ class Users extends Model
     /**
      *
      * Редактирование пользователя
-     *
-     * @param int $id
-     * @param string $name
-     * @param string $password
-     * @param string $email
-     * @param string $fullName
-     * @param string $date
-     * @param string $about
-     *
      */
-    static function edit(int $id, string $name, string $password, string $email, string $fullName, string $date, string $about): void
+    function edit(int $id, string $name, string $password, string $email, string $fullName, string $date, string $about): ?string
     {
         $files = null;
         try {
-            $files = fopen(Paths::DIR_BASE_USERS . $id, 'w');
-            fwrite($files, $name . "\n");
-            fwrite($files, $password . "\n");
-            fwrite($files, $email . "\n");
-            fwrite($files, $fullName . "\n");
-            fwrite($files, $date . "\n");
-            fwrite($files, $about);
+            if ($this->findUser($id)) {
+                $files = fopen(Paths::DIR_BASE_USERS . $id, 'w');
+                fwrite($files, $name . "\n");
+                fwrite($files, password_hash($password, PASSWORD_DEFAULT) . "\n");
+                fwrite($files, $email . "\n");
+                fwrite($files, $fullName . "\n");
+                fwrite($files, $date . "\n");
+                fwrite($files, $about);
+
+                return "Пользователь успешно отредактирован";
+            }
         } catch (Exception $e) {
             var_dump($e);
         } finally {
             fclose($files);
         }
+        return null;
     }
 
     /**
      * Заносим в массив пользователей,
      * сортируем по убыванию и отдаём последний id пользователя
      */
-    static function id(): int
+    function id(): int
     {
         $arrayUsers = [];
         $dir = null;
@@ -121,13 +138,22 @@ class Users extends Model
 
     /**
      * Удаление пользователя по id
+     * Добавить проверку на существующего пользователя
      */
-    function deleteUser($id)
+    function deleteUser(int $id): void
     {
         try {
             unlink(Paths::DIR_BASE_USERS . $id);
         } catch (Exception $e) {
             var_dump($e);
         }
+    }
+
+    /**
+     * Поиск пользователя по id
+     */
+    function findUser(int $id): bool
+    {
+        return file_exists(Paths::DIR_BASE_USERS . $id);
     }
 }

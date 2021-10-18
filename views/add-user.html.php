@@ -9,7 +9,7 @@ use Controllers\AddUsesController;
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?= AddUsesController::$info; ?>
+        <?= $info ?? null; ?>
         <div class="forms">
             <p><a href="/">Главная </a><span>  >  </span>Добавить пользователя</p>
             <form id="send" method="post" action="">

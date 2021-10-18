@@ -8,10 +8,4 @@ namespace Core;
 //interface Controller
 class Controller
 {
-    /**
-     * Обязательные методы которые нужно реализовать
-     */
-    //function get(){}
-
-    //function post(){}
 }

@@ -10,12 +10,11 @@ use Core\Controller;
  */
 class ViewUsersController extends Controller
 {
-    // Хранение пользователей для отдачи во views
-    public static ?array $arrayUsers = null;
-
     public function getUsersList()
     {
-        self::$arrayUsers = Users::views();
+        $objUsers = new Users();
+        $arrayUsers = $objUsers->views();
+
         include_once "../views/views-users.php";
     }
 }

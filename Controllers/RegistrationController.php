@@ -7,17 +7,17 @@ use Core\Validation;
 
 class RegistrationController extends Controller
 {
-    public static ?string $info = null;
+    public ?string $info = null;
 
-    public function get()
+    function get()
     {
         include_once "../views/registration-user.html.php";
     }
 
-    public function post()
+    function post()
     {
         $obj = new Validation();
-        self::$info = $obj->mainForm($_POST['login'], $_POST['password'], $_POST['passwordConfirm'], $_POST['email'],
+        $this->info = $obj->mainForm($_POST['login'], $_POST['password'], $_POST['passwordConfirm'], $_POST['email'],
             $_POST['fullName'], $_POST['date'], $_POST['about']);
         include_once "../views/registration-user.html.php";
     }

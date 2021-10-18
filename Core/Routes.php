@@ -18,6 +18,9 @@ class Routes
 
     private function __construct()
     {
+        // Выдаем роль пользователю, если у него её нет
+        if (!isset($_SESSION['role'])) $_SESSION['role'] = 'guest';
+
         $this->method = htmlspecialchars($_SERVER['REQUEST_METHOD']);
         $this->path = htmlspecialchars($_SERVER['REQUEST_URI']);
     }
@@ -65,6 +68,8 @@ class Routes
 
     /**
      * Обрабатывает Path и разбивает на параметры
+     * Отдаёт именнованый массив с параметрами: path/param + id
+     * При отсутсвии id, отдаёт: path/param
      */
     function router($path): array
     {
@@ -85,12 +90,6 @@ class Routes
                 'id' => array_key_exists(0, $id) ? $id[0] : null
             ];
         }
-        echo "<br>";
-        echo "url: " . $path['url'];
-        echo "<br>";
-        echo "param: " . $path['param'];
-        echo "<br>";
-        echo "id: " . $path['id'];
         return $path;
     }
 
@@ -126,10 +125,14 @@ class Routes
                 break;
             case "user/edit":
                 $objEditUser = new EditUsersController();
-                $objEditUser->get();
+                $objEditUser->get($path['id']);
+                break;
+            case "exit":
+                $obj = new LoginController();
+                $obj->exit();
                 break;
             default:
-                NotFoundPageController::page404();
+                (new NotFoundPageController())->page404();
                 break;
         }
     }
@@ -141,27 +144,28 @@ class Routes
      */
     function sendPostController(): void
     {
-        $test = $this->router($this->path);
-        $test2 = !is_null($test['param']) ? $test['param'] : $test['url'];
-        switch ($this->path) {
-            case "/login":
+        $path = $this->router($this->path);
+        $param = !is_null($path['param']) ? $path['url'] . "/" . $path['param'] : $path['url'];
+
+        switch ($param) {
+            case "login":
                 $objLogin = new LoginController();
                 $objLogin->post();
                 break;
-            case "/registration":
+            case "registration":
                 $objReg = new RegistrationController();
                 $objReg->post();
                 break;
-            case "/user/add":
+            case "user/add":
                 $objAddUser = new AddUsesController();
                 $objAddUser->post();
                 break;
-            case $urlEditUser:
+            case "user/edit":
                 $objEditUser = new EditUsersController();
-                $objEditUser->post($urlEditUser);
+                $objEditUser->post($path['id']);
                 break;
             default:
-                NotFoundPageController::page404();
+                (new NotFoundPageController())->page404();
                 break;
         }
     }

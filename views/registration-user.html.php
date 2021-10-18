@@ -9,7 +9,7 @@ use Controllers\RegistrationController;
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?= RegistrationController::$info; ?>
+        <?= $info ?? null; ?>
         <div class="forms">
             <h2>Регистрация</h2>
             <form id="send" method="post" action="">

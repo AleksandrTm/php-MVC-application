@@ -1,6 +1,7 @@
 <?php
 
 use Controllers\ViewUsersController;
+use Controllers\DeleteUserController;
 
 ?>
 <!-- Начала Шаблона: header -->
@@ -8,21 +9,22 @@ use Controllers\ViewUsersController;
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
+        <?= $info ?? null ?>
         <div class="table-head">
             <a href="/user/add" class="table-link">
-                <img src="<?php __DIR__ ?>/../img/add.png" alt="Add">
+                <img src="/../img/add.png" alt="Add">
             </a>
         </div>
-        <?php foreach (ViewUsersController::$arrayUsers as $users): ?>
+        <?php foreach ($arrayUsers ?? null as $users): ?>
             <?php foreach ($users as $key => $user): ?>
                 <div class="table-row">
                     <p><?= $user[3] ?></p>
                     <div class="add-delete">
                         <a href="/user/<?= $key ?>/edit" class="table-link">
-                            <img src="<?php __DIR__ ?>/../img/edit.png" alt="Edit">
+                            <img src="/../img/edit.png" alt="Edit">
                         </a>
                         <a href="/user/<?= $key ?>/delete" class="table-link">
-                            <img src="<?php __DIR__ ?>/../img/delete.png" alt="Delete">
+                            <img src="/../img/delete.png" alt="Delete">
                         </a>
                     </div>
                 </div>

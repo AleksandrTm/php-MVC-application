@@ -9,7 +9,7 @@ use Controllers\LoginController;
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?= LoginController::$info; ?>
+        <?= $info ?? null; ?>
         <div class="forms">
             <form id="send" method="post" action="">
                 <input type="hidden" name="type-form" value="login">
@@ -24,7 +24,7 @@ use Controllers\LoginController;
                     <input id="password" type="password" name="password" value="" required/>
                 </div>
 
-                <button id="submit" type="submit">Добавить</button>
+                <button id="submit" type="submit">Войти</button>
 
             </form>
         </div>

@@ -7,9 +7,15 @@ use Models\Users;
 
 class DeleteUserController extends Controller
 {
-    function get($id)
+
+    function get(int $id)
     {
         $obj = new Users();
-        $obj->deleteUser($id);
+        if ($obj->findUser($id)) {
+            $obj->deleteUser($id);
+        } else {
+            header('Location: http://localsite.ru');
+            exit();
+        }
     }
 }

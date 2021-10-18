@@ -3,12 +3,19 @@
 namespace Controllers;
 
 use Core\Controller;
-use Core\Validation;
+use Core\Authorization;
 
 
 class LoginController extends Controller
 {
-    public static ?string $info = null;
+    public ?string $info = null;
+
+    public Authorization $authorization;
+
+    public function __construct()
+    {
+        $this->authorization = new Authorization();
+    }
 
     public function get()
     {
@@ -17,8 +24,13 @@ class LoginController extends Controller
 
     function post()
     {
-        $obj = new Validation();
-        self::$info = $obj->validLogin($_POST['login'], $_POST['password']);
-        include_once "../views/login.html.php";
+        $this->authorization->authentication();
+        header('Location: http://localsite.ru');
+        exit;
+    }
+
+    public function exit()
+    {
+        $this->authorization->out();
     }
 }

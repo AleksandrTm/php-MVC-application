@@ -6,7 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>title</title>
-    <link rel="stylesheet" type="text/css" href="<?php __DIR__ ?>/../css/style.css">
+    <link rel="stylesheet" type="text/css" href="/../css/style.css">
 </head>
 <body>
 <div class="wrapper">
@@ -15,10 +15,12 @@
             <a href="/"><img src="" alt="Logo"></a>
             <div class="links">
                 <a href="/login">Login</a>
-                <!-- <a href=\"#\">Login</a> -->
                 <span>/</span>
                 <a href="/registration"> Registration</a>
-                <!-- <a href = \"#\" > User</a > -->
+                <span>/</span>
+                <?= isset($_SESSION['login']) ? $_SESSION['login'] : "guest"; ?>
+                <span>/</span>
+                <a href="/exit"> Exit</a>
             </div>
         </div>
     </header>

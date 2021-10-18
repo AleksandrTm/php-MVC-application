@@ -1,6 +1,8 @@
 <?php
 
 namespace Core;
+use config\Paths;
+
 /**
  * БАЗОВАЯ РАБОТА С ФАЙЛАМИ И БД
  *
@@ -8,26 +10,25 @@ namespace Core;
  */
 class Model
 {
-    public function __construct()
+    function views(): array
     {
-        /**
-         * ОПРЕДЕЛЯЕМ БД ИЛИ ФАЙЛ НУЖЕН ПОТОМКУ, ОТДАЁМ ДАННЫЕ
-         */
-    }
-
-    /**
-     * ВОЗВРАЩАЕМ МАССИВ ДАННЫХ
-     */
-    static function getArraySQL(): array
-    {
-        return [];
-    }
-    
-    /**
-     * ВОЗВРАЩАЕМ МАССИВ ДАННЫХ
-     */
-    static function getArrayFile(): array
-    {
-        return [];
+        $arrayUsers = [];
+        $dir = null;
+        try {
+            // Считываем файлы и каталоги по указанному пути в DIR_BASE_USERS
+            if ($dir = opendir(Paths::DIR_BASE_USERS)) {
+                while (($file = readdir($dir)) !== false) {
+                    if ($file == '.' || $file == '..' || $file == '.gitkeep') {
+                        continue;
+                    }
+                    $arrayUsers[] = [$file => file(Paths::DIR_BASE_USERS . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)];
+                }
+            }
+        } catch (Exception $e) {
+            var_dump($e);
+        } finally {
+            closedir($dir);
+        }
+        return $arrayUsers;
     }
 }
