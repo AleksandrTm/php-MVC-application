@@ -2,11 +2,11 @@
 
 namespace Controllers;
 
-use Core\Controller;
+use Core\Middleware;
 use Core\Validation;
 use Models\Users;
 
-class EditUsersController extends Controller
+class EditUsersController extends Middleware
 {
     function get($id)
     {

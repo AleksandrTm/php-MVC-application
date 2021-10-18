@@ -2,13 +2,11 @@
 
 namespace Controllers;
 
-use Core\Controller;
+use Core\Middleware;
 use Core\Validation;
 
-class RegistrationController extends Controller
+class RegistrationController extends Middleware
 {
-    public ?string $info = null;
-
     function get()
     {
         include_once "../views/registration-user.html.php";
@@ -17,7 +15,7 @@ class RegistrationController extends Controller
     function post()
     {
         $obj = new Validation();
-        $this->info = $obj->mainForm($_POST['login'], $_POST['password'], $_POST['passwordConfirm'], $_POST['email'],
+        $info = $obj->mainForm($_POST['login'], $_POST['password'], $_POST['passwordConfirm'], $_POST['email'],
             $_POST['fullName'], $_POST['date'], $_POST['about']);
         include_once "../views/registration-user.html.php";
     }

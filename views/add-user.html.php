@@ -1,7 +1,6 @@
 <?php
 
 use config\Paths;
-use Controllers\AddUsesController;
 
 ?>
 <!-- Начала Шаблона: header -->
@@ -10,50 +9,6 @@ use Controllers\AddUsesController;
 <div class="container">
     <div class="table">
         <?= $info ?? null; ?>
-        <div class="forms">
-            <p><a href="/">Главная </a><span>  >  </span>Добавить пользователя</p>
-            <form id="send" method="post" action="">
-                <input type="hidden" name="type-form" value="add-user">
-
-                <div class="form-line">
-                    <label for="login">Login: </label>
-                    <input id="login" type="text" name="login" value="" required/>
-                </div>
-
-                <div class="form-line">
-                    <label for="email">E-mail</label>
-                    <input id="email" type="email" name="email" value="" required/>
-                </div>
-
-                <div class="form-line">
-                    <label for="password">password</label>
-                    <input id="password" type="password" name="password" value="" required/>
-                </div>
-
-                <div class="form-line">
-                    <label for="passwordConfirm">password confirm</label>
-                    <input id="passwordConfirm" type="password" name="passwordConfirm" value="" required/>
-                </div>
-
-                <div class="form-line">
-                    <label for="fullName">ФИО</label>
-                    <input id="fullName" type="text" name="fullName" value=""/>
-                </div>
-
-                <div class="form-line">
-                    <label for="date">Дата рождения</label>
-                    <input id="date" type="date" name="date" value=""/>
-                </div>
-
-                <div class="form-line" id="text-area">
-                    <label for="about">Описание</label>
-                    <textarea name="about" id="about" cols="30" rows="10"></textarea>
-                </div>
-
-                <button id="submit" type="submit">Добавить</button>
-
-            </form>
-        </div>
     </div>
 </div>
 <!-- Начала Шаблона: footer -->

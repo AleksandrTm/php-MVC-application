@@ -9,6 +9,8 @@ namespace Core;
  */
 class ValidatorField
 {
+    protected bool $errorStatus = false;
+
     /**
      * Валидация input=date
      * с использованием:

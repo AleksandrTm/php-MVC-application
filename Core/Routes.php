@@ -148,6 +148,10 @@ class Routes
         $param = !is_null($path['param']) ? $path['url'] . "/" . $path['param'] : $path['url'];
 
         switch ($param) {
+            case "":
+                $objViewsUsers = new ViewUsersController();
+                $objViewsUsers->getUsersList();
+                break;
             case "login":
                 $objLogin = new LoginController();
                 $objLogin->post();

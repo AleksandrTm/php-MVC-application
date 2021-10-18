@@ -13,10 +13,10 @@ class Views
 
     public function render(string $template, array $vars = [])
     {
-//        /**
-//         * Разбивает массив на переменные
-//         */
-//        extract($vars);
+        /**
+         * Разбивает массив на переменные
+         */
+        extract($vars);
 
         require_once $this->templatesPath . $template;
     }

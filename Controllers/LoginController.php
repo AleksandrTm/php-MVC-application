@@ -2,11 +2,11 @@
 
 namespace Controllers;
 
-use Core\Controller;
+use Core\Middleware;
 use Core\Authorization;
 
 
-class LoginController extends Controller
+class LoginController extends Middleware
 {
     public ?string $info = null;
 

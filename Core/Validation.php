@@ -84,36 +84,4 @@ class Validation extends ValidatorField
         ";
         }
     }
-
-    /**
-     * Валидация входа на сайт
-     */
-    function validLogin($login, $password): string
-    {
-        $errorStatus = false;
-
-        $checkLogin = ValidatorField::fieldLogin($login);
-        $checkPass = ValidatorField::fieldPassword($password);
-
-        ob_start(); // старт буфера вывода
-
-        if (!($checkLogin === true)) {
-            echo $checkLogin . "<br>";
-            $errorStatus = true;
-        }
-        if (!($checkPass === true)) {
-            echo $checkPass . "<br>";
-            $errorStatus = true;
-        }
-
-        $bufferError = ob_get_contents();
-        ob_end_clean(); // очищаем и закрываем буфер
-
-        if ($errorStatus) {
-            return $bufferError;
-        }
-
-        return true;
-
-    }
 }

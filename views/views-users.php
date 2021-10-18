@@ -9,12 +9,12 @@ use Controllers\DeleteUserController;
 <!-- Конец Шаблона: header -->
 <div class="container">
     <div class="table">
-        <?= $info ?? null ?>
         <div class="table-head">
             <a href="/user/add" class="table-link">
                 <img src="/../img/add.png" alt="Add">
             </a>
         </div>
+        <?= $info ?? null ?>
         <?php foreach ($arrayUsers ?? null as $users): ?>
             <?php foreach ($users as $key => $user): ?>
                 <div class="table-row">
