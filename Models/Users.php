@@ -12,26 +12,12 @@ class Users extends Model
      * Отдаёт многомерный массив со всеми пользователями и данными
      * [[KeyIdUser => Values][KeyIdUser => Values]]
      */
-    function views(): array
+    function views(): ?array
     {
-        $arrayUsers = [];
-        $dir = null;
-        try {
-            // Считываем файлы и каталоги по указанному пути в DIR_BASE_USERS
-            if ($dir = opendir(Paths::DIR_BASE_USERS)) {
-                while (($file = readdir($dir)) !== false) {
-                    if ($file == '.' || $file == '..' || $file == '.gitkeep') {
-                        continue;
-                    }
-                    $arrayUsers[] = [$file => file(Paths::DIR_BASE_USERS . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)];
-                }
-            }
-        } catch (Exception $e) {
-            var_dump($e);
-        } finally {
-            closedir($dir);
+        foreach ($this->data as $file) {
+            $arrayUsers[] = [$file => file(Paths::DIR_BASE_USERS . $file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)];
         }
-        return $arrayUsers;
+        return $arrayUsers ?? null;
     }
 
 
@@ -116,24 +102,9 @@ class Users extends Model
      */
     function id(): int
     {
-        $arrayUsers = [];
-        $dir = null;
-        try {
-            if ($dir = opendir(Paths::DIR_BASE_USERS)) {
-                while (($file = readdir($dir)) !== false) {
-                    if ($file == '.' || $file == '..' || $file == '.gitkeep') {
-                        continue;
-                    }
-                    $arrayUsers[] = $file;
-                }
-            }
-        } catch (Exception $e) {
-            var_dump($e);
-        } finally {
-            closedir($dir);
-        }
-        rsort($arrayUsers);
-        return (int)array_shift($arrayUsers);
+        $users = $this->data;
+        rsort($users);
+        return (int)array_shift($users);
     }
 
     /**

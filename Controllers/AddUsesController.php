@@ -2,11 +2,17 @@
 
 namespace Controllers;
 
-use Core\Middleware;
+use Core\Controller;
 use Core\Validation;
+use Models\Users;
 
-class AddUsesController extends Middleware
+class AddUsesController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     function get()
     {
         $info = include_once "../views/temp/form-add-user.html.php";
@@ -15,16 +21,10 @@ class AddUsesController extends Middleware
 
     function post()
     {
-        $obj = new Validation();
+        $objValidation = new Validation();
+        $info = $objValidation->validation();
 
-        /**
-         *
-         *  В КОНТРОЛЛЕРЕ ВЫЗЫВАТЬ ВАЛИДАЦИЮ И ПОЛУЧАТЬ ОТВЕТ ( НИКАКИЕ ПАРАМЕТРЫ ТУТ НЕ ПЕРЕДАЕМ )
-         *  С МОДЕЛЬЮ РАБОТАЕМ В КОНТРОЛЛЕРЕ А НЕ ВАЛИДАЦИИ
-         *
-         */
-        $info = $obj->mainForm($_POST['login'], $_POST['password'], $_POST['passwordConfirm'], $_POST['email'],
-            $_POST['fullName'], $_POST['date'], $_POST['about']);
+        empty($info) ? $objUsers = new Users() : $objUsers = null;
 
 
 

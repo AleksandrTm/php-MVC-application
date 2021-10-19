@@ -2,10 +2,10 @@
 
 namespace Controllers;
 
-use Core\Middleware;
+use Core\Controller;
 use Models\Users;
 
-class DeleteUserController extends Middleware
+class DeleteUserController extends Controller
 {
 
     function get(int $id)

@@ -2,13 +2,13 @@
 
 namespace Controllers;
 
-use Models\Users as Users;
-use Core\Middleware;
+use Core\Controller;
+use Models\Users;
 
 /**
  * Controller для отображения пользователей с модели
  */
-class ViewUsersController extends Middleware
+class ViewUsersController extends Controller
 {
     public function getUsersList()
     {

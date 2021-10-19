@@ -3,9 +3,9 @@
 namespace Controllers;
 
 use config\Paths;
-use Core\Middleware;
+use Core\Controller;
 
-class NotFoundPageController extends Middleware
+class NotFoundPageController extends Controller
 {
     function page404()
     {

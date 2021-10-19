@@ -14,6 +14,7 @@ class Routes extends Middleware
 {
     protected static ?Routes $_instance = null;
 
+
     private function __construct()
     {
         parent::__construct();
@@ -48,7 +49,7 @@ class Routes extends Middleware
      */
     function run(): void
     {
-        switch ($this->method) {
+        switch ($this->requestMethod) {
             case 'GET':
                 $this->sendGetController();
                 break;
@@ -71,7 +72,7 @@ class Routes extends Middleware
         switch ($this->uri) {
             case "user/delete":
                 $objDeleteUsers = new DeleteUserController();
-                $objDeleteUsers->get($this->pathArray['id']);
+                $objDeleteUsers->get($this->path['id']);
             case "":
                 $objViewsUsers = new ViewUsersController();
                 $objViewsUsers->getUsersList();
@@ -90,7 +91,7 @@ class Routes extends Middleware
                 break;
             case "user/edit":
                 $objEditUser = new EditUsersController();
-                $objEditUser->get($this->pathArray['id']);
+                $objEditUser->get($this->path['id']);
                 break;
             case "exit":
                 $obj = new LoginController();
@@ -128,7 +129,7 @@ class Routes extends Middleware
                 break;
             case "user/edit":
                 $objEditUser = new EditUsersController();
-                $objEditUser->post($this->pathArray['id']);
+                $objEditUser->post($this->path['id']);
                 break;
             default:
                 (new NotFoundPageController())->page404();

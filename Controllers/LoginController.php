@@ -2,11 +2,11 @@
 
 namespace Controllers;
 
-use Core\Middleware;
+use Core\Controller;
 use Core\Authorization;
 
 
-class LoginController extends Middleware
+class LoginController extends Controller
 {
     public ?string $info = null;
 
@@ -14,6 +14,7 @@ class LoginController extends Middleware
 
     public function __construct()
     {
+        parent::__construct();
         $this->authorization = new Authorization();
     }
 
