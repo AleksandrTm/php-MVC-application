@@ -2,86 +2,140 @@
 
 namespace Core;
 
-use Models\Users;
 
 /**
- * Валидатор для форм
+ * Валидация форм и полей
+ *
+ * Возвращает String с ошибками или null при их отсутсвии
  */
-class Validation extends ValidatorField
+class Validation
 {
-    function mainForm($login, $password, $passwordConfirm, $email, $fullName, $date, $about, $id = null): string
+    protected string $login, $password, $passwordConfirm, $email, $fullName, $date, $about;
+
+    public function __construct()
     {
-        $objUsers = new Users();
+        $this->login = htmlspecialchars($_POST['login']);
+        $this->password = htmlspecialchars($_POST['password']);
+        $this->passwordConfirm = htmlspecialchars($_POST['passwordConfirm']);
+        $this->email = htmlspecialchars($_POST['email']);
+        $this->fullName = htmlspecialchars($_POST['fullName']);
+        $this->date = htmlspecialchars($_POST['date']);
+        $this->about = htmlspecialchars($_POST['about']);
+    }
 
-        $errorStatus = false;
+    function validation(): ?string
+    {
+        ob_start(); // Включение буферизации вывода
 
-        $checkLogin = parent::fieldLogin($login);
-        $checkPass = parent::fieldPassword($password);
-        $checkEmail = parent::fieldEmail($email);
-        $checkFullName = parent::fieldFullName($fullName);
-        $checkDate = parent::fieldDate($date);
-        $checkAbout = parent::fieldAbout($about);
+        $this->fieldLogin($this->login);
+        $this->fieldPassword($this->password);
+        $this->fieldEmail($this->email);
+        $this->fieldFullName($this->fullName);
+        $this->fieldDate($this->date);
+        $this->fieldAbout($this->about);
 
-        ob_start(); // старт буфера вывода
+        $bufferError = ob_get_contents(); // Сохраняем поток вывода
 
-        if (!($checkLogin === true)) {
-            echo $checkLogin . "<br>";
-            $errorStatus = true;
-        }
-        if (!($checkPass === true)) {
-            echo $checkPass . "<br>";
-            $errorStatus = true;
-        }
-        if (!($passwordConfirm == $password)) {
-            echo "- Пароли должны совпадать <br>";
-            $errorStatus = true;
-        }
-        if (!($checkEmail === true)) {
-            echo $checkEmail . "<br>";
-            $errorStatus = true;
-        }
-        if (!($checkDate === true)) {
-            echo $checkDate . "<br>";
-            $errorStatus = true;
-        }
-        if (!($checkFullName === true)) {
-            echo $checkFullName . "<br>";
-            $errorStatus = true;
-        }
-        if (!($checkAbout === true)) {
-            echo $checkAbout . "<br>";
-            $errorStatus = true;
+        ob_end_clean(); // Очищаем и закрываем буферизацию вывода
+
+        return !empty($bufferError) ?: null; // отдаём буфер с ошибками или null
+    }
+
+    /**
+     * Валидация input=date
+     * с использованием:
+     * explode() для разбития строки
+     * checkdate() проверки корректности даты
+     */
+    function fieldDate($date): ?string
+    {
+        $dataYMD = explode("-", $date);
+        if (!(checkdate($dataYMD[2], $dataYMD[1], $dataYMD[0])) and !(gettype($date) == "string")) {
+            echo "- Дата не корректная <br>";
         }
 
-        $bufferError = ob_get_contents();
-        ob_end_clean(); // очищаем и закрываем буфер
-
-        if ($errorStatus) {
-            return $bufferError;
+        if (!($dataYMD[0] - date('Y') < 18)) {
+            echo "- Пользователь должен быть старше 18 лет <br>";
         }
 
-        if (is_null($id)) {
-            $objUsers->add($login, $password, $email, $fullName, $date, $about);
-            return "
-        <div class='accept-reg'>Пользователь добален</div><br>
-        Логин: $login<br>
-        Пароль: $password<br>
-        Почта: $email<br>
-        ФИО: $fullName<br>
-        Дата: $date<br>
-        Описание: $about<br>
-        ";
-        } else {
-            $objUsers->edit($id, $login, $password, $email, $fullName, $date, $about);
-            return "
-        <div class='accept-reg'>Изминения сохранены</div><br>
-        Логин: $login<br>
-        Пароль: $password<br>
-        Почта: $email<br>
-        ФИО: $fullName<br>
-        Дата: $date<br>
-        Описание: $about<br>
-        ";
+        return null;
+    }
+
+    /**
+     * Валидация input=fullName
+     * с использованием preg_match()
+     */
+    function fieldFullName($fullName): ?string
+    {
+        if (!(preg_match("/[А-Яа-яЁё ]/im", $fullName))) {
+            echo "- Укажите корректно ФИО <br>";
         }
+        return null;
+    }
+
+    /**
+     * Валидация input=login
+     * с использованием preg_match()
+     */
+    function fieldLogin($login): ?string
+    {
+        if (empty($login)) {
+            echo "- Поле логин не может быть пустым <br>";
+        }
+        if (!(preg_match("/^.{5,16}$/", $login))) {
+            echo "- Логин должен содержать от 5 до 16 латинских символов <br>";
+        }
+        if (!(preg_match("/^[a-zA-Z]{5,16}$/", $login))) {
+            echo "- Логин должен содержать только латинские символы <br>";
+        }
+        return null;
+    }
+
+    /**
+     * Валидация input=password
+     * с использованием preg_match()
+     */
+    function fieldPassword($password): ?string
+    {
+        if (empty($password)) {
+            echo "- Поле пароль не может быть пустым <br>";
+        }
+        if (!(preg_match("/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,30}$/", $password))) {
+            echo "- Пароль должен содержать хотя бы одну цифру, одну строчную,
+        одну заглавную латинскую букву, а так же один из символов: '@#$%!*',
+        Длинна пароля от 8 до 30 символов <br>";
+        }
+        if (!(preg_match("/^[a-zA-Z0-9!@#$&*]{8,30}$/", $password))) {
+            echo "- В пароле разрешены только латинские символы <br>";
+        }
+        return null;
+    }
+
+    /**
+     * Валидация input=email
+     * с использованием filter_var()
+     */
+    function fieldEmail($email): ?string
+    {
+        if (empty($email)) {
+            echo "- Поле e-mail не может быть пустым <br>";
+        }
+        $check = filter_var($email, FILTER_VALIDATE_EMAIL);
+        if (!$check) {
+            echo "- Не корректный email <br>";
+        }
+        return null;
+    }
+
+    /**
+     * Валидация input=about
+     * с использованием preg_match()
+     */
+    function fieldAbout($about): ?string
+    {
+        if (!(preg_match("/[а-яА-Яa-zA-Z0-9 ]{0,200}/", $about))) {
+            echo "- Описание не может быть более 200 символов <br>";
+        }
+        return null;
     }
 }
