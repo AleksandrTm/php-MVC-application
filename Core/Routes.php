@@ -10,19 +10,14 @@ use Controllers\ViewUsersController;
 use Controllers\NotFoundPageController;
 use Controllers\RegistrationController;
 
-class Routes
+class Routes extends Middleware
 {
     protected static ?Routes $_instance = null;
-    public string $method;
-    public string $path;
 
     private function __construct()
     {
-        // Выдаем роль пользователю, если у него её нет
-        if (!isset($_SESSION['role'])) $_SESSION['role'] = 'guest';
-
-        $this->method = htmlspecialchars($_SERVER['REQUEST_METHOD']);
-        $this->path = htmlspecialchars($_SERVER['REQUEST_URI']);
+        parent::__construct();
+        $this->middleware();
     }
 
     /**
@@ -67,46 +62,16 @@ class Routes
     }
 
     /**
-     * Обрабатывает Path и разбивает на параметры
-     * Отдаёт именнованый массив с параметрами: path/param + id
-     * При отсутсвии id, отдаёт: path/param
-     */
-    function router($path): array
-    {
-        $parsPath = explode('/', $path);
-        preg_match("([0-9]+)", array_key_exists(2, $parsPath) ? $parsPath[2] : null, $id);
-
-        /**
-         * Проверка на отсутсвие параметра id в path
-         */
-        if (count($parsPath) == 3) {
-            $path = ['url' => array_key_exists(1, $parsPath) ? $parsPath[1] : null,
-                'param' => array_key_exists(2, $parsPath) ? $parsPath[2] : null,
-                'id' => array_key_exists(0, $id) ? $id[0] : null
-            ];
-        } else {
-            $path = ['url' => array_key_exists(1, $parsPath) ? $parsPath[1] : null,
-                'param' => array_key_exists(3, $parsPath) ? $parsPath[3] : null,
-                'id' => array_key_exists(0, $id) ? $id[0] : null
-            ];
-        }
-        return $path;
-    }
-
-    /**
      * Направляем GET запросы
      *
      * Обращается к GET методам контроллера
      */
     function sendGetController(): void
     {
-        $path = $this->router($this->path);
-        $param = !is_null($path['param']) ? $path['url'] . "/" . $path['param'] : $path['url'];
-
-        switch ($param) {
+        switch ($this->uri) {
             case "user/delete":
                 $objDeleteUsers = new DeleteUserController();
-                $objDeleteUsers->get($path['id']);
+                $objDeleteUsers->get($this->pathArray['id']);
             case "":
                 $objViewsUsers = new ViewUsersController();
                 $objViewsUsers->getUsersList();
@@ -125,7 +90,7 @@ class Routes
                 break;
             case "user/edit":
                 $objEditUser = new EditUsersController();
-                $objEditUser->get($path['id']);
+                $objEditUser->get($this->pathArray['id']);
                 break;
             case "exit":
                 $obj = new LoginController();
@@ -144,10 +109,7 @@ class Routes
      */
     function sendPostController(): void
     {
-        $path = $this->router($this->path);
-        $param = !is_null($path['param']) ? $path['url'] . "/" . $path['param'] : $path['url'];
-
-        switch ($param) {
+        switch ($this->uri) {
             case "":
                 $objViewsUsers = new ViewUsersController();
                 $objViewsUsers->getUsersList();
@@ -166,7 +128,7 @@ class Routes
                 break;
             case "user/edit":
                 $objEditUser = new EditUsersController();
-                $objEditUser->post($path['id']);
+                $objEditUser->post($this->pathArray['id']);
                 break;
             default:
                 (new NotFoundPageController())->page404();

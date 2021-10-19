@@ -2,36 +2,90 @@
 
 namespace Core;
 
+use config\Permissions;
 
-class Middleware
+/**
+ * Middleware между Роутером и Роутерами
+ *
+ * Обеспечивает права доступа по URI
+ */
+class Middleware extends Router
 {
-    protected ?string $userRole = null;
+    protected string $getUserRole;
 
     public function __construct()
     {
-        $this->userRole = $_SESSION['role'];
+        parent::__construct();
+        $this->getUserRole = $_SESSION['role'];
+        $this->router();
     }
 
     /**
-     * True если пользователь админ или обычный зарегистрированный пользователь
+     * Определяем какие URI доступны определенным правам доступа
      */
-    function checkGeneralRols(): bool
+    function middleware()
     {
-        return $this->userRole === Permissions::ROLE_ADMIN or $this->userRole === Permissions::ROLE_MEMBER;
+        switch ($this->uri) {
+            case '':
+                // Разрещено всем =\
+                break;
+            case 'login':
+            case 'registration':
+                $this->getGuestPermission() ?: $this->deniesAccess();
+                break;
+            case 'user/delete':
+            case 'user/add':
+            case 'user/edit':
+                $this->getAdminPermission() ?: $this->deniesAccess();
+                break;
+            case 'exit':
+                $this->getSharingPermission() ?: $this->deniesAccess();
+                break;
+            default:
+                $this->deniesAccess();
+
+        }
     }
 
-    function checkMemberRols(): bool
+    /**
+     * Запрещает доступ, отдаёт 403 ошибку
+     */
+    function deniesAccess()
     {
-        return $this->userRole === Permissions::ROLE_MEMBER;
+        header('HTTP/1.1 403 Forbidden');
+        echo 'Нет прав доступа';
+        exit();
     }
 
-    function checkAdminRols(): bool
+    /**
+     * Разрещено Администратору и зарегистированным пользователям
+     */
+    function getSharingPermission(): bool
     {
-        return $this->userRole === Permissions::ROLE_ADMIN;
+        return $this->getUserRole === Permissions::ROLE_ADMIN or $this->getUserRole === Permissions::ROLE_MEMBER;
     }
 
-    function checkGuestRols(): bool
+    /**
+     * Не используется, права только для зарегистрированного пользователя, админу запрещено
+     */
+    function getMemberPermission(): bool
     {
-        return $this->userRole === Permissions::ROLE_ADMIN;
+        return $this->getUserRole === Permissions::ROLE_MEMBER;
+    }
+
+    /**
+     * Права для Администратора
+     */
+    function getAdminPermission(): bool
+    {
+        return $this->getUserRole === Permissions::ROLE_ADMIN;
+    }
+
+    /**
+     *  Права для гостей
+     */
+    function getGuestPermission(): bool
+    {
+        return $this->getUserRole === Permissions::ROLE_GUEST;
     }
 }

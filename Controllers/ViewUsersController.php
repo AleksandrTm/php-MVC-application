@@ -13,12 +13,8 @@ class ViewUsersController extends Middleware
     public function getUsersList()
     {
         $objUsers = new Users();
-        if ($this->generalRules()) {
-            $arrayUsers = $objUsers->views();
-        } else {
-            $arrayUsers = [];
-            $info = "нет прав, требуется авторизация";
-        }
+        $arrayUsers = $objUsers->views();
+
         include_once "../views/views-users.php";
     }
 }
