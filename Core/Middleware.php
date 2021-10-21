@@ -40,7 +40,7 @@ class Middleware extends Router
             $this->deniesAccess();
         }
         /**
-         *  Запрещает переданным группам доступ ( требуется указать второй аргумент $allowed = false )
+         *  Запрещает доступ переданным группам ( требуется указать второй аргумент $allowed = false )
          */
         if (in_array($this->getUserRole, $role) and !$allowed) {
             $this->deniesAccess();
