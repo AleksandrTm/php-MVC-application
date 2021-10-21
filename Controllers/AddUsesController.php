@@ -7,6 +7,9 @@ use Core\Controller;
 use Core\Validations;
 use Models\UserModel;
 
+/**
+ * Контроллер отвечает за отображение формы добавления пользователей и
+ */
 class AddUsesController extends Controller
 {
     function getAddUserForm(): void
