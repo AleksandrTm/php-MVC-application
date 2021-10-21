@@ -11,7 +11,7 @@ use config\Permissions;
  */
 class Middleware extends Router
 {
-    protected string $getUserRole;
+    protected ?string $getUserRole = null;
 
     public function __construct()
     {
@@ -21,71 +21,39 @@ class Middleware extends Router
     }
 
     /**
-     * Определяем какие URI доступны определенным правам доступа
+     * Проверяет переданные группы, и определяет разрешён доступ или нет
+     *
+     * @$allowed : по дефолту кому разрешено, при установке false, кому запрещено
+     *
+     * @$role : передача ролей
+     *
+     * Без аргументов: Разрешено всем
+     *
+     * Группы заносятся массивом ['user', 'admin']
      */
-    function middleware()
+    function middleware(array $role = null, bool $allowed = true): void
     {
-        switch ($this->uri) {
-            case '':
-                // Разрещено всем =\
-                break;
-            case 'login':
-            case 'registration':
-                $this->getGuestPermission() ?: $this->deniesAccess();
-                break;
-            case 'user/delete':
-            case 'user/add':
-            case 'user/edit':
-                $this->getAdminPermission() ?: $this->deniesAccess();
-                break;
-            case 'exit':
-                $this->getSharingPermission() ?: $this->deniesAccess();
-                break;
-            default:
-                $this->deniesAccess();
-
+        /**
+         * Разрешает доступ переданным группам, остальным доступ запрещён
+         */
+        if (!in_array($this->getUserRole, $role)) {
+            $this->deniesAccess();
+        }
+        /**
+         *  Запрещает переданным группам доступ ( требуется указать второй аргумент $allowed = false )
+         */
+        if (in_array($this->getUserRole, $role) and !$allowed) {
+            $this->deniesAccess();
         }
     }
 
     /**
      * Запрещает доступ, отдаёт 403 ошибку
      */
-    function deniesAccess()
+    function deniesAccess(): void
     {
         header('HTTP/1.1 403 Forbidden');
         echo 'Нет прав доступа';
         exit();
-    }
-
-    /**
-     * Разрещено Администратору и зарегистированным пользователям
-     */
-    function getSharingPermission(): bool
-    {
-        return $this->getUserRole === Permissions::ROLE_ADMIN or $this->getUserRole === Permissions::ROLE_MEMBER;
-    }
-
-    /**
-     * Не используется, права только для зарегистрированного пользователя, админу запрещено
-     */
-    function getMemberPermission(): bool
-    {
-        return $this->getUserRole === Permissions::ROLE_MEMBER;
-    }
-
-    /**
-     * Права для Администратора
-     */
-    function getAdminPermission(): bool
-    {
-        return $this->getUserRole === Permissions::ROLE_ADMIN;
-    }
-
-    /**
-     *  Права для гостей
-     */
-    function getGuestPermission(): bool
-    {
-        return $this->getUserRole === Permissions::ROLE_GUEST;
     }
 }
