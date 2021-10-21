@@ -3,30 +3,28 @@
 namespace Core;
 
 
-use config\Paths;
 use Exception;
+use config\Paths;
 
 /**
  *
  */
 class Model
 {
-    protected array $data;
+    protected array $allData;
 
-    public function __construct()
-    {
-        $this->data();
-    }
-
-    function data()
+    /**
+     * $path: путь до нужного каталога
+     */
+    function readData($path): array
     {
         try {
-            if ($dir = opendir(Paths::DIR_BASE_USERS)) {
+            if ($dir = opendir($path)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == '.' || $file == '..' || $file == '.gitkeep') {
                         continue;
                     }
-                    $this->data[] = $file;
+                    $this->allData[$file] = file_get_contents($path . $file);
                 }
             }
         } catch (Exception $e) {
@@ -34,5 +32,6 @@ class Model
         } finally {
             closedir($dir ?? null);
         }
+        return $this->allData;
     }
 }

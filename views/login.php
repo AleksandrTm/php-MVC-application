@@ -1,15 +1,10 @@
-<?php
-
-use config\Paths;
-use Controllers\LoginController;
-
-?>
-<!-- Начала Шаблона: header -->
-<?php include_once Paths::DIR_VIEWS . "template/header.html"; ?>
-<!-- Конец Шаблона: header -->
-<div class="container">
-    <div class="table">
-        <?= $info ?? null; ?>
+<div class="table">
+    <?php if (($info['statusAuthorization'] ?? null) === true) { ?>
+        <p>Авторизация успешна</p>
+    <?php } else { ?>
+        <?php if (($info['statusAuthorization'] ?? null) === false) { ?>
+            <p>Неверный логин или пароль</p>
+        <?php } ?>
         <div class="forms">
             <form id="send" method="post" action="">
                 <input type="hidden" name="type-form" value="login">
@@ -28,8 +23,5 @@ use Controllers\LoginController;
 
             </form>
         </div>
-    </div>
+    <?php } ?>
 </div>
-<!-- Начала Шаблона: footer -->
-<?php include_once Paths::DIR_VIEWS . 'template/footer.html'; ?>
-<!-- Конец Шаблона: footer -->

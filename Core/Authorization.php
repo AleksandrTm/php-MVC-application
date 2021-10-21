@@ -2,27 +2,30 @@
 
 namespace Core;
 
-use Models\Users;
+use Models\UserModel;
 
 class Authorization
 {
-    function authentication()
+    /**
+     * User данные полученные из $_POST
+     * UserModel данные из Базы данных
+     */
+    function logInUser(User $user, UserModel $userModel): bool
     {
-        $users = new Users();
-        $dataUsers = $users->userLoginPassword();
-        $userLogin = htmlspecialchars($_POST['login']);
-        $userPassword = htmlspecialchars($_POST['password']);
+        /** Получаем все данные, всех пользователей из БД */
+        $usersData = $userModel->getDataAllUsers();
 
-        foreach ($dataUsers as $user) {
-            if ($user['login'] === $userLogin and !password_verify($user['password'], $userPassword)) {
-                $_SESSION['login'] = $userLogin;
-                $_SESSION['password'] = $user['password'];
-                $_SESSION['role'] = $user['role'];
+        foreach ($usersData as $userData) {
+            if ($userData['login'] === $user->getLogin() && password_verify($user->getPassword(), $userData['password'])) {
+                $_SESSION['login'] = $user->getLogin();
+                $_SESSION['role'] = $userData['role'];
+                return true;
             }
         }
+        return false;
     }
 
-    function out()
+    function logOut(): void
     {
         session_destroy();
         header('Location: http://localsite.ru');

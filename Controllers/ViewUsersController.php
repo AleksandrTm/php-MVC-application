@@ -3,18 +3,17 @@
 namespace Controllers;
 
 use Core\Controller;
-use Models\Users;
+use Models\UserModel;
 
 /**
  * Controller для отображения пользователей с модели
  */
 class ViewUsersController extends Controller
 {
-    public function getUsersList()
+    public function getUsersList(): void
     {
-        $objUsers = new Users();
-        $arrayUsers = $objUsers->views();
-
-        include_once "../views/views-users.php";
+        $objUsers = new UserModel();
+        $dataAllUsers = $objUsers->getDataAllUsers();
+        $this->view->render('views-users','Список пользователей', $dataAllUsers);
     }
 }

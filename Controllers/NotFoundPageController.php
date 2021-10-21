@@ -2,13 +2,15 @@
 
 namespace Controllers;
 
-use config\Paths;
 use Core\Controller;
 
+/**
+ * Отдаёт 404 ошибку, в случае если пользователь зашёл на несуществующий URI
+ */
 class NotFoundPageController extends Controller
 {
-    function page404()
+    function getPage404(): void
     {
-        include_once Paths::DIR_VIEWS . "page-404.php";
+        $this->view->render('page-404', 'Страница не найдена');
     }
 }

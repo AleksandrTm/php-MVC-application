@@ -2,32 +2,31 @@
 
 namespace Controllers;
 
+use Core\User;
 use Core\Controller;
-use Core\Validation;
-use Models\Users;
+use Core\Validations;
+use Models\UserModel;
 
 class AddUsesController extends Controller
 {
-    public function __construct()
+    function getAddUserForm(): void
     {
-        parent::__construct();
+        $this->view->render('add-user', 'Добавление пользователя');
     }
 
-    function get()
+    function getResultAddUser(): void
     {
-        $info = include_once "../views/temp/form-add-user.html.php";
-        include_once "../views/add-user.html.php";
-    }
+        $user = new User();
+        $objUsers = new UserModel();
+        $objValidation = new Validations();
+        $info = $objValidation->validatesForms($user);
 
-    function post()
-    {
-        $objValidation = new Validation();
-        $info = $objValidation->validation();
-
-        empty($info) ? $objUsers = new Users() : $objUsers = null;
-
-
-
-        include_once "../views/add-user.html.php";
+        if (isset($info)) {
+            $info[] = 'Ошибка при добавлении пользователя';
+        } else {
+            $info = ['Пользователь успешно добавлен'];
+            $objUsers->addUser($user);
+        }
+        $this->view->render('add-user','Добавление пользователя', $info);
     }
 }

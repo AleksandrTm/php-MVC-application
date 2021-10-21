@@ -1,0 +1,119 @@
+<?php
+
+namespace Core;
+
+/**
+ * Возвращает массив с ошибками или true при их отсутсвии ( успешной валидации )
+ */
+class Validations
+{
+    public ?array $validationErrors = null;
+
+    /**
+     * Вызывает функции проверки для полей
+     */
+    function validatesForms(User $user): ?array
+    {
+        $this->checksLoginField($user->getLogin());
+        $this->checksPasswordField($user->getPassword());
+        $this->checksEmailField($user->getEmail());
+        $this->checksFullNameField($user->getFullName());
+        $this->checksDateField($user->getDate());
+        $this->checksAboutField($user->getAbout());
+
+        return $this->validationErrors;
+    }
+
+    /**
+     * Валидация input=date
+     * с использованием:
+     * explode() для разбития строки
+     * checkdate() проверки корректности даты
+     */
+    function checksDateField(string $date): void
+    {
+        $dataYMD = explode("-", $date);
+        if (!(checkdate($dataYMD[2], $dataYMD[1], $dataYMD[0])) && !(gettype($date) == "string")) {
+            $this->validationErrors[] = "- Дата не корректная";
+        }
+
+        if (!($dataYMD[0] - date('Y') < 18)) {
+            $this->validationErrors[] = "- Пользователь должен быть старше 18 лет";
+        }
+    }
+
+    /**
+     * Валидация input=fullName
+     * с использованием preg_match()
+     */
+    function checksFullNameField(string $fullName): void
+    {
+        if (!(preg_match("/[А-Яа-яЁё ]/im", $fullName))) {
+            $this->validationErrors[] = "- Укажите корректно ФИО";
+        }
+    }
+
+    /**
+     * Валидация input=login
+     * с использованием preg_match()
+     */
+    function checksLoginField(string $login): void
+    {
+        if (empty($login)) {
+            $this->validationErrors[] = "- Поле логин не может быть пустым";
+        }
+        if (!(preg_match("/^.{5,16}$/", $login))) {
+            $this->validationErrors[] = "- Логин должен содержать от 5 до 16 латинских символов";
+        }
+        if (!(preg_match("/^[a-zA-Z]{5,16}$/", $login))) {
+            $this->validationErrors[] = "- Логин должен содержать только латинские символы";
+        }
+    }
+
+    /**
+     * Валидация input=password
+     * с использованием preg_match()
+     */
+    function checksPasswordField(string $password): void
+    {
+        if (empty($password)) {
+            $this->validationErrors[] = "- Поле пароль не может быть пустым";
+        }
+        if (!(preg_match("/^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,30}$/", $password))) {
+            $this->validationErrors[] = "- Пароль должен содержать хотя бы одну цифру, одну строчную,
+        одну заглавную латинскую букву, а так же один из символов: '@#$%!*',
+        Длинна пароля от 8 до 30 символов";
+        }
+        if (!(preg_match("/^[a-zA-Z0-9!@#$&*]{8,30}$/", $password))) {
+            $this->validationErrors[] = "- В пароле разрешены только латинские символы";
+        }
+    }
+
+    /**
+     * Валидация input=email
+     * с использованием filter_var()
+     */
+    function checksEmailField(string $email): void
+    {
+        if (empty($email)) {
+            $this->validationErrors[] = "- Поле e-mail не может быть пустым";
+        }
+        $check = filter_var($email, FILTER_VALIDATE_EMAIL);
+        if (!$check) {
+            $this->validationErrors[] = "- Не корректный email";
+        }
+    }
+
+    /**
+     * Валидация input=about
+     * с использованием preg_match()
+     *
+     * ************* ПРОВЕРИТЬ РАБОТУ РЕГУЛЯРКИ *******************
+     */
+    function checksAboutField(string $about): void
+    {
+        if (!(preg_match("/[а-яА-Яa-zA-Z0-9 ]{0,200}/", $about))) {
+            $this->validationErrors[] = "- Описание не может быть более 200 символов";
+        }
+    }
+}

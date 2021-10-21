@@ -27,9 +27,7 @@ class Router
         $this->requestMethod = htmlspecialchars($_SERVER['REQUEST_METHOD']);
         $this->requestURI = htmlspecialchars($_SERVER['REQUEST_URI']);
 
-        /**
-         * Выдаем роль пользователю, если у него её нет, по дефолту это Гость
-        */
+        /** Выдаем роль пользователю, если у него её нет, по дефолту это Гость */
         if (!isset($_SESSION['role'])) $_SESSION['role'] = 'guest';
     }
 

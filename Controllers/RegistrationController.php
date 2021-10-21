@@ -2,20 +2,31 @@
 
 namespace Controllers;
 
+use Core\User;
 use Core\Controller;
-use Core\Validation;
+use Core\Validations;
+use Models\UserModel;
 
 class RegistrationController extends Controller
 {
-    function get()
+    function getRegistrationForm(): void
     {
-        include_once "../views/registration-user.html.php";
+        $this->view->render('registration', 'Регистрация');
     }
 
-    function post()
+    function getResultRegistrationUser(): void
     {
-        $obj = new Validation();
-        $info = $obj->validation();
-        include_once "../views/registration-user.html.php";
+        $user = new User();
+        $objUsers = new UserModel();
+        $objValidation = new Validations();
+        $info = $objValidation->validatesForms($user);
+
+        if (isset($info)) {
+            $info[] = 'Ошибка регистрации';
+        } else {
+            $info = ['Регистрация успешна'];
+            $objUsers->addUser($user);
+        }
+        $this->view->render('registration','Регистрация', $info);
     }
 }

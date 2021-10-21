@@ -3,14 +3,13 @@
 namespace Controllers;
 
 use Core\Controller;
-use Models\Users;
+use Models\UserModel;
 
 class DeleteUserController extends Controller
 {
-
-    function get(int $id)
+    function removesUser(int $id): void
     {
-        $obj = new Users();
+        $obj = new UserModel();
         if ($obj->findUser($id)) {
             $obj->deleteUser($id);
         } else {

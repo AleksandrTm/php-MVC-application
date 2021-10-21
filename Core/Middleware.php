@@ -2,28 +2,20 @@
 
 namespace Core;
 
-use config\Permissions;
-
 /**
- * Middleware между Роутером и Роутерами
- *
- * Обеспечивает права доступа по URI
+ * Middleware обеспечивает возможность ограничить доступ для групп пользоваталей
  */
-class Middleware extends Router
+class Middleware
 {
-    protected ?string $getUserRole = null;
+    protected ?string $userRole = null;
 
     public function __construct()
     {
-        parent::__construct();
-        $this->getUserRole = $_SESSION['role'];
-        $this->router();
+        $this->userRole = $_SESSION['role'];
     }
 
     /**
      * Проверяет переданные группы, и определяет разрешён доступ или нет
-     *
-     * @$allowed : по дефолту кому разрешено, при установке false, кому запрещено
      *
      * @$role : передача ролей
      *
@@ -31,20 +23,14 @@ class Middleware extends Router
      *
      * Группы заносятся массивом ['user', 'admin']
      */
-    function middleware(array $role = null, bool $allowed = true): void
+    function definesAccessRights(array $role = null): void
     {
         /**
          * Разрешает доступ переданным группам, остальным доступ запрещён
+         *
+         * Если пользователь входит в переданную группу, доступ разрещён, иначе запрещён
          */
-        if (!in_array($this->getUserRole, $role)) {
-            $this->deniesAccess();
-        }
-        /**
-         *  Запрещает доступ переданным группам ( требуется указать второй аргумент $allowed = false )
-         */
-        if (in_array($this->getUserRole, $role) and !$allowed) {
-            $this->deniesAccess();
-        }
+        in_array($this->userRole, $role) ?: $this->deniesAccess();
     }
 
     /**

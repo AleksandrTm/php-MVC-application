@@ -4,26 +4,26 @@ namespace Controllers;
 
 use Core\Controller;
 use Core\Middleware;
-use Core\Validation;
-use Models\Users;
+use Core\Validations;
+use Models\UserModel;
 
 class EditUsersController extends Controller
 {
-    function get($id)
+    function getEditUserForm($id): void
     {
-        if ((new Users())->findUser($id)) {
-            include_once "../views/edit-user.html.php";
+        if ((new UserModel())->findUser($id)) {
+            $this->view->render('edit-user', 'Редактирование пользователя');
         } else {
-            header('Location: http://localsite.ru');
-            exit();
+            $info['userNotFound'] = "Пользователь не найден в базе";
+            $this->view->render('edit-user', 'Редактирование пользователя', $info);
         }
     }
 
-    function post($id)
+    function getResultEditUser($id): void
     {
-        $obj = new Validation();
-        $info = $obj->mainForm($_POST['login'], $_POST['password'], $_POST['passwordConfirm'], $_POST['email'],
-            $_POST['fullName'], $_POST['date'], $_POST['about'], $id);
-        include_once "../views/edit-user.html.php";
+//        $obj = new Validations();
+//        $info = $obj->mainForm($_POST['login'], $_POST['password'], $_POST['passwordConfirm'], $_POST['email'],
+//            $_POST['fullName'], $_POST['date'], $_POST['about'], $id);
+//        include_once "../views/edit-user.php";
     }
 }

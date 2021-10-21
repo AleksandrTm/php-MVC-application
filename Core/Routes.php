@@ -5,20 +5,24 @@ namespace Core;
 use Controllers\AddUsesController;
 use Controllers\DeleteUserController;
 use Controllers\EditUsersController;
+use Controllers\indexController;
 use Controllers\LoginController;
 use Controllers\ViewUsersController;
 use Controllers\NotFoundPageController;
 use Controllers\RegistrationController;
+use Core\Middleware;
 
-class Routes extends Middleware
+class Routes extends Router
 {
     protected static ?Routes $_instance = null;
+    protected Middleware $middleware;
 
 
     private function __construct()
     {
         parent::__construct();
-        $this->middleware();
+        $this->router();
+        $this->middleware = new Middleware();
     }
 
     /**
@@ -70,35 +74,46 @@ class Routes extends Middleware
     function sendGetController(): void
     {
         switch ($this->uri) {
-            case "user/delete":
-                $objDeleteUsers = new DeleteUserController();
-                $objDeleteUsers->get($this->path['id']);
             case "":
+                $objIndex = new indexController();
+                $objIndex->getIndexPage();
+                break;
+            case "user/delete":
+                $this->middleware->definesAccessRights(['admin']);
+                $objDeleteUsers = new DeleteUserController();
+                $objDeleteUsers->removesUser($this->path['id']);
+            case "view/users":
+                $this->middleware->definesAccessRights(['admin', 'member']);
                 $objViewsUsers = new ViewUsersController();
                 $objViewsUsers->getUsersList();
                 break;
             case "login":
+                $this->middleware->definesAccessRights(['guest']);
                 $objLogin = new LoginController();
-                $objLogin->get();
+                $objLogin->getLoginForm();
                 break;
             case "registration":
+                $this->middleware->definesAccessRights(['guest']);
                 $objReg = new RegistrationController();
-                $objReg->get();
+                $objReg->getRegistrationForm();
                 break;
             case "user/add":
+                $this->middleware->definesAccessRights(['admin']);
                 $objAddUser = new AddUsesController();
-                $objAddUser->get();
+                $objAddUser->getAddUserForm();
                 break;
             case "user/edit":
+                $this->middleware->definesAccessRights(['admin']);
                 $objEditUser = new EditUsersController();
-                $objEditUser->get($this->path['id']);
+                $objEditUser->getEditUserForm($this->path['id']);
                 break;
             case "exit":
+                $this->middleware->definesAccessRights(['admin', 'member']);
                 $obj = new LoginController();
-                $obj->exit();
+                $obj->logsOut();
                 break;
             default:
-                (new NotFoundPageController())->page404();
+                (new NotFoundPageController())->getPage404();
                 break;
         }
     }
@@ -111,28 +126,28 @@ class Routes extends Middleware
     function sendPostController(): void
     {
         switch ($this->uri) {
-            case "":
+            case "view/users":
                 $objViewsUsers = new ViewUsersController();
                 $objViewsUsers->getUsersList();
                 break;
             case "login":
                 $objLogin = new LoginController();
-                $objLogin->post();
+                $objLogin->getResultAuthorizationUser();
                 break;
             case "registration":
                 $objReg = new RegistrationController();
-                $objReg->post();
+                $objReg->getResultRegistrationUser();
                 break;
             case "user/add":
                 $objAddUser = new AddUsesController();
-                $objAddUser->post();
+                $objAddUser->getResultAddUser();
                 break;
             case "user/edit":
                 $objEditUser = new EditUsersController();
-                $objEditUser->post($this->path['id']);
+                $objEditUser->getResultEditUser($this->path['id']);
                 break;
             default:
-                (new NotFoundPageController())->page404();
+                (new NotFoundPageController())->getPage404();
                 break;
         }
     }

@@ -1,7 +1,7 @@
-body {
-    margin: 0;
-}
 
+
+
+.menu,
 .header,
 .footer,
 .table,
@@ -12,9 +12,15 @@ body {
     display: flex;
 }
 
+.menu,
 .header {
     justify-content: space-between;
-    padding: 50px 0 50px 0;
+    padding: 50px 0 20px 0;
+}
+
+.menu {
+    padding: 0 0 0 0;
+    background: gainsboro;
 }
 
 a {
@@ -28,6 +34,11 @@ p {
 
 .container {
     justify-content: center;
+}
+
+.index {
+    justify-content: center;
+    display: flex;
 }
 
 .table {
@@ -106,3 +117,22 @@ button {
     margin: 20px;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+}
+html,
+body {
+    height: 100%;
+}
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+.footer {
+    flex: 0 0 auto;
+}
+header {
+    padding: 0 0 50px 0;
+}

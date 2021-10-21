@@ -2,15 +2,16 @@
 
 namespace Controllers;
 
+use Core\User;
 use Core\Controller;
 use Core\Authorization;
+use Models\UserModel;
 
 
 class LoginController extends Controller
 {
-    public ?string $info = null;
-
-    public Authorization $authorization;
+    protected Authorization $authorization;
+    protected bool $authorizationStatus;
 
     public function __construct()
     {
@@ -18,20 +19,26 @@ class LoginController extends Controller
         $this->authorization = new Authorization();
     }
 
-    public function get()
+    public function getLoginForm(): void
     {
-        include_once "../views/login.html.php";
+        $this->view->render("login", 'Авторизация');
     }
 
-    function post()
+    function getResultAuthorizationUser(): void
     {
-        $this->authorization->authentication();
-        header('Location: http://localsite.ru');
-        exit;
+        $objUserModel = new UserModel();
+        $objUser = new User($_POST);
+
+        /** Проверяем  */
+        $this->authorizationStatus = $this->authorization->logInUser($objUser, $objUserModel);
+
+        $info = ['statusAuthorization' => $this->authorizationStatus];
+
+        $this->view->render("login", 'Авторизация', $info);
     }
 
-    public function exit()
+    public function logsOut(): void
     {
-        $this->authorization->out();
+        $this->authorization->logOut();
     }
 }
