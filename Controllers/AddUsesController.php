@@ -8,7 +8,7 @@ use Core\Validations;
 use Models\UserModel;
 
 /**
- * Контроллер отвечает за отображение формы добавления пользователей и
+ * Контроллер отвечает за отображение формы добавления пользователей
  */
 class AddUsesController extends Controller
 {
