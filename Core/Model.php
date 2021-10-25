@@ -2,26 +2,25 @@
 
 namespace Core;
 
-
 use Exception;
 use config\Paths;
 
 /**
- *
+ * Базовая модель
  */
 class Model
 {
-    protected array $allData;
+    protected array $allData = [];
 
     /**
-     * $path: путь до нужного каталога
+     * Получает все данные с указанной базы данных, и отдаёт их в массиве
      */
-    function readData($path): array
+    function getAllDataFromDatabase($path): array
     {
         try {
             if ($dir = opendir($path)) {
                 while (($file = readdir($dir)) !== false) {
-                    if ($file == '.' || $file == '..' || $file == '.gitkeep') {
+                    if ($file == '.' || $file == '..') {
                         continue;
                     }
                     $this->allData[$file] = file_get_contents($path . $file);
@@ -33,5 +32,24 @@ class Model
             closedir($dir ?? null);
         }
         return $this->allData;
+    }
+
+    /**
+     * Проверка наличия записи в базе по id
+     */
+    function checksExistenceRecord($base, int $id): bool
+    {
+        return file_exists($base . $id);
+    }
+
+    /**
+     * Получаем последний id записи в указанной базе данных
+     */
+    function getLastId(): int
+    {
+        $this->getAllDataFromDatabase(Paths::DIR_BASE_USERS);
+        $users = array_keys($this->allData);
+        rsort($users);
+        return (int)array_shift($users);
     }
 }

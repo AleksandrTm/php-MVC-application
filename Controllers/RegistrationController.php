@@ -19,6 +19,7 @@ class RegistrationController extends Controller
         $user = new User();
         $objUsers = new UserModel();
         $objValidation = new Validations();
+
         $info = $objValidation->validatesForms($user);
 
         if (isset($info)) {

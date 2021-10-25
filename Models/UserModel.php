@@ -15,7 +15,7 @@ class UserModel extends Model
      */
     function getDataAllUsers(): ?array
     {
-        $this->readData(Paths::DIR_BASE_USERS);
+        $this->getAllDataFromDatabase(Paths::DIR_BASE_USERS);
 
         foreach ($this->allData as $userId => $userData) {
 
@@ -39,10 +39,10 @@ class UserModel extends Model
      */
     function addUser(User $user): void
     {
-        if (empty($this->getLastIdUser())) {
+        if (empty($this->getLastId())) {
             $userId = Paths::DIR_BASE_USERS . 1;
         } else {
-            $userId = Paths::DIR_BASE_USERS . ($this->getLastIdUser() + 1);
+            $userId = Paths::DIR_BASE_USERS . ($this->getLastId() + 1);
         }
         $this->writeData($user, $userId);
     }
@@ -54,26 +54,13 @@ class UserModel extends Model
      */
     function editUser(User $user, int $id): void
     {
-        if ($this->findUser($id)) {
-            $this->writeData($user, $id);
+        if ($this->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
+            $this->writeData($user, Paths::DIR_BASE_USERS . $id);
         }
     }
 
     /**
-     * Заносим в массив пользователей,
-     * сортируем по убыванию и отдаём последний id пользователя
-     */
-    function getLastIdUser(): int
-    {
-        $this->readData(Paths::DIR_BASE_USERS);
-        $users = array_keys($this->allData);
-        rsort($users);
-        return (int)array_shift($users);
-    }
-
-    /**
      * Удаление пользователя по id
-     * Добавить проверку на существующего пользователя
      */
     function deleteUser(int $id): void
     {
@@ -82,14 +69,6 @@ class UserModel extends Model
         } catch (Exception $e) {
             var_dump($e);
         }
-    }
-
-    /**
-     * Поиск пользователя по id
-     */
-    function findUser(int $id): bool
-    {
-        return file_exists(Paths::DIR_BASE_USERS . $id);
     }
 
     function writeData(User $user, $id): void

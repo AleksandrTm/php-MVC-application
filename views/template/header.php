@@ -15,8 +15,8 @@
     </div>
     <div class="menu">
         <a class="menu-link" href="/">Главная</a>
-        <a class="menu-link" href="/">Новости</a>
-        <a class="menu-link" href="/">Статьи</a>
+        <a class="menu-link" href="/news">Новости</a>
+        <a class="menu-link" href="/articles">Статьи</a>
         <?php if (($_SESSION['role'] ?? null) != "guest") { ?>
         <a class="menu-link" href="/view/users">Пользователи</a>
         <?php } ?>

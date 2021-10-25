@@ -1,5 +1,6 @@
 <div class="table">
-    <?= $info['userNotFound'] ?? null; ?>
+    <?= $info['resultEdit'] ?? null; ?>
+    <?php if(is_array($info)) { ?>
     <div class="forms">
         <h3>Редактирование пользователя</h3>
         <form id="send" method="post" action="">
@@ -44,5 +45,8 @@
             <button id="submit" type="submit">Сохранить изменения</button>
 
         </form>
+        <?php } else { ?>
+            <?= $info['userNotFound'] ?? null; ?>
+        <?php } ?>
     </div>
 </div>

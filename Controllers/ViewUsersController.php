@@ -6,7 +6,7 @@ use Core\Controller;
 use Models\UserModel;
 
 /**
- * Controller для отображения пользователей с модели
+ * Отдаёт список пользователей во view
  */
 class ViewUsersController extends Controller
 {

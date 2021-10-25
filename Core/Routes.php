@@ -3,14 +3,17 @@
 namespace Core;
 
 use Controllers\AddUsesController;
+use Controllers\ArticlesController;
 use Controllers\DeleteUserController;
 use Controllers\EditUsersController;
 use Controllers\indexController;
 use Controllers\LoginController;
+use Controllers\NewsController;
 use Controllers\ViewUsersController;
 use Controllers\NotFoundPageController;
 use Controllers\RegistrationController;
-use Core\Middleware;
+
+use config\Permissions as access;
 
 class Routes extends Router
 {
@@ -79,38 +82,46 @@ class Routes extends Router
                 $objIndex->getIndexPage();
                 break;
             case "user/delete":
-                $this->middleware->definesAccessRights(['admin']);
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $objDeleteUsers = new DeleteUserController();
                 $objDeleteUsers->removesUser($this->path['id']);
             case "view/users":
-                $this->middleware->definesAccessRights(['admin', 'member']);
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN'], access::ROLE['MEMBER']]);
                 $objViewsUsers = new ViewUsersController();
                 $objViewsUsers->getUsersList();
                 break;
             case "login":
-                $this->middleware->definesAccessRights(['guest']);
+                $this->middleware->definesAccessRights([access::ROLE['GUEST']]);
                 $objLogin = new LoginController();
                 $objLogin->getLoginForm();
                 break;
             case "registration":
-                $this->middleware->definesAccessRights(['guest']);
+                $this->middleware->definesAccessRights([access::ROLE['GUEST']]);
                 $objReg = new RegistrationController();
                 $objReg->getRegistrationForm();
                 break;
             case "user/add":
-                $this->middleware->definesAccessRights(['admin']);
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $objAddUser = new AddUsesController();
                 $objAddUser->getAddUserForm();
                 break;
             case "user/edit":
-                $this->middleware->definesAccessRights(['admin']);
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $objEditUser = new EditUsersController();
                 $objEditUser->getEditUserForm($this->path['id']);
                 break;
             case "exit":
-                $this->middleware->definesAccessRights(['admin', 'member']);
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN'], access::ROLE['MEMBER']]);
                 $obj = new LoginController();
                 $obj->logsOut();
+                break;
+            case "news":
+                $obj = new NewsController();
+                $obj->getNewsPage();
+                break;
+            case "articles":
+                $obj = new ArticlesController();
+                $obj->getArticlesPage();
                 break;
             default:
                 (new NotFoundPageController())->getPage404();
@@ -127,22 +138,27 @@ class Routes extends Router
     {
         switch ($this->uri) {
             case "view/users":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $objViewsUsers = new ViewUsersController();
                 $objViewsUsers->getUsersList();
                 break;
             case "login":
+                $this->middleware->definesAccessRights([access::ROLE['GUEST']]);
                 $objLogin = new LoginController();
                 $objLogin->getResultAuthorizationUser();
                 break;
             case "registration":
+                $this->middleware->definesAccessRights([access::ROLE['GUEST']]);
                 $objReg = new RegistrationController();
                 $objReg->getResultRegistrationUser();
                 break;
             case "user/add":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $objAddUser = new AddUsesController();
                 $objAddUser->getResultAddUser();
                 break;
             case "user/edit":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $objEditUser = new EditUsersController();
                 $objEditUser->getResultEditUser($this->path['id']);
                 break;

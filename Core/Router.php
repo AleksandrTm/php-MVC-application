@@ -28,11 +28,24 @@ class Router
         $this->requestURI = htmlspecialchars($_SERVER['REQUEST_URI']);
 
         /** Выдаем роль пользователю, если у него её нет, по дефолту это Гость */
-        if (!isset($_SESSION['role'])) $_SESSION['role'] = 'guest';
+        if (!isset($_SESSION['role'])) $_SESSION['role'] = Permissions::ROLE['GUEST'];
     }
 
+    /**
+     * Разбивает URI по слешу
+     *
+     * в случае если второе значение содержит цифры, определяем как id ( пользователя, новости, статьи ... )
+     *
+     * id сохраняется как отдельный параметр и убирается из URI для дальнейшей работы с ним
+     *
+     * URI хранит текстовый формат параметров в $uri
+     */
     public function router(): void
     {
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////// ПЕРЕПИСАТЬ: УЙТИ ОТ НОМЕРОВАННЫХ ИНДЕКСОВ ////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         $parsPath = explode('/', $this->requestURI);
         preg_match("([0-9]+)", array_key_exists(2, $parsPath) ? $parsPath[2] : null, $id);
 
@@ -52,6 +65,14 @@ class Router
                 'id' => array_key_exists(0, $id) ? $id[0] : null
             ];
         }
-        $this->uri = !is_null($this->path['param']) ? $this->path['url'] . "/" . $this->path['param'] : $this->path['url'];
+
+        /**
+         * Сохраняем URI без параметра id:
+         *
+         * 1. вариант: param
+         *
+         * 2. вариант: param/param2
+         */
+        $this->uri = is_null($this->path['param']) ? $this->path['url'] : $this->path['url'] . "/" . $this->path['param'];
     }
 }
