@@ -1,9 +1,12 @@
 <?php
 
+
 namespace phpScripts;
 require_once "../Core/Autoload.php";
 
-use config\Content;
+use Enums\Content;
+use config\Paths;
+use Core\Model;
 use Exception;
 
 /**
@@ -24,23 +27,40 @@ class ContentGenerator
      *
      * По умолчанию 25 статей, параметр для смены на новости: Content::CONTENT_TYPE['NEWS']
      */
-    function generatesContent(int $countContent = 25, string $contentType = Content::CONTENT_TYPE['ARTICLES']): void
+    function generatesContent(string $type, int $countContent = 25, string $contentType = Content::TYPE['ARTICLES']): void
     {
         /* Сохраняем текущее время до начала цикла и генерации */
         $start_time = microtime(true);
-        $file = null;
 
-        /* цикл с надстройкой, сколько генерировать контента */
-        for ($i = 1; $i <= $countContent; $i++) {
+        $file = null;
+        $objModel = new Model();
+        // последний id
+        $lastId = $objModel->getLastId($type);
+
+        /* цикл с надстройкой, сколько генерировать контента и чего */
+        for ($i = $lastId; $i <= $countContent + $lastId; $i++) {
             try {
                 if (!$file = fopen("../database/$contentType/" . $i, 'w+')) {
                     print "Не могу открыть файл ($file)";
                     exit;
                 }
-                fwrite($file, Content::TITLE_ARTICLE . "\n");
-                fwrite($file, Content::TEXT . "\n");
-                fwrite($file, Content::AUTHOR . "\n");
-                fwrite($file, date("d-m-Y H:m:s"));
+                /**
+                 * Что генерируем? Пользователей или контент ( новости, статьи )
+                 */
+                if ($contentType === 'user') {
+                    fwrite($file, "UserTest$i\n");
+                    fwrite($file, password_hash("testpassword", PASSWORD_DEFAULT) . "\n");
+                    fwrite($file, "test@user.ru\n");
+                    fwrite($file, "Сгенерированный Пользователь\n");
+                    fwrite($file, "10-05-2000 10:00:00\n");
+                    fwrite($file, "Сгенерированный пользователь №$i\n");
+                    fwrite($file, 'member');
+                } else {
+                    fwrite($file, Content::TITLE_ARTICLE . "\n");
+                    fwrite($file, Content::TEXT . "\n");
+                    fwrite($file, Content::AUTHOR . "\n");
+                    fwrite($file, date("d-m-Y H:m:s"));
+                }
             } catch (Exception $e) {
                 var_dump($e);
             } finally {
@@ -52,12 +72,14 @@ class ContentGenerator
         /*
          * Выводим информацию о времени затраченном на генерацию, и количество контента
          */
-        print 'Время выполнения генерации контента: ' . round(($end_time - $start_time), 3) . " сек. \n";
-        print 'Количество сгенерированного контента: ' . ($i - 1) . " $contentType \n";
+        print 'Время затраченное на генерацию: ' . round(($end_time - $start_time), 3) . " сек. \n";
+        print 'Количество сгенерированного: ' . $countContent . " $contentType \n";
     }
 }
 
-/* Генерирует 100 статей */
-(new ContentGenerator())->generatesContent(100);
-/* Генерирует 100 новостей */
-(new ContentGenerator())->generatesContent(100, Content::CONTENT_TYPE['NEWS']);
+/* Генерирует 25 статей */
+(new ContentGenerator())->generatesContent(Paths::DIR_BASE_ARTICLES,25);
+/* Генерирует 25 новостей */
+//(new ContentGenerator())->generatesContent(Paths::DIR_BASE_NEWS, 25, Content::TYPE['NEWS']);
+/* Генерирует 25 пользователей */
+//(new ContentGenerator())->generatesContent(Paths::DIR_BASE_USERS, 25, Content::TYPE['USER']);
