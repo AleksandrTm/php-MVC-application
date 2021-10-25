@@ -2,7 +2,6 @@
 
 namespace Models;
 
-use config\Content;
 use config\Paths;
 
 class NewsModel extends ContentModel

@@ -56,7 +56,7 @@ class Model
     /**
      * Удаление по id
      */
-    function delete(int $id, string $typeBase): void
+    function deletesContent(int $id, string $typeBase): void
     {
         try {
             unlink($typeBase . $id);

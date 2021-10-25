@@ -11,7 +11,7 @@ class NewsController extends Controller
     /**
      * Получает все новости из базы данных и передаёт их во View
      */
-    function getNewsPage()
+    function getNewsPage(): void
     {
         $objNews = new NewsModel();
         $content['content'] = $objNews->getNewsFromTheLastDay();

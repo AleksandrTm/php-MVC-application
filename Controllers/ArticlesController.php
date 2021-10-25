@@ -40,6 +40,10 @@ class ArticlesController extends Controller
 
         $this->view->render('full-content', 'Статьи', $content);
     }
+
+    /**
+     * Удаляет нужный контент по id
+     */
     function removesContent(int $id): void
     {
         $objArticles = new ArticlesModel();
@@ -49,7 +53,7 @@ class ArticlesController extends Controller
          */
         if ($objArticles->checksExistenceRecord(Paths::DIR_BASE_ARTICLES, $id)) {
             /** Удаляем пользователя и остаёмся на текущей странице */
-            $objArticles->delete($id, Paths::DIR_BASE_ARTICLES);
+            $objArticles->deletesContent($id, Paths::DIR_BASE_ARTICLES);
         } else {
             /** Если статья не найден в базе, отправляем на главную */
             header('Location: http://localsite.ru');
@@ -57,8 +61,7 @@ class ArticlesController extends Controller
         }
     }
 
-    function getAddContentForm()
+    function getAddContentForm(string $string)
     {
-        $this->view->render('content-action', 'Добавление контента');
     }
 }

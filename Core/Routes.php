@@ -130,7 +130,12 @@ class Routes extends Router
             case "articles/add":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $obj = new ArticlesController();
-                $obj->getAddContentForm();
+                $obj->getAddContentForm('add');
+                break;
+            case "articles/edit":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
+                $obj = new ArticlesController();
+                $obj->getAddContentForm('edit');
                 break;
             case "articles/delete":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);

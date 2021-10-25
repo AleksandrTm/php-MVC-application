@@ -2,6 +2,9 @@
 
 namespace Entities;
 
+/**
+ * Сущность пользователя ( получает данные из $_POST ) и хранит
+ */
 class User
 {
     private string $login;
