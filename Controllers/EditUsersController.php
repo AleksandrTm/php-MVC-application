@@ -4,7 +4,7 @@ namespace Controllers;
 
 use config\Paths;
 use Core\Controller;
-use Core\User;
+use Entities\User;
 use Core\Validations;
 use Models\UserModel;
 
@@ -12,7 +12,9 @@ class EditUsersController extends Controller
 {
     function getEditUserForm($id): void
     {
-        if ((new UserModel())->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
+        $obj = new UserModel();
+
+        if ($obj->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
             $this->view->render('edit-user', 'Редактирование пользователя');
         } else {
             $info['userNotFound'] = "Пользователь не найден в базе";
@@ -28,12 +30,12 @@ class EditUsersController extends Controller
 
         $info = $objValidation->validatesForms($objUser);
 
-                if (isset($info)) {
-                    $info[] = 'Ошибка редактирования';
-                } else {
-                    $info = ['resultEdit' => 'Редактирование успешно'];
-                    $objUserModel->editUser($objUser, $id);
-                }
+        if (isset($info)) {
+            $info['resultEdit'] = 'Ошибка редактирования';
+        } else {
+            $info = ['resultEdit' => 'Редактирование успешно'];
+            $objUserModel->editUser($objUser, $id);
+        }
 
         $this->view->render('edit-user', 'Редактирование пользователя', $info);
     }

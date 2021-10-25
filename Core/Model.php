@@ -45,11 +45,23 @@ class Model
     /**
      * Получаем последний id записи в указанной базе данных
      */
-    function getLastId(): int
+    function getLastId(string $type): int
     {
-        $this->getAllDataFromDatabase(Paths::DIR_BASE_USERS);
-        $users = array_keys($this->allData);
-        rsort($users);
-        return (int)array_shift($users);
+        $this->getAllDataFromDatabase($type);
+        $data = array_keys($this->allData);
+        rsort($data);
+        return (int)array_shift($data);
+    }
+
+    /**
+     * Удаление по id
+     */
+    function delete(int $id, string $typeBase): void
+    {
+        try {
+            unlink($typeBase . $id);
+        } catch (Exception $e) {
+            var_dump($e);
+        }
     }
 }

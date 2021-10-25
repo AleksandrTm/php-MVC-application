@@ -1,6 +1,8 @@
 <div class="table">
-    <?= $info['resultEdit'] ?? null; ?>
-    <?php if(is_array($info)) { ?>
+    <?php foreach ($info ?? null as $result) { ?>
+        <div><?php echo $result; ?></div>
+    <?php } ?>
+    <?php if(!array_key_exists('userNotFound', $info)) { ?>
     <div class="forms">
         <h3>Редактирование пользователя</h3>
         <form id="send" method="post" action="">

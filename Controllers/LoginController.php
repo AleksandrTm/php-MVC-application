@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-use Core\User;
+use Entities\User;
 use Core\Controller;
 use Core\Authorization;
 use Models\UserModel;
@@ -27,9 +27,8 @@ class LoginController extends Controller
     function getResultAuthorizationUser(): void
     {
         $objUserModel = new UserModel();
-        $objUser = new User($_POST);
+        $objUser = new User();
 
-        /** Проверяем  */
         $this->authorizationStatus = $this->authorization->logInUser($objUser, $objUserModel);
 
         $info = ['statusAuthorization' => $this->authorizationStatus];

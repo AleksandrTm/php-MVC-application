@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use config\Paths;
 use Core\Controller;
 use Models\NewsModel;
 
@@ -13,14 +14,18 @@ class NewsController extends Controller
     function getNewsPage()
     {
         $objNews = new NewsModel();
-        $content = $objNews->getNewsFromTheLastDay();
-        $this->view->render('news', 'Новости', $content);
+        $content['content'] = $objNews->getNewsFromTheLastDay();
+        $content['titleContent'] = 'Список новостей за последнии 24 часа';
+        $content['typeContent'] = 'news';
+
+        $this->view->render('content', 'Новости', $content);
     }
 
     function getFullNewsPage($id)
     {
-        $content[] = ['idNews' => $id];
+        $objNews = new NewsModel();
+        $content = $objNews->getContentByID($id, Paths::DIR_BASE_NEWS);
 
-        $this->view->render('full-news', 'Новость', $content);
+        $this->view->render('full-content', 'Новость', $content);
     }
 }

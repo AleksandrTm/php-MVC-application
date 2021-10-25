@@ -3,32 +3,19 @@
 namespace Models;
 
 use config\Paths;
-use Core\Model;
 
-class ArticlesModel extends Model
+class ArticlesModel extends ContentModel
 {
-    protected array $articlesInfo = [];
+    protected array $articlesData = [];
 
     /**
      * Получаем данные всех статей из базы данных и заносим в массив по ключам
      */
     function getDataAllArticles(): array
     {
-        $this->getAllDataFromDatabase(Paths::DIR_BASE_ARTICLES);
+        /** Выводим все статьи с кратким содержанием */
+        $this->articlesData = $this->getDataAllContent(Paths::DIR_BASE_ARTICLES, true);
 
-        foreach ($this->allData as $articlesId => $articlesData) {
-
-            /** Разбиваем по строкам и заносим в переменные */
-            list($titleArticles, $textArticles, $author, $date) = explode("\n", $articlesData);
-
-            /** Заносим данные в ассоциативный массив */
-            $this->articlesInfo[$articlesId] = [
-                'titleArticles' => $titleArticles,
-                'textArticles' => $textArticles,
-                'author' => $author,
-                'date' => $date,
-            ];
-        }
-        return $this->articlesInfo;
+        return $this->articlesData;
     }
 }

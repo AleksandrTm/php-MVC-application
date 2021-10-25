@@ -1,6 +1,6 @@
 <?php
 
-namespace Core;
+namespace Entities;
 
 class User
 {
@@ -17,7 +17,7 @@ class User
     {
         foreach ($_POST as $key => $value) {
             if (property_exists($this, $key)) {
-                $this->$key = $value;
+                $this->$key = htmlspecialchars($value);
             }
         }
     }

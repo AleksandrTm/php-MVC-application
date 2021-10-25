@@ -13,7 +13,7 @@ use Controllers\ViewUsersController;
 use Controllers\NotFoundPageController;
 use Controllers\RegistrationController;
 
-use config\Permissions as access;
+use Enums\Permissions as access;
 
 class Routes extends Router
 {
@@ -119,6 +119,23 @@ class Routes extends Router
                 $obj = new NewsController();
                 $obj->getNewsPage();
                 break;
+            case "news/view":
+                $obj = new NewsController();
+                $obj->getFullNewsPage($this->path['id']);
+                break;
+            case "articles/view":
+                $obj = new ArticlesController();
+                $obj->getFullArticlePage($this->path['id']);
+                break;
+            case "articles/add":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
+                $obj = new ArticlesController();
+                $obj->getAddContentForm();
+                break;
+            case "articles/delete":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
+                $obj = new ArticlesController();
+                $obj->removesContent($this->path['id']);
             case "articles":
                 $obj = new ArticlesController();
                 $obj->getArticlesPage();

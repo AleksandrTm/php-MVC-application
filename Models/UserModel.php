@@ -3,7 +3,7 @@
 namespace Models;
 
 use Exception;
-use Core\User;
+use Entities\User;
 use Core\Model;
 use config\Paths;
 
@@ -39,10 +39,10 @@ class UserModel extends Model
      */
     function addUser(User $user): void
     {
-        if (empty($this->getLastId())) {
+        if (empty($this->getLastId(Paths::DIR_BASE_USERS))) {
             $userId = Paths::DIR_BASE_USERS . 1;
         } else {
-            $userId = Paths::DIR_BASE_USERS . ($this->getLastId() + 1);
+            $userId = Paths::DIR_BASE_USERS . ($this->getLastId(Paths::DIR_BASE_USERS) + 1);
         }
         $this->writeData($user, $userId);
     }
@@ -56,18 +56,6 @@ class UserModel extends Model
     {
         if ($this->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
             $this->writeData($user, Paths::DIR_BASE_USERS . $id);
-        }
-    }
-
-    /**
-     * Удаление пользователя по id
-     */
-    function deleteUser(int $id): void
-    {
-        try {
-            unlink(Paths::DIR_BASE_USERS . $id);
-        } catch (Exception $e) {
-            var_dump($e);
         }
     }
 

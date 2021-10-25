@@ -2,7 +2,7 @@
 
 namespace Core;
 
-use config\Permissions;
+use Enums\Permissions;
 
 /**
  * Обрабатывает URI и разбивает на параметры

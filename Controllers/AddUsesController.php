@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-use Core\User;
+use Entities\User;
 use Core\Controller;
 use Core\Validations;
 use Models\UserModel;
