@@ -1,8 +1,9 @@
 <?php
 
-
 namespace phpScripts;
-require_once "../Core/Autoload.php";
+
+require_once "../Core/Autoload.php";;
+$dbConfig = require_once "../config/database.php";
 
 use Enums\Content;
 use config\Paths;
@@ -25,9 +26,9 @@ class ContentGenerator
      *
      * Возможность указать количество нужного тестового контента, а так же тип ( статьи или новости )
      *
-     * По умолчанию 25 статей, параметр для смены на новости: Content::CONTENT_TYPE['NEWS']
+     * По умолчанию 25 статей, параметр для новости: Content::TYPE['NEWS']
      */
-    function generatesContent(string $type, int $countContent = 25, string $contentType = Content::TYPE['ARTICLES']): void
+    function generatesContent(string $type, string $contentType, int $countContent = 25): void
     {
         /* Сохраняем текущее время до начала цикла и генерации */
         $start_time = microtime(true);
@@ -36,9 +37,8 @@ class ContentGenerator
         $objModel = new Model();
         // последний id
         $lastId = $objModel->getLastId($type);
-
         /* цикл с надстройкой, сколько генерировать контента и чего */
-        for ($i = $lastId; $i <= $countContent + $lastId; $i++) {
+        for ($i = 1 + $lastId; $i <= $countContent + $lastId; $i++) {
             try {
                 if (!$file = fopen("../database/$contentType/" . $i, 'w+')) {
                     print "Не могу открыть файл ($file)";
@@ -47,7 +47,7 @@ class ContentGenerator
                 /**
                  * Что генерируем? Пользователей или контент ( новости, статьи )
                  */
-                if ($contentType === 'user') {
+                if ($contentType === Content::TYPE['USERS']) {
                     fwrite($file, "UserTest$i\n");
                     fwrite($file, password_hash("testpassword", PASSWORD_DEFAULT) . "\n");
                     fwrite($file, "test@user.ru\n");
@@ -78,8 +78,8 @@ class ContentGenerator
 }
 
 /* Генерирует 25 статей */
-(new ContentGenerator())->generatesContent(Paths::DIR_BASE_ARTICLES,25);
+(new ContentGenerator())->generatesContent(Paths::DIR_BASE_ARTICLES, Content::TYPE['ARTICLES']);
 /* Генерирует 25 новостей */
-//(new ContentGenerator())->generatesContent(Paths::DIR_BASE_NEWS, 25, Content::TYPE['NEWS']);
+(new ContentGenerator())->generatesContent(Paths::DIR_BASE_NEWS, Content::TYPE['NEWS']);
 /* Генерирует 25 пользователей */
-//(new ContentGenerator())->generatesContent(Paths::DIR_BASE_USERS, 25, Content::TYPE['USER']);
+(new ContentGenerator())->generatesContent(Paths::DIR_BASE_USERS, Content::TYPE['USERS']);
