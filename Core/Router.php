@@ -25,7 +25,7 @@ class Router
     public function __construct()
     {
         $this->requestMethod = htmlspecialchars($_SERVER['REQUEST_METHOD']);
-        $this->requestURI = htmlspecialchars($_SERVER['REQUEST_URI']);
+        $this->requestURI = htmlspecialchars(explode('?', $_SERVER['REQUEST_URI'])[0]);
 
         /** Выдаем роль пользователю, если у него её нет, по дефолту это Гость */
         if (!isset($_SESSION['role'])) $_SESSION['role'] = Permissions::ROLE['GUEST'];

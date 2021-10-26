@@ -2,7 +2,6 @@
 
 namespace Models;
 
-use config\Paths;
 use Core\Model;
 use Exception;
 
