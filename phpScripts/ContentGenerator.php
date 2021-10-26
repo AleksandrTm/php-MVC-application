@@ -59,7 +59,7 @@ class ContentGenerator
                     fwrite($file, Content::TITLE_ARTICLE . "\n");
                     fwrite($file, Content::TEXT . "\n");
                     fwrite($file, Content::AUTHOR . "\n");
-                    fwrite($file, date("d-m-Y H:m:s"));
+                    fwrite($file, date("d-m-Y H:i:s"));
                 }
             } catch (Exception $e) {
                 var_dump($e);
@@ -80,6 +80,6 @@ class ContentGenerator
 /* Генерирует 25 статей */
 (new ContentGenerator())->generatesContent(Paths::DIR_BASE_ARTICLES, Content::TYPE['ARTICLES']);
 /* Генерирует 25 новостей */
-(new ContentGenerator())->generatesContent(Paths::DIR_BASE_NEWS, Content::TYPE['NEWS']);
+//(new ContentGenerator())->generatesContent(Paths::DIR_BASE_NEWS, Content::TYPE['NEWS']);
 /* Генерирует 25 пользователей */
-(new ContentGenerator())->generatesContent(Paths::DIR_BASE_USERS, Content::TYPE['USERS']);
+//(new ContentGenerator())->generatesContent(Paths::DIR_BASE_USERS, Content::TYPE['USERS']);

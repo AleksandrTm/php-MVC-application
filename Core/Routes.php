@@ -115,6 +115,21 @@ class Routes extends Router
                 $obj = new LoginController();
                 $obj->logsOut();
                 break;
+            case "news/add":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
+                $obj = new NewsController();
+                $obj->getAddNewsForm();
+                break;
+            case "news/edit":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
+                $obj = new NewsController();
+                $obj->getEditNewsForm();
+                break;
+            case "news/delete":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
+                $obj = new NewsController();
+                $obj->removesNews($this->path['id']);
+                break;
             case "news":
                 $obj = new NewsController();
                 $obj->getNewsPage();
@@ -130,17 +145,18 @@ class Routes extends Router
             case "articles/add":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $obj = new ArticlesController();
-                $obj->getAddContentForm('add');
+                $obj->getAddArticleForm();
                 break;
             case "articles/edit":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $obj = new ArticlesController();
-                $obj->getAddContentForm('edit');
+                $obj->getEditArticleForm();
                 break;
             case "articles/delete":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $obj = new ArticlesController();
-                $obj->removesContent($this->path['id']);
+                $obj->removesArticle($this->path['id']);
+                break;
             case "articles":
                 $obj = new ArticlesController();
                 $obj->getArticlesPage();
@@ -183,6 +199,26 @@ class Routes extends Router
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $objEditUser = new EditUsersController();
                 $objEditUser->getResultEditUser($this->path['id']);
+                break;
+            case "articles/add":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
+                $obj = new ArticlesController();
+                $obj->getResultAddArticle();
+                break;
+            case "articles/edit":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
+                $objEditArticle = new ArticlesController();
+                $objEditArticle->getResultEditArticle($this->path['id']);
+                break;
+            case "news/add":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
+                $obj = new NewsController();
+                $obj->getResultAddNews();
+                break;
+            case "news/edit":
+                $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
+                $objEditArticle = new NewsController();
+                $objEditArticle->getResultEditNews($this->path['id']);
                 break;
             default:
                 (new NotFoundPageController())->getPage404();

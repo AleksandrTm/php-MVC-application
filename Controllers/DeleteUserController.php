@@ -20,7 +20,7 @@ class DeleteUserController extends Controller
          */
         if ($obj->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
             /** Удаляем пользователя и остаёмся на текущей странице */
-            $obj->deletesContent($id, Paths::DIR_BASE_USERS);
+            $obj->removeFromTheDatabase($id, Paths::DIR_BASE_USERS);
         } else {
             /** Если пользователь не найден в базе, отправляем на главную */
             header('Location: http://localsite.ru');

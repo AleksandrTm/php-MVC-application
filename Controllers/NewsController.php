@@ -4,28 +4,119 @@ namespace Controllers;
 
 use config\Paths;
 use Core\Controller;
+use Core\Validations;
+use Entities\Content;
 use Models\NewsModel;
 
 class NewsController extends Controller
 {
+    protected string $database = Paths::DIR_BASE_NEWS;
+    protected array $content;
+
     /**
      * Получает все новости из базы данных и передаёт их во View
      */
     function getNewsPage(): void
     {
         $objNews = new NewsModel();
-        $content['content'] = $objNews->getNewsFromTheLastDay();
-        $content['titleContent'] = 'Список новостей за последнии 24 часа';
-        $content['typeContent'] = 'news';
 
-        $this->view->render('content', 'Новости', $content);
+        $this->content['content'] = $objNews->getNewsFromTheLastDay();
+        $this->content['titleContent'] = 'Список новостей за последнии 24 часа';
+        $this->content['typeContent'] = 'news';
+
+        $this->view->render('content', 'Новости', $this->content);
     }
 
-    function getFullNewsPage($id)
+    /**
+     * Получаем страницу с полной новостью
+     */
+    function getFullNewsPage(int $id): void
     {
         $objNews = new NewsModel();
-        $content = $objNews->getContentByID($id, Paths::DIR_BASE_NEWS);
+
+        $content = $objNews->getContentByID($id, $this->database);
 
         $this->view->render('full-content', 'Новость', $content);
+    }
+
+    /**
+     * Получаем страницу с формой добавления новости
+     */
+    public function getAddNewsForm(): void
+    {
+        $this->content['title'] = 'Добавление новости';
+
+        $this->view->render('content-action', $this->content['title'], $this->content);
+
+    }
+
+    /**
+     * Получаем страницу с формой редактирования новости
+     */
+    public function getEditNewsForm(): void
+    {
+        $this->content['title'] = 'Редактирование новости';
+
+        $this->view->render('content-action', $this->content['title'], $this->content);
+    }
+
+    /**
+     * Удаляет нужную новость по id
+     */
+    function removesNews(int $id): void
+    {
+        $objArticles = new NewsModel();
+
+        $result = $objArticles->removesContent($this->database, $id);
+        if ($result) {
+            $this->content['resultDelete'] = 'Новость успешно удалена';
+        } else {
+            $this->content['resultDelete'] = 'Ошибка удаления новости';
+        }
+        $this->getNewsPage();
+    }
+
+    /**
+     * Результат добавления новости в базу данных
+     */
+    public function getResultAddNews(): void
+    {
+        $objValidation = new Validations();
+        $objNewsModel = new NewsModel();
+        $objContent = new Content();
+
+        $this->content = $objValidation->validatesFormsContent($objContent);
+
+        if (isset($this->content)) {
+            $this->content['result'] = 'Ошибка добавления статьи';
+        } else {
+            $this->content = ['result' => 'Статья успешно добавлена'];
+            $objNewsModel->addContent($objContent, $this->database);
+        }
+
+        $this->view->render('content-action', 'Добавление новости', $this->content);
+    }
+
+    /**
+     * Результат редактирования новости и сохранение в базу данных
+     *
+     * Валидация полей
+     */
+    public function getResultEditNews(int $id): void
+    {
+        $objValidation = new Validations();
+        $objNewsModel = new NewsModel();
+        $objContent = new Content();
+
+        $this->content = $objValidation->validatesFormsContent($objContent);
+
+        if (isset($this->content)) {
+            $this->content['result'] = 'Ошибка редактирования новости';
+        } else {
+            $this->content = ['result' => 'Новость успешно отредактирована'];
+            $objNewsModel->editContent($objContent, $id, $this->database);
+        }
+
+        $this->view->render('content-action', 'Редактирование новости', $this->content);
     }
 }

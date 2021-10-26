@@ -12,11 +12,11 @@ use config\Paths;
 class View
 {
     /**
-     * Имя подключаемого шаблона
+     * $template: Имя подключаемого шаблона
      *
-     * Загаловок страницы
+     * $title: Загаловок страницы
      *
-     * Массив данных для обработки в шаблоне
+     * $info: Массив данных для обработки в шаблоне
      */
     public function render(string $template, string $title, array $info = []): void
     {

@@ -7,7 +7,9 @@ use Core\Controller;
 use Core\Authorization;
 use Models\UserModel;
 
-
+/**
+ * Контроллер Сессии пользователя ( авторизация, выход )
+ */
 class LoginController extends Controller
 {
     protected Authorization $authorization;
@@ -19,11 +21,17 @@ class LoginController extends Controller
         $this->authorization = new Authorization();
     }
 
-    public function getLoginForm(): void
+    /**
+     * Получаем форму для авторизации ( ввода логина и пароля )
+     */
+    function getLoginForm(): void
     {
         $this->view->render("login", 'Авторизация');
     }
 
+    /**
+     * Результат авторизации ( набор ошибок или успех авторизации )
+     */
     function getResultAuthorizationUser(): void
     {
         $objUserModel = new UserModel();
@@ -36,7 +44,10 @@ class LoginController extends Controller
         $this->view->render("login", 'Авторизация', $info);
     }
 
-    public function logsOut(): void
+    /**
+     * Вызов выхода из авторизации ( выход для пользователя )
+     */
+    function logsOut(): void
     {
         $this->authorization->logOut();
     }

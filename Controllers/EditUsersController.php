@@ -10,7 +10,7 @@ use Models\UserModel;
 
 class EditUsersController extends Controller
 {
-    function getEditUserForm($id): void
+    function getEditUserForm(int $id): void
     {
         $obj = new UserModel();
 
@@ -22,7 +22,7 @@ class EditUsersController extends Controller
         }
     }
 
-    function getResultEditUser($id): void
+    function getResultEditUser(int $id): void
     {
         $objValidation = new Validations();
         $objUserModel = new UserModel();

@@ -2,6 +2,7 @@
 
 namespace Core;
 
+use Entities\Content;
 use Entities\User;
 
 /**
@@ -12,7 +13,7 @@ class Validations
     protected ?array $validationErrors = null;
 
     /**
-     * Вызывает функции проверки для полей, валидирует форму
+     * Вызывает функции проверки для полей пользователя, валидирует форму
      */
     function validatesForms(User $user): ?array
     {
@@ -23,6 +24,17 @@ class Validations
         $this->checksFullNameField($user->getFullName());
         $this->checksDateField($user->getDate());
         $this->checksAboutField($user->getAbout());
+
+        return $this->validationErrors;
+    }
+
+    /**
+     * Вызывает функции проверки для полей контента, валидирует форму
+     */
+    function validatesFormsContent(Content $content): ?array
+    {
+        $this->checksTitleField($content->getTitle());
+        $this->checksTextField($content->getText());
 
         return $this->validationErrors;
     }
@@ -125,6 +137,26 @@ class Validations
     {
         if (!(preg_match("/[а-яА-Яa-zA-Z0-9 ]{0,200}/", $about))) {
             $this->validationErrors[] = "- Описание не может быть более 200 символов";
+        }
+    }
+
+    /**
+     * Проверка поля Заголовок контента
+     */
+    protected function checksTitleField(string $getTitle): void
+    {
+        if (empty($getTitle)) {
+            $this->validationErrors[] = "- Поле заголовок не может быть пустым";
+        }
+    }
+
+    /**
+     * Проверка поля текст контента
+     */
+    protected function checksTextField(string $getText): void
+    {
+        if (empty($getText)) {
+            $this->validationErrors[] = "- Поле текст не может быть пустым";
         }
     }
 }

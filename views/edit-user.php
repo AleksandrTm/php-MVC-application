@@ -47,8 +47,6 @@
             <button id="submit" type="submit">Сохранить изменения</button>
 
         </form>
-        <?php } else { ?>
-            <?= $info['userNotFound'] ?? null; ?>
         <?php } ?>
     </div>
 </div>

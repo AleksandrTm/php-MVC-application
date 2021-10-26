@@ -1,5 +1,6 @@
 <div class="news">
     <h4><?= $info['titleContent'] ?></h4>
+    <div class="remove-content"><?= $info['resultDelete'] ?? null ?></div>
     <?php if (($_SESSION['role'] ?? null) === "admin") { ?>
         <div class="table-head">
         <a href="/<?= $info['typeContent'] ?>/add" class="table-link">

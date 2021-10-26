@@ -1,13 +1,9 @@
 <div class="table">
-    <?php foreach ($info ?? null as $result) { ?>
-        <div><?php echo $result; ?></div>
-    <?php } ?>
     <?php if(!array_key_exists('NotFound', $info)) { ?>
     <div class="forms">
         <h3><?= $info['title'] ?? null; ?></h3>
+        <div><?= $info['result'] ?? null; ?></div>
         <form id="send" method="post" action="">
-
-            <input type="hidden" name="type-form" value="<?= $info['type'] ?? null; ?>">
 
             <div class="form-line">
                 <label for="title">Заголовок</label>

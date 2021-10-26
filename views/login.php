@@ -7,7 +7,6 @@
         <?php } ?>
         <div class="forms">
             <form id="send" method="post" action="">
-                <input type="hidden" name="type-form" value="login">
 
                 <div class="form-line">
                     <label for="login">Login: </label>

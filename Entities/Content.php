@@ -38,6 +38,4 @@ class Content
     {
         $this->text = $text;
     }
-
-
 }

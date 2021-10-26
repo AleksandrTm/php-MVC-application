@@ -2,6 +2,11 @@
 
 namespace Core;
 
+/**
+ * Базовый Контроллер
+ *
+ * Создаёт обязательный для всех контроллеров View объект
+ */
 class Controller
 {
     protected ?View $view = null;

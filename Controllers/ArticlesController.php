@@ -2,15 +2,20 @@
 
 namespace Controllers;
 
-use config\Paths;
 use Core\Controller;
+use Core\Validations;
+use Entities\Content;
 use Models\ArticlesModel;
+use config\Paths;
 
 /**
  * Контроллер Статей
  */
 class ArticlesController extends Controller
 {
+    protected string $database = Paths::DIR_BASE_ARTICLES;
+    protected ?array $content = null;
+
     /**
      * Получает все статьи из базы данных и передаёт их во View
      */
@@ -19,15 +24,15 @@ class ArticlesController extends Controller
         $objArticles = new ArticlesModel();
 
         /** Хранит все статьи по id */
-        $content['content'] = $objArticles->getDataAllArticles();
+        $this->content['content'] = $objArticles->getDataAllArticles();
 
-        /** Заголовок */
-        $content['titleContent'] = 'Список статей';
+        /** Заголовок статьи <h3> */
+        $this->content['titleContent'] = 'Список статей';
 
         /** Тип передаваемого контента во view */
-        $content['typeContent'] = 'articles';
+        $this->content['typeContent'] = 'articles';
 
-        $this->view->render('content', 'Статьи', $content);
+        $this->view->render('content', 'Статьи', $this->content);
     }
 
     /**
@@ -36,32 +41,89 @@ class ArticlesController extends Controller
     function getFullArticlePage(int $id): void
     {
         $objArticle = new ArticlesModel();
-        $content = $objArticle->getContentByID($id, Paths::DIR_BASE_ARTICLES);
 
-        $this->view->render('full-content', 'Статьи', $content);
+        $this->content = $objArticle->getContentByID($id, $this->database);
+
+        $this->view->render('full-content', 'Статья', $this->content);
     }
 
     /**
-     * Удаляет нужный контент по id
+     * Получаем страницу с формой добавления статьи
      */
-    function removesContent(int $id): void
+    function getAddArticleForm(): void
+    {
+        $this->content['title'] = 'Добавление статьи';
+
+        $this->view->render('content-action', $this->content['title'], $this->content);
+    }
+
+    /**
+     * Получаем страницу с формой редактирования статьи
+     */
+    public function getEditArticleForm(): void
+    {
+        $this->content['title'] = 'Редактирование статьи';
+
+        $this->view->render('content-action', $this->content['title'], $this->content);
+    }
+
+    /**
+     * Результат редактирования статьи и сохранение в базу данных
+     *
+     * Валидация полей
+     */
+    function getResultEditArticle(int $id): void
+    {
+        $objValidation = new Validations();
+        $objArticleModel = new ArticlesModel();
+        $objContent = new Content();
+
+        $this->content = $objValidation->validatesFormsContent($objContent);
+
+        if (isset($this->content)) {
+            $this->content['result'] = 'Ошибка редактирования';
+        } else {
+            $this->content = ['result' => 'Редактирование успешно'];
+            $objArticleModel->editContent($objContent, $id, $this->database);
+        }
+
+        $this->view->render('content-action', 'Редактирование статьи', $this->content);
+    }
+
+    /**
+     * Удаляет нужную статью по id
+     */
+    function removesArticle(int $id): void
     {
         $objArticles = new ArticlesModel();
 
-        /**
-         * Проверка на существования пользователя в базе данных и последующих действий с ним
-         */
-        if ($objArticles->checksExistenceRecord(Paths::DIR_BASE_ARTICLES, $id)) {
-            /** Удаляем пользователя и остаёмся на текущей странице */
-            $objArticles->deletesContent($id, Paths::DIR_BASE_ARTICLES);
+        $result = $objArticles->removesContent($this->database, $id);
+        if ($result) {
+            $this->content['resultDelete'] = 'Статья успешно удалена';
         } else {
-            /** Если статья не найден в базе, отправляем на главную */
-            header('Location: http://localsite.ru');
-            exit();
+            $this->content['resultDelete'] = 'Ошибка удаления статьи';
         }
+        $this->getArticlesPage();
     }
 
-    function getAddContentForm(string $string)
+    /**
+     * Результат добавления статьи в базу данных
+     */
+    public function getResultAddArticle(): void
     {
+        $objValidation = new Validations();
+        $objArticleModel = new ArticlesModel();
+        $objContent = new Content();
+
+        $this->content = $objValidation->validatesFormsContent($objContent);
+
+        if (isset($this->content)) {
+            $this->content['result'] = 'Ошибка добавления статьи';
+        } else {
+            $this->content = ['result' => 'Статья успешно добавлена'];
+            $objArticleModel->addContent($objContent, $this->database);
+        }
+
+        $this->view->render('content-action', 'Добавление статьи', $this->content);
     }
 }

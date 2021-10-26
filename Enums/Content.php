@@ -10,6 +10,6 @@ class Content
     const TYPE = [
         'ARTICLES' => 'articles',
         'NEWS' => 'news',
-        'USER' => 'user',
+        'USERS' => 'users',
     ];
 }

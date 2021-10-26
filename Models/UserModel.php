@@ -44,7 +44,7 @@ class UserModel extends Model
         } else {
             $userId = Paths::DIR_BASE_USERS . ($this->getLastId(Paths::DIR_BASE_USERS) + 1);
         }
-        $this->writeData($user, $userId);
+        $this->writingDatabase($user, $userId);
     }
 
     /**
@@ -55,11 +55,14 @@ class UserModel extends Model
     function editUser(User $user, int $id): void
     {
         if ($this->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
-            $this->writeData($user, Paths::DIR_BASE_USERS . $id);
+            $this->writingDatabase($user, Paths::DIR_BASE_USERS . $id);
         }
     }
 
-    function writeData(User $user, $id): void
+    /**
+     * Записывает переданные данные в базу данных
+     */
+    function writingDatabase(User $user, int $id): void
     {
         $files = null;
         try {

@@ -3,7 +3,6 @@
 namespace Core;
 
 use Exception;
-use config\Paths;
 
 /**
  * Базовая модель
@@ -15,7 +14,7 @@ class Model
     /**
      * Получает все данные с указанной базы данных, и отдаёт их в массиве
      */
-    function getAllDataFromDatabase($path): array
+    function getAllDataFromDatabase(string $path): array
     {
         try {
             if ($dir = opendir($path)) {
@@ -37,9 +36,9 @@ class Model
     /**
      * Проверка наличия записи в базе по id
      */
-    function checksExistenceRecord($base, int $id): bool
+    function checksExistenceRecord(string $database, int $id): bool
     {
-        return file_exists($base . $id);
+        return file_exists($database . $id);
     }
 
     /**
@@ -54,12 +53,12 @@ class Model
     }
 
     /**
-     * Удаление по id
+     * Удаление из базы данных записи по id
      */
-    function deletesContent(int $id, string $typeBase): void
+    function removeFromTheDatabase(int $id, string $database): void
     {
         try {
-            unlink($typeBase . $id);
+            unlink($database . $id);
         } catch (Exception $e) {
             var_dump($e);
         }
