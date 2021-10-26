@@ -40,11 +40,11 @@ class UserModel extends Model
     function addUser(User $user): void
     {
         if (empty($this->getLastId(Paths::DIR_BASE_USERS))) {
-            $userId = Paths::DIR_BASE_USERS . 1;
+            $userId = 1;
         } else {
-            $userId = Paths::DIR_BASE_USERS . ($this->getLastId(Paths::DIR_BASE_USERS) + 1);
+            $userId = ($this->getLastId(Paths::DIR_BASE_USERS) + 1);
         }
-        $this->writingDatabase($user, $userId);
+        $this->writingDatabase($user, Paths::DIR_BASE_USERS, $userId);
     }
 
     /**
@@ -55,18 +55,18 @@ class UserModel extends Model
     function editUser(User $user, int $id): void
     {
         if ($this->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
-            $this->writingDatabase($user, Paths::DIR_BASE_USERS . $id);
+            $this->writingDatabase($user, Paths::DIR_BASE_USERS, $id);
         }
     }
 
     /**
      * Записывает переданные данные в базу данных
      */
-    function writingDatabase(User $user, int $id): void
+    function writingDatabase(User $user, string $database, int $id): void
     {
         $files = null;
         try {
-            $files = fopen($id, 'w');
+            $files = fopen($database . $id, 'w');
             fwrite($files, $user->getLogin() . "\n");
             fwrite($files, password_hash($user->getPassword(), PASSWORD_DEFAULT) . "\n");
             fwrite($files, $user->getEmail() . "\n");

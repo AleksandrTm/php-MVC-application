@@ -11,7 +11,7 @@ use Models\NewsModel;
 class NewsController extends Controller
 {
     protected string $database = Paths::DIR_BASE_NEWS;
-    protected array $content;
+    protected ?array $content = null;
 
     /**
      * Получает все новости из базы данных и передаёт их во View

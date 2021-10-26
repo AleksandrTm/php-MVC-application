@@ -43,11 +43,15 @@ class ContentModel extends Model
      */
     function getShortText(string $text, int $number = 100): string
     {
-        // Обрезаем строку до 100 символов по дефолту
-        $text = substr($text, 0, $number);
+        /** Обрезать если длинна текста контента более $number символов */
+        if (strlen($text) >= $number) {
+            // Обрезаем строку до 100 символов по дефолту
+            $text = substr($text, 0, $number);
 
-        // Ищем последний пробел и обрезаем по нему, добавляем троеточие
-        return substr($text, 0, strrpos($text, ' ')) . "...";
+            // Ищем последний пробел и обрезаем по нему, добавляем троеточие
+            return substr($text, 0, strrpos($text, ' ')) . "...";
+        }
+        return $text;
     }
 
     /**
