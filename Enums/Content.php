@@ -12,4 +12,6 @@ class Content
         'NEWS' => 'news',
         'USERS' => 'users',
     ];
+    const COUNT_CONTENT = 10;
+    const SHORT_TEXT = 100;
 }

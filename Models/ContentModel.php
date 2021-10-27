@@ -3,6 +3,7 @@
 namespace Models;
 
 use Core\Model;
+use Enums\Content;
 use Exception;
 
 class ContentModel extends Model
@@ -16,7 +17,38 @@ class ContentModel extends Model
      */
     function getDataAllContent(string $typeContent, bool $short = false): array
     {
-        $this->getAllDataFromDatabase($typeContent);
+        /** Весь контент */
+        $allData = $this->getAllDataFromDatabase($typeContent);
+
+        /** Сколько контента выводить на страницу */
+        $quantityPerPage = Content::COUNT_CONTENT;
+
+        /**
+         * Определяем текущую страницу на которой находимся, если не задана, то первая
+         *
+         * Фильтруем полученные данные от GET
+         */
+        $currentPage = htmlspecialchars($_GET['page'] ?? null ?: 1);
+
+        /** Проверка что в странице хранится число */
+        if (!ctype_digit($currentPage)) {
+            $currentPage = 1;
+        }
+
+        /**
+         * Общее количество контента
+         *
+         * Округляем в большую сторону, если необходимо
+         */
+        $countPage = ceil(count($allData) / $quantityPerPage);
+
+        /** Начала вывода, с какой записи выводить контент на страницу */
+        $beginWith = ($currentPage * $quantityPerPage) - $quantityPerPage;
+
+        /** Если запрощена не существующая страница, отдаём первую */
+        if ($currentPage > $countPage) {
+            $currentPage = 1;
+        }
 
         foreach ($this->allData as $idContent => $contentData) {
 
@@ -25,14 +57,17 @@ class ContentModel extends Model
 
             /** Заносим данные в ассоциативный массив */
             $this->allContentData[$idContent] = [
+                'id' => $idContent,
                 'title' => $title,
                 /** При установленном $short = true, используем сокращенный текст контента */
                 'text' => $short ? $this->getShortText($text) : $text,
                 'author' => $author,
                 'date' => $date,
+                'page' => $currentPage,
+                'countPage' => $countPage
             ];
         }
-        return $this->allContentData;
+        return array_slice($this->allContentData, $beginWith, $quantityPerPage);
     }
 
     /**
@@ -40,14 +75,15 @@ class ContentModel extends Model
      *
      * Обрезает по целое число на n-символов, добавляет троеточие
      */
-    function getShortText(string $text, int $number = 100): string
+    function getShortText(string $text, int $number = Content::SHORT_TEXT): string
     {
         /** Обрезать если длинна текста контента более $number символов */
         if (strlen($text) >= $number) {
-            // Обрезаем строку до 100 символов по дефолту
+
+            /** Обрезаем строку до 100 символов по дефолту */
             $text = substr($text, 0, $number);
 
-            // Ищем последний пробел и обрезаем по нему, добавляем троеточие
+            /** Ищем последний пробел и обрезаем по нему, добавляем троеточие */
             return substr($text, 0, strrpos($text, ' ')) . "...";
         }
         return $text;

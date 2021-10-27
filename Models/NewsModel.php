@@ -29,13 +29,16 @@ class NewsModel extends ContentModel
          * проверка по unix time, конвертируем дату в секунды,
          * проверяем разницу между текущим временем и созданным. Заносим в массив нужные.
          */
-        foreach ($allNews as $idNews => $news) {
+        foreach ($allNews as $news) {
             if ($currentUnixTime - strtotime($news['date']) <= $secondsDay) {
-                $this->currentLastDayNews[$idNews] = [
+                $this->currentLastDayNews[] = [
+                    'id' => $news['id'],
                     'title' => $news['title'],
                     'text' => $news['text'],
                     'author' => $news['author'],
                     'date' => $news['date'],
+                    'page' => $news['page'],
+                    'countPage' => $news['countPage']
                 ];
             };
         }
