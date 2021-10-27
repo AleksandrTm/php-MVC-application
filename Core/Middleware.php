@@ -11,7 +11,9 @@ class Middleware
 
     public function __construct()
     {
-        $this->userRole = $_SESSION['role'];
+        if(isset($_SESSION['role'])) {
+            $this->userRole = $_SESSION['role'];
+        }
     }
 
     /**
