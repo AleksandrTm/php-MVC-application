@@ -21,7 +21,7 @@ class ContentModel extends Model
         $allData = $this->getAllDataFromDatabase($typeContent);
 
         /** Сколько контента выводить на страницу */
-        $quantityPerPage = Content::COUNT_CONTENT;
+        $quantityPerPage = Content::COUNT_CONTENT_PAGE;
 
         /**
          * Определяем текущую страницу на которой находимся, если не задана, то первая

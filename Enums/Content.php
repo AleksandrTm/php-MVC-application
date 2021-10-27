@@ -12,6 +12,14 @@ class Content
         'NEWS' => 'news',
         'USERS' => 'users',
     ];
-    const COUNT_CONTENT = 10;
+
+    /**
+     * Количество контента на страницу
+     */
+    const COUNT_CONTENT_PAGE = 10;
+
+    /**
+     * Количество символов для краткой новости или статьи
+     */
     const SHORT_TEXT = 100;
 }
