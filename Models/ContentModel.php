@@ -9,6 +9,7 @@ use Exception;
 class ContentModel extends Model
 {
     protected array $allContentData = [];
+    protected int $beginWith;
 
     /**
      * Получаем данные всех новостей из базы данных и заносим в массив по ключам
@@ -24,7 +25,7 @@ class ContentModel extends Model
         $quantityPerPage = Content::COUNT_CONTENT_PAGE;
 
         /**
-         * Определяем текущую страницу на которой находимся, если не задана, то первая
+         * Определяем текущую страницу на которой находимся, если не задана, то переходим на первую
          *
          * Фильтруем полученные данные от GET
          */
@@ -43,7 +44,7 @@ class ContentModel extends Model
         $countPage = ceil(count($allData) / $quantityPerPage);
 
         /** Начала вывода, с какой записи выводить контент на страницу */
-        $beginWith = ($currentPage * $quantityPerPage) - $quantityPerPage;
+        $this->beginWith = ($currentPage * $quantityPerPage) - $quantityPerPage;
 
         /** Если запрощена не существующая страница, отдаём первую */
         if ($currentPage > $countPage) {
@@ -67,7 +68,7 @@ class ContentModel extends Model
                 'countPage' => $countPage
             ];
         }
-        return array_slice($this->allContentData, $beginWith, $quantityPerPage);
+        return array_slice($this->allContentData, $this->beginWith, $quantityPerPage);
     }
 
     /**

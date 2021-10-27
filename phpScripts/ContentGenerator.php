@@ -17,7 +17,7 @@ class ContentGenerator
 {
     public function __construct()
     {
-        /* Задаём неограниченное количество времени для выполнения скрипта */
+        /** Задаём неограниченное количество времени для выполнения скрипта */
         set_time_limit(0);
     }
 
@@ -30,14 +30,14 @@ class ContentGenerator
      */
     function generatesContent(string $type, string $contentType, int $countContent = 25): void
     {
-        /* Сохраняем текущее время до начала цикла и генерации */
+        /** Сохраняем текущее время до начала цикла и генерации */
         $start_time = microtime(true);
 
         $file = null;
         $objModel = new Model();
-        // последний id
+        /** последний id */
         $lastId = $objModel->getLastId($type);
-        /* цикл с надстройкой, сколько генерировать контента и чего */
+        /** цикл с надстройкой, сколько генерировать контента и чего */
         for ($i = 1 + $lastId; $i <= $countContent + $lastId; $i++) {
             try {
                 if (!$file = fopen("../database/$contentType/" . $i, 'w+')) {
