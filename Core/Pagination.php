@@ -2,6 +2,7 @@
 
 namespace Core;
 
+use config\App;
 use config\Paths;
 use Enums\Content;
 
@@ -12,35 +13,38 @@ use Enums\Content;
  */
 class Pagination
 {
-    private int $quantityPerPage = Content::COUNT_CONTENT_PAGE;
-    private string $database;
     private Model $model;
     private View $view;
     public int $currentPage;
     public int $countPage;
+    public int $beginWith;
+    public ?int $page;
 
-    public function __construct(string $database = Paths::DIR_BASE_NEWS)
+    public function __construct()
     {
-        $this->database = $database;
         $this->model = new Model();
         $this->view = new View();
     }
 
-    public function run(): array
+    public function run(): void
     {
-        $this->currentPage = htmlspecialchars($_GET['page'] ?? $_GET['page'] = 1);
-        $this->countPage = ceil($this->model->getTheNumberOfRecords($this->database) / $this->quantityPerPage);
+        $limit = App::NUMBER_RECORD_PAGE;
 
-        if (!ctype_digit($this->currentPage) || $_GET['page'] > $this->countPage) {
-            $this->view->render('page-404', 'Страница не найдена');
+        $this->countPage = ceil($this->model->getTheNumberOfRecords(Paths::DIR_BASE_USERS) / $limit);
+
+
+        if (!isset($_GET['page'])) {
+            $_GET['page'] = 1;
         }
 
-        $beginWith = ($this->currentPage * $this->quantityPerPage) - $this->quantityPerPage;
+        if ($_GET['page'] > $this->countPage || !($_GET['page'] > 0)) {
+            $this->view->render('page-404', 'Страница не найдена');
+        }
+        $this->currentPage = $_GET['page'];
 
-        return $this->model->getAllDataFromDatabase($this->database, $beginWith, $this->quantityPerPage);
-    }
 
-    public function getCountPage(){
+        $this->beginWith = ($this->currentPage * $limit) - $limit;
 
+        $_GET['countPage'] = $this->countPage;
     }
 }

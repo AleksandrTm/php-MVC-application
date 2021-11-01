@@ -12,7 +12,7 @@ class App
     const NAME_PROJECT = "local-site";
 
     /** Какую базу данных использовать на сайте */
-    const DATABASE = db::MYSQL;
+    const DATABASE = db::FILES;
 
     /** количество записей на страницу */
     const NUMBER_RECORD_PAGE = 10;

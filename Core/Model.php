@@ -43,35 +43,38 @@ class Model
     }
 
     /**
-     * Получает все данные с указанной базы данных, и отдаёт их в массиве
-     *
-     * Возможность доставать от и до контент
+     * Данные из таблицы
      */
-    public function getAllDataFromDatabase(string $query, int $begin = null, int $countPage = null): array
+    public function getAllDataFromDatabase(string $table): array
     {
+        $pagination = new Pagination();
+        $pagination->run();
+
+        $limit = App::NUMBER_RECORD_PAGE;
+
         if (App::DATABASE === db::MYSQL) {
-            $this->resultQuery = $this->mysqlConnect->query($query);
+            $this->resultQuery = $this->mysqlConnect->query("SELECT * FROM $table LIMIT $limit OFFSET $pagination->beginWith");
         }
         if (App::DATABASE === db::FILES) {
             try {
                 $countFile = 0;
 
-                if ($dir = opendir($query)) {
+                if ($dir = opendir($table)) {
                     while (($file = readdir($dir)) !== false) {
                         if ($file == '.' || $file == '..') {
                             continue;
                         }
                         /** До куда считываем файлы */
-                        if ($countPage === 0) {
+                        if ($limit === 0) {
                             break;
                         }
                         /**От куда начинаем считывать файлы */
                         $countFile++;
-                        if ($begin > $countFile) {
+                        if ($pagination->beginWith > $countFile) {
                             continue;
                         }
-                        $countPage--;
-                        $this->allData[$file] = file_get_contents($query . $file);
+                        $limit--;
+                        $this->allData[$file] = file_get_contents($table . $file);
                     }
                 }
             } catch (Exception $e) {
@@ -152,12 +155,12 @@ class Model
     /**
      * Получает количество значений из таблицы
      */
-    public function getTheNumberOfRecords(string $path): int
+    public function getTheNumberOfRecords(string $path = null): int
     {
         $count = 0;
 
         if (App::DATABASE === db::MYSQL) {
-            $count = $this->mysqlConnect->query('SELECT count(*) FROM users');
+            $count = $this->mysqlConnect->query('SELECT * FROM users')->num_rows;
         }
         if (App::DATABASE === db::FILES) {
             try {

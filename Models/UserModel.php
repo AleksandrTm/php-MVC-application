@@ -20,7 +20,7 @@ class UserModel extends Model
     {
         $userInfo = [];
         if (App::DATABASE === db::MYSQL) {
-            $this->getAllDataFromDatabase('SELECT * FROM users');
+            $this->getAllDataFromDatabase('users');
 
             while ($user = $this->resultQuery->fetch_assoc()) {
                 $userInfo[$user['userId']] = [

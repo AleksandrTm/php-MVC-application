@@ -14,6 +14,7 @@ class ViewUsersController extends Controller
     {
         $objUsers = new UserModel();
         $dataAllUsers = $objUsers->getDataAllUsers();
+
         $this->view->render('views-users','Список пользователей', $dataAllUsers);
     }
 }
