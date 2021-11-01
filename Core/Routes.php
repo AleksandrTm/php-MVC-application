@@ -6,7 +6,7 @@ use Controllers\AddUsesController;
 use Controllers\ArticlesController;
 use Controllers\DeleteUserController;
 use Controllers\EditUsersController;
-use Controllers\indexController;
+use Controllers\IndexController;
 use Controllers\LoginController;
 use Controllers\NewsController;
 use Controllers\ViewUsersController;
@@ -26,6 +26,7 @@ class Routes extends Router
         parent::__construct();
         $this->router();
         $this->middleware = new Middleware();
+        $this->run();
     }
 
     /**
@@ -74,17 +75,18 @@ class Routes extends Router
      *
      * Обращается к GET методам контроллера
      */
-    function sendGetController(): void
+    public function sendGetController(): void
     {
         switch ($this->uri) {
             case "":
-                $objIndex = new indexController();
+                $objIndex = new IndexController();
                 $objIndex->getIndexPage();
                 break;
             case "user/delete":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $objDeleteUsers = new DeleteUserController();
                 $objDeleteUsers->removesUser($this->path['id']);
+                break;
             case "view/users":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN'], access::ROLE['MEMBER']]);
                 $objViewsUsers = new ViewUsersController();
@@ -172,7 +174,7 @@ class Routes extends Router
      *
      * Обращается к POST методам контроллера
      */
-    function sendPostController(): void
+    public function sendPostController(): void
     {
         switch ($this->uri) {
             case "view/users":

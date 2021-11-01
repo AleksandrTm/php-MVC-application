@@ -3,19 +3,21 @@
 namespace Models;
 
 use config\Paths;
+use Core\Pagination;
 
 class NewsModel extends ContentModel
 {
     /** Новости за 24 часа */
     protected array $currentLastDayNews = [];
+    private string $database = Paths::DIR_BASE_NEWS;
 
     /**
      * Получаем новости за последний 24 часа
      */
-    function getNewsFromTheLastDay(): array
+    public function getNewsFromTheLastDay(): array
     {
         /** Получаем все новости из базы с кратким содержанием */
-        $allNews = $this->getDataAllContent(Paths::DIR_BASE_NEWS, true);
+        $allNews = $this->getDataAllContent(true);
 
         /** Количество секунд в сутках */
         $secondsDay = 24 * 60 * 60;
@@ -36,12 +38,11 @@ class NewsModel extends ContentModel
                     'title' => $news['title'],
                     'text' => $news['text'],
                     'author' => $news['author'],
-                    'date' => $news['date'],
-                    'page' => $news['page'],
-                    'countPage' => $news['countPage']
+                    'date' => $news['date']
                 ];
             };
         }
+
         return $this->currentLastDayNews;
     }
 }

@@ -19,7 +19,7 @@ class ArticlesController extends Controller
     /**
      * Получает все статьи из базы данных и передаёт их во View
      */
-    function getArticlesPage(): void
+    public function getArticlesPage(): void
     {
         $objArticles = new ArticlesModel();
 
@@ -38,19 +38,22 @@ class ArticlesController extends Controller
     /**
      * Получаем страницу с полной статьей
      */
-    function getFullArticlePage(int $id): void
+    public function getFullArticlePage(int $id): void
     {
         $objArticle = new ArticlesModel();
 
         $this->content = $objArticle->getContentByID($id, $this->database);
-
-        $this->view->render('full-content', 'Статья', $this->content);
+        if(!is_null($this->content)){
+            $this->view->render('full-content', 'Статья', $this->content);
+        } else {
+            $this->view->render('page-404', 'Статья не найдена');
+        }
     }
 
     /**
      * Получаем страницу с формой добавления статьи
      */
-    function getAddArticleForm(): void
+    public function getAddArticleForm(): void
     {
         $this->content['title'] = 'Добавление статьи';
 
@@ -72,7 +75,7 @@ class ArticlesController extends Controller
      *
      * Валидация полей
      */
-    function getResultEditArticle(int $id): void
+    public function getResultEditArticle(int $id): void
     {
         $objValidation = new Validations();
         $objArticleModel = new ArticlesModel();
@@ -93,7 +96,7 @@ class ArticlesController extends Controller
     /**
      * Удаляет нужную статью по id
      */
-    function removesArticle(int $id): void
+    public function removesArticle(int $id): void
     {
         $objArticles = new ArticlesModel();
 

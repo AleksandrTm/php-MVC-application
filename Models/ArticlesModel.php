@@ -11,10 +11,10 @@ class ArticlesModel extends ContentModel
     /**
      * Получаем данные всех статей из базы данных и заносим в массив по ключам
      */
-    function getDataAllArticles(): array
+    public function getDataAllArticles(): array
     {
         /** Выводим все статьи с кратким содержанием */
-        $this->articlesData = $this->getDataAllContent(Paths::DIR_BASE_ARTICLES, true);
+        $this->articlesData = $this->getDataAllContent(true);
 
         return $this->articlesData;
     }

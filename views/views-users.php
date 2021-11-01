@@ -6,19 +6,23 @@
             </a>
         <?php } ?>
     </div>
+    <?php if (!array_key_exists('statusRemove', $info)){ ?>
     <?php foreach ($info ?? null as $userId => $userData): ?>
-        <div class="table-row">
-            <p><?= $userData['fullName'] ?></p>
-            <?php if (($_SESSION['role'] ?? null) === "admin") { ?>
-                <div class="add-delete">
-                    <a href="/user/<?= $userId ?>/edit" class="table-link">
-                        <img src="/../img/edit.png" alt="Edit">
-                    </a>
-                    <a href="/user/<?= $userId ?>/delete" class="table-link">
-                        <img src="/../img/delete.png" alt="Delete">
-                    </a>
-                </div>
-            <?php } ?>
-        </div>
+    <div class="table-row">
+        <p><?= $userData['fullName'] ?></p>
+        <?php if (($_SESSION['role'] ?? null) === "admin") { ?>
+            <div class="add-delete">
+                <a href="/user/<?= $userId ?>/edit" class="table-link">
+                    <img src="/../img/edit.png" alt="Edit">
+                </a>
+                <a href="/user/<?= $userId ?>/delete" class="table-link">
+                    <img src="/../img/delete.png" alt="Delete">
+                </a>
+            </div>
+        <?php } ?>
+    </div>
     <?php endforeach; ?>
+    <?php } else { ?>
+    <p><?= $info['statusRemove'] ?></p>
+    <?php }  ?>
 </div>

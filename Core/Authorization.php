@@ -8,32 +8,37 @@ use Entities\User;
 class Authorization
 {
     /**
-     * User данные полученные из $_POST
-     * UserModel данные из Базы данных
+     * Сверяет полученные данные из формы, с данными в базе данных
      */
-    function logInUser(User $user, UserModel $userModel): bool
+    public function logInUser(User $user, UserModel $userModel): bool
     {
-        /** Получаем все данные, всех пользователей из БД */
         $usersData = $userModel->getDataAllUsers();
 
-        /** Проверка переданных в POST запросе данных с данным в базе данных */
-        foreach ($usersData as $userData) {
+        if (!isset($usersData)) {
+            return false;
+        }
+
+        foreach ($usersData as $key => $userData) {
             if ($userData['login'] === $user->getLogin() && password_verify($user->getPassword(), $userData['password'])) {
                 $_SESSION['login'] = $user->getLogin();
                 $_SESSION['role'] = $userData['role'];
+                $_SESSION['id'] = $key;
+
                 return true;
             }
         }
+
         return false;
     }
 
     /**
      * Убивает сессию пользователя, тем самым выходит из текущей авторизации
      */
-    function logOut(): void
+    public function logOut(): void
     {
         /** Убиваем данные сессии */
         session_destroy();
+        session_start();
 
         header('Location: http://localsite.ru');
         exit;

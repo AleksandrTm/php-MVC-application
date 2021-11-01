@@ -9,12 +9,12 @@ use Models\UserModel;
 
 class RegistrationController extends Controller
 {
-    function getRegistrationForm(): void
+    public function getRegistrationForm(): void
     {
         $this->view->render('registration', 'Регистрация');
     }
 
-    function getResultRegistrationUser(): void
+    public function getResultRegistrationUser(): void
     {
         $user = new User();
         $objUsers = new UserModel();

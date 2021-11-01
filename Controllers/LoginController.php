@@ -24,7 +24,7 @@ class LoginController extends Controller
     /**
      * Получаем форму для авторизации ( ввода логина и пароля )
      */
-    function getLoginForm(): void
+    public function getLoginForm(): void
     {
         $this->view->render("login", 'Авторизация');
     }
@@ -32,7 +32,7 @@ class LoginController extends Controller
     /**
      * Результат авторизации ( набор ошибок или успех авторизации )
      */
-    function getResultAuthorizationUser(): void
+    public function getResultAuthorizationUser(): void
     {
         $objUserModel = new UserModel();
         $objUser = new User();
@@ -47,7 +47,7 @@ class LoginController extends Controller
     /**
      * Вызов выхода из авторизации ( выход для пользователя )
      */
-    function logsOut(): void
+    public function logsOut(): void
     {
         $this->authorization->logOut();
     }

@@ -26,8 +26,8 @@
                 </div>
             <?php } ?>
         </div>
-        <?php $page = $content['page'] ?>
-        <?php $pageMax = $content['countPage'] ?>
+        <?php $page = $content['page'] ?? null ?>
+        <?php $pageMax = $content['countPage'] ?? null ?>
     <?php } ?>
     <?php if ($page ?? null) { ?>
         <div class="page-numbers">

@@ -2,7 +2,12 @@
 
 namespace Core;
 
+use Entities\User;
 use Exception;
+use mysqli;
+use Enums\Database as db;
+use config\App;
+use mysqli_result;
 
 /**
  * Базовая модель
@@ -10,57 +15,172 @@ use Exception;
 class Model
 {
     protected array $allData = [];
+    protected string $filesConnect;
+    protected mysqli $mysqlConnect;
+    protected mysqli_result $resultQuery;
+
+    public function __construct()
+    {
+        $config = parse_ini_file(db::CONFIG_DB, true);
+
+        if (App::DATABASE === db::MYSQL) {
+            $this->mysqlConnect = new mysqli(
+                $config['MySQL']['host'],
+                $config['MySQL']['username'],
+                $config['MySQL']['password'],
+                $config['MySQL']['database']);
+        }
+        if (App::DATABASE === db::FILES) {
+            $this->filesConnect = $config['Files']['database'];
+        }
+    }
+
+    public function __destruct()
+    {
+        if (App::DATABASE === db::MYSQL) {
+            $this->mysqlConnect->close();
+        }
+    }
 
     /**
      * Получает все данные с указанной базы данных, и отдаёт их в массиве
+     *
+     * Возможность доставать от и до контент
      */
-    function getAllDataFromDatabase(string $path): array
+    public function getAllDataFromDatabase(string $query, int $begin = null, int $countPage = null): array
     {
-        try {
-            if ($dir = opendir($path)) {
-                while (($file = readdir($dir)) !== false) {
-                    if ($file == '.' || $file == '..') {
-                        continue;
-                    }
-                    $this->allData[$file] = file_get_contents($path . $file);
-                }
-            }
-        } catch (Exception $e) {
-            var_dump($e);
-        } finally {
-            closedir($dir ?? null);
+        if (App::DATABASE === db::MYSQL) {
+            $this->resultQuery = $this->mysqlConnect->query($query);
         }
+        if (App::DATABASE === db::FILES) {
+            try {
+                $countFile = 0;
+
+                if ($dir = opendir($query)) {
+                    while (($file = readdir($dir)) !== false) {
+                        if ($file == '.' || $file == '..') {
+                            continue;
+                        }
+                        /** До куда считываем файлы */
+                        if ($countPage === 0) {
+                            break;
+                        }
+                        /**От куда начинаем считывать файлы */
+                        $countFile++;
+                        if ($begin > $countFile) {
+                            continue;
+                        }
+                        $countPage--;
+                        $this->allData[$file] = file_get_contents($query . $file);
+                    }
+                }
+            } catch (Exception $e) {
+                var_dump($e);
+            } finally {
+                closedir($dir ?? null);
+            }
+        }
+
         return $this->allData;
     }
 
     /**
      * Проверка наличия записи в базе по id
      */
-    function checksExistenceRecord(string $database, int $id): bool
+    public function checksExistenceRecord(string $database, int $id): bool
     {
-        return file_exists($database . $id);
+        if (App::DATABASE === db::MYSQL) {
+            return ($this->mysqlConnect->query("SELECT * FROM users WHERE userId = $id")->num_rows == 1);
+        } else {
+            return file_exists($database . $id);
+        }
     }
 
     /**
-     * Получаем последний id записи в указанной базе данных
+     * Получает текущую роль пользователя из базы данных по id
      */
-    function getLastId(string $type): int
+    public function checksUserRole(string $database, int $id, User $object = null): ?object
+    {
+        if ($this->checksExistenceRecord($database, $id)) {
+            if (App::DATABASE === db::MYSQL) {
+                $result = $this->mysqlConnect->query("SELECT * FROM users WHERE userId = $id");
+                while ($user = $result->fetch_assoc()) {
+                    $object->setRole($user['role']);
+                }
+            }
+            if (App::DATABASE === db::FILES) {
+                $file = file_get_contents($database . $id);
+                list($login, $password, $email, $fullName, $date, $about, $role) = explode("\n", $file);
+                $object->setRole($role);
+            }
+
+            return $object;
+        }
+
+        return null;
+    }
+
+    /**
+     * Получаем последний id записи в файлах
+     */
+    public function getLastId(string $type): int
     {
         $this->getAllDataFromDatabase($type);
         $data = array_keys($this->allData);
         rsort($data);
+
         return (int)array_shift($data);
     }
 
     /**
      * Удаление из базы данных записи по id
      */
-    function removeFromTheDatabase(int $id, string $database): void
+    public function removeFromTheDatabase(int $id, string $database): void
     {
-        try {
-            unlink($database . $id);
-        } catch (Exception $e) {
-            var_dump($e);
+        if (App::DATABASE === db::MYSQL) {
+            $this->mysqlConnect->query("DELETE FROM users WHERE userId = $id");
         }
+        if (App::DATABASE === db::FILES) {
+            try {
+                unlink($database . $id);
+            } catch (Exception $e) {
+                var_dump($e);
+            }
+        }
+    }
+
+    /**
+     * Получает количество значений из таблицы
+     */
+    public function getTheNumberOfRecords(string $path): int
+    {
+        $count = 0;
+
+        if (App::DATABASE === db::MYSQL) {
+            $count = $this->mysqlConnect->query('SELECT count(*) FROM users');
+        }
+        if (App::DATABASE === db::FILES) {
+            try {
+                if ($dir = opendir($path)) {
+                    while (($file = readdir($dir)) !== false) {
+                        if ($file == '.' || $file == '..') {
+                            continue;
+                        }
+                        $count++;
+                    }
+                }
+            } catch (Exception $e) {
+                var_dump($e);
+            } finally {
+                closedir($dir ?? null);
+            }
+        }
+
+        return $count;
+    }
+
+    public function writeToDatabase(string $sql)
+    {
+        $this->mysqlConnect->query($sql);
     }
 }

@@ -28,7 +28,7 @@ class ContentGenerator
      *
      * По умолчанию 25 статей, параметр для новости: Content::TYPE['NEWS']
      */
-    function generatesContent(string $type, string $contentType, int $countContent = 25): void
+    public function generatesContent(string $type, string $contentType, int $countContent = 25): void
     {
         /** Сохраняем текущее время до начала цикла и генерации */
         $start_time = microtime(true);
@@ -61,6 +61,7 @@ class ContentGenerator
                     fwrite($file, Content::AUTHOR . "\n");
                     fwrite($file, date("d-m-Y H:i:s"));
                 }
+                sleep(12);
             } catch (Exception $e) {
                 var_dump($e);
             } finally {
@@ -80,6 +81,6 @@ class ContentGenerator
 /* Генерирует 25 статей */
 //(new ContentGenerator())->generatesContent(Paths::DIR_BASE_ARTICLES, Content::TYPE['ARTICLES'], 100);
 /* Генерирует 25 новостей */
-(new ContentGenerator())->generatesContent(Paths::DIR_BASE_NEWS, Content::TYPE['NEWS'], 100);
+(new ContentGenerator())->generatesContent(Paths::DIR_BASE_NEWS, Content::TYPE['NEWS'], 15);
 /* Генерирует 25 пользователей */
 //(new ContentGenerator())->generatesContent(Paths::DIR_BASE_USERS, Content::TYPE['USERS']);

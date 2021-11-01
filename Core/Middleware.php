@@ -23,7 +23,7 @@ class Middleware
      *
      * Группы заносятся массивом ['user', 'admin']
      */
-    function definesAccessRights(array $role = null): void
+    public function definesAccessRights(array $role = null): void
     {
         /**
          * Разрешает доступ переданным группам, остальным доступ запрещён
@@ -38,7 +38,7 @@ class Middleware
     /**
      * Запрещает доступ, отдаёт 403 ошибку
      */
-    function deniesAccess(): void
+    public function deniesAccess(): void
     {
         header('HTTP/1.1 403 Forbidden');
         echo 'Нет прав доступа';

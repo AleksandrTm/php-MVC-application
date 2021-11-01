@@ -3,10 +3,11 @@
 namespace Entities;
 
 /**
- * Сущность пользователя ( получает данные из $_POST ) и хранит
+ * Сущность пользователя ( получает данные из $_POST по дефолту ) и хранит их в сущности
  */
 class User
 {
+    private int $id;
     private string $login;
     private string $password;
     private string $passwordConfirm;
@@ -16,9 +17,12 @@ class User
     private string $about;
     private string $role;
 
-    public function __construct()
+    public function __construct(array $data = null)
     {
-        foreach ($_POST as $key => $value) {
+        if (!isset($data)) {
+            $data = $_POST;
+        }
+        foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = htmlspecialchars($value);
             }

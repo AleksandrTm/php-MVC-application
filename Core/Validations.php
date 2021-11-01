@@ -15,7 +15,7 @@ class Validations
     /**
      * Вызывает функции проверки для полей пользователя, валидирует форму
      */
-    function validatesForms(User $user): ?array
+    public function validatesForms(User $user): ?array
     {
         $this->checksLoginField($user->getLogin());
         $this->checksPasswordField($user->getPassword());
@@ -31,7 +31,7 @@ class Validations
     /**
      * Вызывает функции проверки для полей контента, валидирует форму
      */
-    function validatesFormsContent(Content $content): ?array
+    public function validatesFormsContent(Content $content): ?array
     {
         $this->checksTitleField($content->getTitle());
         $this->checksTextField($content->getText());

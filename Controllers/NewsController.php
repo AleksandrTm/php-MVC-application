@@ -16,7 +16,7 @@ class NewsController extends Controller
     /**
      * Получает все новости из базы данных и передаёт их во View
      */
-    function getNewsPage(): void
+    public function getNewsPage(): void
     {
         $objNews = new NewsModel();
 
@@ -30,13 +30,17 @@ class NewsController extends Controller
     /**
      * Получаем страницу с полной новостью
      */
-    function getFullNewsPage(int $id): void
+    public function getFullNewsPage(int $id): void
     {
         $objNews = new NewsModel();
 
         $content = $objNews->getContentByID($id, $this->database);
 
-        $this->view->render('full-content', 'Новость', $content);
+        if (!is_null($content)) {
+            $this->view->render('full-content', 'Новость', $content);
+        } else {
+            $this->view->render('page-404', 'Статья не найдена');
+        }
     }
 
     /**
@@ -63,7 +67,7 @@ class NewsController extends Controller
     /**
      * Удаляет нужную новость по id
      */
-    function removesNews(int $id): void
+    public function removesNews(int $id): void
     {
         $objArticles = new NewsModel();
 

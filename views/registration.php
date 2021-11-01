@@ -1,7 +1,7 @@
 <div class="table">
-    <?php foreach ($info ?? null as $result) { ?>
-        <div><?php echo $result; ?></div>
-    <?php } ?>
+        <?php foreach ($info as $result) { ?>
+            <div><?php echo $result; ?></div>
+        <?php } ?>
     <div class="forms">
         <h3>Регистрация</h3>
         <form id="send" method="post" action="">

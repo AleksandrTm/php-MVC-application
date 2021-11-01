@@ -8,19 +8,19 @@ use Models\UserModel;
 
 /**
  * Удаление пользователя по его id
+ *
+ * Проверка на существования пользователя в базе данных и последующих действий с ним
  */
 class DeleteUserController extends Controller
 {
-    function removesUser(int $id): void
+    public function removesUser(int $id): void
     {
-        $obj = new UserModel();
+        $userModel = new UserModel();
 
-        /**
-         * Проверка на существования пользователя в базе данных и последующих действий с ним
-         */
-        if ($obj->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
-            /** Удаляем пользователя и остаёмся на текущей странице */
-            $obj->removeFromTheDatabase($id, Paths::DIR_BASE_USERS);
+        if ($userModel->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
+            $userModel->removeFromTheDatabase($id, Paths::DIR_BASE_USERS);
+            $info['statusRemove'] = 'Пользователь успешно удалён';
+            $this->view->render('views-users', 'Список пользователей', $info);
         } else {
             /** Если пользователь не найден в базе, отправляем на главную */
             header('Location: http://localsite.ru');

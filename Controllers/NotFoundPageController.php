@@ -9,7 +9,7 @@ use Core\Controller;
  */
 class NotFoundPageController extends Controller
 {
-    function getPage404(): void
+    public function getPage404(): void
     {
         $this->view->render('page-404', 'Страница не найдена');
     }

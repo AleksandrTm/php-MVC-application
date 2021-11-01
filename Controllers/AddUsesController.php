@@ -15,7 +15,7 @@ class AddUsesController extends Controller
     /**
      * Отображение формы для добавление пользователя
      */
-    function getAddUserForm(): void
+    public function getAddUserForm(): void
     {
         $this->view->render('add-user', 'Добавление пользователя');
     }
@@ -25,7 +25,7 @@ class AddUsesController extends Controller
      *
      * Сохранение результат в базу данных и вывод результата в вебе.
      */
-    function getResultAddUser(): void
+    public function getResultAddUser(): void
     {
         $user = new User();
         $objUsers = new UserModel();

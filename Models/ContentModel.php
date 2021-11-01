@@ -9,66 +9,29 @@ use Exception;
 class ContentModel extends Model
 {
     protected array $allContentData = [];
-    protected int $beginWith;
 
     /**
      * Получаем данные всех новостей из базы данных и заносим в массив по ключам
      *
      * Флаг short, позволяет вывести краткий текст контента
      */
-    function getDataAllContent(string $typeContent, bool $short = false): array
+    public function getDataAllContent(string $contentData, bool $short = false): array
     {
-        /** Весь контент */
-        $allData = $this->getAllDataFromDatabase($typeContent);
-
-        /** Сколько контента выводить на страницу */
-        $quantityPerPage = Content::COUNT_CONTENT_PAGE;
-
-        /**
-         * Определяем текущую страницу на которой находимся, если не задана, то переходим на первую
-         *
-         * Фильтруем полученные данные от GET
-         */
-        $currentPage = htmlspecialchars($_GET['page'] ?? null ?: 1);
-
-        /** Проверка что в странице хранится число */
-        if (!ctype_digit($currentPage)) {
-            $currentPage = 1;
-        }
-
-        /**
-         * Общее количество контента
-         *
-         * Округляем в большую сторону, если необходимо
-         */
-        $countPage = ceil(count($allData) / $quantityPerPage);
-
-        /** Начала вывода, с какой записи выводить контент на страницу */
-        $this->beginWith = ($currentPage * $quantityPerPage) - $quantityPerPage;
-
-        /** Если запрощена не существующая страница, отдаём первую */
-        if ($currentPage > $countPage) {
-            $currentPage = 1;
-        }
+        $this->getAllDataFromDatabase($contentData);
 
         foreach ($this->allData as $idContent => $contentData) {
-
-            /** Разбиваем по строкам и заносим в переменные */
             list($title, $text, $author, $date) = explode("\n", $contentData);
 
-            /** Заносим данные в ассоциативный массив */
             $this->allContentData[$idContent] = [
                 'id' => $idContent,
                 'title' => $title,
-                /** При установленном $short = true, используем сокращенный текст контента */
                 'text' => $short ? $this->getShortText($text) : $text,
                 'author' => $author,
-                'date' => $date,
-                'page' => $currentPage,
-                'countPage' => $countPage
+                'date' => $date
             ];
         }
-        return array_slice($this->allContentData, $this->beginWith, $quantityPerPage);
+
+        return $this->allContentData;
     }
 
     /**
@@ -76,33 +39,46 @@ class ContentModel extends Model
      *
      * Обрезает по целое число на n-символов, добавляет троеточие
      */
-    function getShortText(string $text, int $number = Content::SHORT_TEXT): string
+    public function getShortText(string $text, int $number = Content::SHORT_TEXT): string
     {
         /** Обрезать если длинна текста контента более $number символов */
         if (strlen($text) >= $number) {
-
-            /** Обрезаем строку до 100 символов по дефолту */
             $text = substr($text, 0, $number);
 
-            /** Ищем последний пробел и обрезаем по нему, добавляем троеточие */
             return substr($text, 0, strrpos($text, ' ')) . "...";
         }
+
         return $text;
     }
 
     /**
      * Получить контент по id
      */
-    function getContentByID(int $id, string $typeContent): array
+    public function getContentByID(int $id, string $database): ?array
     {
-        /** Весь контент по типу ( новости, статьи, ...) */
-        $content = $this->getDataAllContent($typeContent);
+        $content = [];
+        if ($this->checksExistenceRecord($database, $id)) {
+            /** Весь контент по типу ( новости, статьи, ...) */
+            $fullContentById = $this->getAllDataFromDatabase($database);
 
-        /** Отдаём нужный контент по id */
-        return $content[$id];
+            foreach ($fullContentById as $idContent => $contentData) {
+                list($title, $text, $author, $date) = explode("\n", $contentData);
+
+                $content[$idContent] = [
+                    'id' => $idContent,
+                    'title' => $title,
+                    'text' => $text,
+                    'author' => $author,
+                    'date' => $date
+                ];
+            }
+            /** Отдаём нужный контент по id */
+            return $content[$id];
+        }
+        return null;
     }
 
-    function removesContent(string $database, int $id): bool
+    public function removesContent(string $database, int $id): bool
     {
         /** Проверка на существования контента */
         if ($this->checksExistenceRecord($database, $id)) {
@@ -111,13 +87,14 @@ class ContentModel extends Model
 
             return true;
         }
+
         return false;
     }
 
     /**
      * Добавление контента в базу данных
      */
-    function addContent(object $object, string $database): void
+    public function addContent(object $object, string $database): void
     {
         if (empty($this->getLastId($database))) {
             $id = 1;
@@ -130,7 +107,7 @@ class ContentModel extends Model
     /**
      * Редактирование контента
      */
-    function editContent(object $object, int $id, string $database): void
+    public function editContent(object $object, int $id, string $database): void
     {
         if ($this->checksExistenceRecord($database, $id)) {
             $this->writeData($object, $id, $database);
