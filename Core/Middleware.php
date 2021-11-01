@@ -30,7 +30,9 @@ class Middleware
          *
          * Если пользователь входит в переданную группу, доступ разрещён, иначе запрещён
          */
-        in_array($this->userRole, $role) ?: $this->deniesAccess();
+        if (!in_array($this->userRole, $role)) {
+            $this->deniesAccess();
+        }
     }
 
     /**
