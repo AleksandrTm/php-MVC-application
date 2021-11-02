@@ -4,12 +4,12 @@ namespace Models;
 
 use config\Paths;
 use Core\Pagination;
+use Enums\Database as db;
 
 class NewsModel extends ContentModel
 {
     /** Новости за 24 часа */
     protected array $currentLastDayNews = [];
-    private string $database = Paths::DIR_BASE_NEWS;
 
     /**
      * Получаем новости за последний 24 часа
@@ -17,7 +17,7 @@ class NewsModel extends ContentModel
     public function getNewsFromTheLastDay(): array
     {
         /** Получаем все новости из базы с кратким содержанием */
-        $allNews = $this->getDataAllContent(true);
+        $this->getDataAllContent(db::NEWS);
 
         /** Количество секунд в сутках */
         $secondsDay = 24 * 60 * 60;
@@ -31,7 +31,7 @@ class NewsModel extends ContentModel
          * проверка по unix time, конвертируем дату в секунды,
          * проверяем разницу между текущим временем и созданным. Заносим в массив нужные.
          */
-        foreach ($allNews as $news) {
+        foreach ($this->allContentData as $news) {
             if ($currentUnixTime - strtotime($news['date']) <= $secondsDay) {
                 $this->currentLastDayNews[] = [
                     'id' => $news['id'],
@@ -40,7 +40,7 @@ class NewsModel extends ContentModel
                     'author' => $news['author'],
                     'date' => $news['date']
                 ];
-            };
+            }
         }
 
         return $this->currentLastDayNews;

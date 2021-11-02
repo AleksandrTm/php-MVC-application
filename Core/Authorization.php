@@ -12,12 +12,11 @@ class Authorization
      */
     public function logInUser(User $user, UserModel $userModel): bool
     {
-        $usersData = $userModel->getDataAllUsers();
+        $usersData = $userModel->getDataUsers();
 
         if (!isset($usersData)) {
             return false;
         }
-
         foreach ($usersData as $key => $userData) {
             if ($userData['login'] === $user->getLogin() && password_verify($user->getPassword(), $userData['password'])) {
                 $_SESSION['login'] = $user->getLogin();

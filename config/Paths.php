@@ -2,6 +2,10 @@
 
 namespace config;
 
+/**
+ * уничтожить данный файл =\
+ * перейти на конфиг БД
+ */
 class Paths
 {
     const DIR_BASE_USERS = "../database/users/";
@@ -9,3 +13,5 @@ class Paths
     const DIR_BASE_ARTICLES = "../database/articles/";
     const DIR_VIEWS = "../views/";
 }
+
+

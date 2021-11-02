@@ -26,19 +26,18 @@
                 </div>
             <?php } ?>
         </div>
-        <?php $page = $content['page'] ?? null ?>
-        <?php $pageMax = $content['countPage'] ?? null ?>
     <?php } ?>
-    <?php if ($page ?? null) { ?>
+
+    <?php if (isset($_GET['page'])) { ?>
         <div class="page-numbers">
-            <?php if ($page > 1) { ?>
+            <?php if ($_GET['page'] > 1) { ?>
                 <a href="/<?= $info['typeContent'] ?>?page=1" class="page-number"> << </a>
-                <a href="/<?= $info['typeContent'] ?>?page=<?= $page - 1 ?>" class="page-number"><?= $page - 1 ?></a>
+                <a href="/<?= $info['typeContent'] ?>?page=<?= $_GET['page'] - 1 ?>" class="page-number"><?= $_GET['page'] - 1 ?></a>
             <?php } ?>
-            <div class="page-number"><?= $page ?></div>
-            <?php if ($page < $pageMax) { ?>
-                <a href="/<?= $info['typeContent'] ?>?page=<?= $page + 1 ?>" class="page-number"><?= $page + 1 ?></a>
-                <a href="/<?= $info['typeContent'] ?>?page=<?= $pageMax ?>" class="page-number"> >> </a>
+            <div class="page-number"><?= $_GET['page'] ?></div>
+            <?php if ($_GET['page'] < $_GET['countPage']) { ?>
+                <a href="/<?= $info['typeContent'] ?>?page=<?= $_GET['page'] + 1 ?>" class="page-number"><?= $_GET['page'] + 1 ?></a>
+                <a href="/<?= $info['typeContent'] ?>?page=<?= $_GET['countPage'] ?>" class="page-number"> >> </a>
             <?php } ?>
         </div>
     <?php } ?>

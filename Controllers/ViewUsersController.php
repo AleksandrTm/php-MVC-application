@@ -13,7 +13,7 @@ class ViewUsersController extends Controller
     public function getUsersList(): void
     {
         $objUsers = new UserModel();
-        $dataAllUsers = $objUsers->getDataAllUsers();
+        $dataAllUsers = $objUsers->getDataUsers();
 
         $this->view->render('views-users','Список пользователей', $dataAllUsers);
     }

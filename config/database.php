@@ -1,9 +1,9 @@
 <?php
-return (object)[
-    'files' => (object)[
+return [
+    'files' => [
         'database' => "../database/"
     ],
-    'mysql' => (object)[
+    'mysql' => [
         'host' => '192.168.10.10',
         'driver' => 'mysql',
         'database' => 'content',

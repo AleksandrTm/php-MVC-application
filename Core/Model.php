@@ -6,7 +6,6 @@ use Entities\User;
 use Exception;
 use mysqli;
 use Enums\Database as db;
-use config\App;
 use mysqli_result;
 
 /**
@@ -18,63 +17,65 @@ class Model
     protected string $filesConnect;
     protected mysqli $mysqlConnect;
     protected mysqli_result $resultQuery;
+    protected array $db;
+    protected array $appConfig;
 
     public function __construct()
     {
-        $config = parse_ini_file(db::CONFIG_DB, true);
+        $this->db = include "../config/database.php";
+        $this->appConfig = include "../config/app.php";
 
-        if (App::DATABASE === db::MYSQL) {
+        if ($this->appConfig['database'] === db::MYSQL) {
             $this->mysqlConnect = new mysqli(
-                $config['MySQL']['host'],
-                $config['MySQL']['username'],
-                $config['MySQL']['password'],
-                $config['MySQL']['database']);
+                $this->db['mysql']['host'],
+                $this->db['mysql']['username'],
+                $this->db['mysql']['password'],
+                $this->db['mysql']['database'],
+            );
         }
-        if (App::DATABASE === db::FILES) {
-            $this->filesConnect = $config['Files']['database'];
+        if ($this->appConfig['database'] === db::FILES) {
+            $this->filesConnect = $this->db['files']['database'];
         }
     }
 
     public function __destruct()
     {
-        if (App::DATABASE === db::MYSQL) {
+        if ($this->appConfig['database'] === db::MYSQL) {
             $this->mysqlConnect->close();
         }
     }
 
     /**
-     * Данные из таблицы
+     * Получить нужное количество записей из таблицы
      */
-    public function getAllDataFromDatabase(string $table): array
+    public function getRecordsFromDatabase(string $table, $limitRecordsPage = null): array
     {
         $pagination = new Pagination();
         $pagination->run();
 
-        $limit = App::NUMBER_RECORD_PAGE;
-
-        if (App::DATABASE === db::MYSQL) {
-            $this->resultQuery = $this->mysqlConnect->query("SELECT * FROM $table LIMIT $limit OFFSET $pagination->beginWith");
+        if ($this->appConfig['database'] === db::MYSQL) {
+            $this->resultQuery = $this->mysqlConnect->query("SELECT * FROM $table LIMIT $limitRecordsPage OFFSET $pagination->beginWith");
         }
-        if (App::DATABASE === db::FILES) {
+        if ($this->appConfig['database'] === db::FILES) {
             try {
                 $countFile = 0;
 
-                if ($dir = opendir($table)) {
+                if ($dir = opendir($this->filesConnect . $table . '/')) {
                     while (($file = readdir($dir)) !== false) {
                         if ($file == '.' || $file == '..') {
                             continue;
                         }
                         /** До куда считываем файлы */
-                        if ($limit === 0) {
+                        if ($limitRecordsPage === 0) {
                             break;
                         }
-                        /**От куда начинаем считывать файлы */
+                        /** От куда начинаем считывать файлы */
                         $countFile++;
                         if ($pagination->beginWith > $countFile) {
                             continue;
                         }
-                        $limit--;
-                        $this->allData[$file] = file_get_contents($table . $file);
+                        $limitRecordsPage--;
+                        $this->allData[$file] = file_get_contents($this->filesConnect . $table . '/' . $file);
                     }
                 }
             } catch (Exception $e) {
@@ -92,7 +93,7 @@ class Model
      */
     public function checksExistenceRecord(string $database, int $id): bool
     {
-        if (App::DATABASE === db::MYSQL) {
+        if ($this->appConfig['database'] === db::MYSQL) {
             return ($this->mysqlConnect->query("SELECT * FROM users WHERE userId = $id")->num_rows == 1);
         } else {
             return file_exists($database . $id);
@@ -102,16 +103,16 @@ class Model
     /**
      * Получает текущую роль пользователя из базы данных по id
      */
-    public function checksUserRole(string $database, int $id, User $object = null): ?object
+    public function checksUserRole(string $database, int $id, User $object = null): ?User
     {
         if ($this->checksExistenceRecord($database, $id)) {
-            if (App::DATABASE === db::MYSQL) {
+            if ($this->appConfig['database'] === db::MYSQL) {
                 $result = $this->mysqlConnect->query("SELECT * FROM users WHERE userId = $id");
                 while ($user = $result->fetch_assoc()) {
                     $object->setRole($user['role']);
                 }
             }
-            if (App::DATABASE === db::FILES) {
+            if ($this->appConfig['database'] === db::FILES) {
                 $file = file_get_contents($database . $id);
                 list($login, $password, $email, $fullName, $date, $about, $role) = explode("\n", $file);
                 $object->setRole($role);
@@ -128,7 +129,7 @@ class Model
      */
     public function getLastId(string $type): int
     {
-        $this->getAllDataFromDatabase($type);
+        $this->getRecordsFromDatabase($type);
         $data = array_keys($this->allData);
         rsort($data);
 
@@ -140,10 +141,10 @@ class Model
      */
     public function removeFromTheDatabase(int $id, string $database): void
     {
-        if (App::DATABASE === db::MYSQL) {
+        if ($this->appConfig['database'] === db::MYSQL) {
             $this->mysqlConnect->query("DELETE FROM users WHERE userId = $id");
         }
-        if (App::DATABASE === db::FILES) {
+        if ($this->appConfig['database'] === db::FILES) {
             try {
                 unlink($database . $id);
             } catch (Exception $e) {
@@ -159,10 +160,10 @@ class Model
     {
         $count = 0;
 
-        if (App::DATABASE === db::MYSQL) {
+        if ($this->appConfig['database'] === db::MYSQL) {
             $count = $this->mysqlConnect->query('SELECT * FROM users')->num_rows;
         }
-        if (App::DATABASE === db::FILES) {
+        if ($this->appConfig['database'] === db::FILES) {
             try {
                 if ($dir = opendir($path)) {
                     while (($file = readdir($dir)) !== false) {

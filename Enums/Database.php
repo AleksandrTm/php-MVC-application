@@ -7,5 +7,8 @@ class Database
     const MYSQL = "mysql";
     const FILES = "files";
 
-    const CONFIG_DB = '../config/database.ini';
+    /** Таблицы в базе данных */
+    const USERS = 'users';
+    const NEWS = 'news';
+    const ARTICLES = 'articles';
 }

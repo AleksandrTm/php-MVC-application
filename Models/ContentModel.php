@@ -15,9 +15,9 @@ class ContentModel extends Model
      *
      * Флаг short, позволяет вывести краткий текст контента
      */
-    public function getDataAllContent(string $contentData, bool $short = false): array
+    public function getDataAllContent(string $typeContent, bool $short = true): array
     {
-        $this->getAllDataFromDatabase($contentData);
+        $this->getRecordsFromDatabase($typeContent, $this->appConfig['number_record_page']);
 
         foreach ($this->allData as $idContent => $contentData) {
             list($title, $text, $author, $date) = explode("\n", $contentData);
@@ -30,7 +30,6 @@ class ContentModel extends Model
                 'date' => $date
             ];
         }
-
         return $this->allContentData;
     }
 
@@ -39,7 +38,8 @@ class ContentModel extends Model
      *
      * Обрезает по целое число на n-символов, добавляет троеточие
      */
-    public function getShortText(string $text, int $number = Content::SHORT_TEXT): string
+    public
+    function getShortText(string $text, int $number = Content::SHORT_TEXT): string
     {
         /** Обрезать если длинна текста контента более $number символов */
         if (strlen($text) >= $number) {
@@ -54,12 +54,13 @@ class ContentModel extends Model
     /**
      * Получить контент по id
      */
-    public function getContentByID(int $id, string $database): ?array
+    public
+    function getContentByID(int $id, string $database): ?array
     {
         $content = [];
         if ($this->checksExistenceRecord($database, $id)) {
             /** Весь контент по типу ( новости, статьи, ...) */
-            $fullContentById = $this->getAllDataFromDatabase($database);
+            $fullContentById = $this->getRecordsFromDatabase($database);
 
             foreach ($fullContentById as $idContent => $contentData) {
                 list($title, $text, $author, $date) = explode("\n", $contentData);
@@ -78,7 +79,8 @@ class ContentModel extends Model
         return null;
     }
 
-    public function removesContent(string $database, int $id): bool
+    public
+    function removesContent(string $database, int $id): bool
     {
         /** Проверка на существования контента */
         if ($this->checksExistenceRecord($database, $id)) {
@@ -94,7 +96,8 @@ class ContentModel extends Model
     /**
      * Добавление контента в базу данных
      */
-    public function addContent(object $object, string $database): void
+    public
+    function addContent(object $object, string $database): void
     {
         if (empty($this->getLastId($database))) {
             $id = 1;
@@ -107,7 +110,8 @@ class ContentModel extends Model
     /**
      * Редактирование контента
      */
-    public function editContent(object $object, int $id, string $database): void
+    public
+    function editContent(object $object, int $id, string $database): void
     {
         if ($this->checksExistenceRecord($database, $id)) {
             $this->writeData($object, $id, $database);

@@ -2,7 +2,6 @@
 
 namespace Models;
 
-use config\App;
 use Enums\Database as db;
 use Exception;
 use Entities\User;
@@ -16,12 +15,13 @@ class UserModel extends Model
      * Отдаёт многомерный массив со всеми пользователями и данными
      * [idUser => ['login' => $login, 'password' => $password, ...], ...]
      */
-    public function getDataAllUsers(): array
+    public function getDataUsers(): array
     {
         $userInfo = [];
-        if (App::DATABASE === db::MYSQL) {
-            $this->getAllDataFromDatabase('users');
 
+        $this->getRecordsFromDatabase(db::USERS, $this->appConfig['number_record_page']);
+
+        if ($this->appConfig['database'] === db::MYSQL) {
             while ($user = $this->resultQuery->fetch_assoc()) {
                 $userInfo[$user['userId']] = [
                     'login' => $user['login'],
@@ -33,9 +33,8 @@ class UserModel extends Model
                     'role' => $user['role']
                 ];
             }
-        } else {
-            $this->getAllDataFromDatabase(Paths::DIR_BASE_USERS);
-
+        }
+        if ($this->appConfig['database'] === db::FILES) {
             foreach ($this->allData as $userId => $userData) {
                 list($login, $password, $email, $fullName, $date, $about, $role) = explode("\n", $userData);
 
@@ -50,6 +49,7 @@ class UserModel extends Model
                 ];
             }
         }
+
         return $userInfo;
     }
 
@@ -58,10 +58,10 @@ class UserModel extends Model
      */
     public function addUser(User $user): void
     {
-        if (App::DATABASE === db::MYSQL) {
+        if ($this->appConfig['database'] === db::MYSQL) {
             $this->writingDatabase($user);
         }
-        if (App::DATABASE === db::FILES) {
+        if ($this->appConfig['database'] === db::FILES) {
             if (empty($this->getLastId(Paths::DIR_BASE_USERS))) {
                 $userId = 1;
             } else {
@@ -88,7 +88,7 @@ class UserModel extends Model
      */
     public function writingDatabase(User $user, int $id = null, string $database = null): void
     {
-        if (App::DATABASE === db::MYSQL) {
+        if ($this->appConfig['database'] === db::MYSQL) {
             $login = $user->getLogin();
             $password = password_hash($user->getPassword(), PASSWORD_DEFAULT);
             $email = $user->getEmail();
@@ -100,7 +100,7 @@ class UserModel extends Model
                                         VALUES ('$login', '$password', '$email', '$fullName', '$date', '$about')");
 
         }
-        if (App::DATABASE === db::FILES) {
+        if ($this->appConfig['database'] === db::FILES) {
             $files = null;
             try {
                 $files = fopen($database . $id, 'w');

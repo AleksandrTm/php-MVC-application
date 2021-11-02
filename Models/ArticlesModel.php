@@ -2,7 +2,7 @@
 
 namespace Models;
 
-use config\Paths;
+use Enums\Database as db;
 
 class ArticlesModel extends ContentModel
 {
@@ -14,7 +14,7 @@ class ArticlesModel extends ContentModel
     public function getDataAllArticles(): array
     {
         /** Выводим все статьи с кратким содержанием */
-        $this->articlesData = $this->getDataAllContent(true);
+        $this->articlesData = $this->getDataAllContent(db::ARTICLES);
 
         return $this->articlesData;
     }

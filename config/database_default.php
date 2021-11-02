@@ -4,9 +4,12 @@ return [
         'database' => "../database/"
     ],
     'mysql' => [
-        'host' => '192.168.10.10',
+        'host' => '127.0.0.1',
         'driver' => 'mysql',
         'database' => '',
         'username' => '',
-        'password' => '',]
+        'password' => '',
+        'charset' => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+        'prefix']
 ];

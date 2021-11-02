@@ -21,6 +21,7 @@ class NewsController extends Controller
         $objNews = new NewsModel();
 
         $this->content['content'] = $objNews->getNewsFromTheLastDay();
+
         $this->content['titleContent'] = 'Список новостей за последнии 24 часа';
         $this->content['typeContent'] = 'news';
 
@@ -33,7 +34,6 @@ class NewsController extends Controller
     public function getFullNewsPage(int $id): void
     {
         $objNews = new NewsModel();
-
         $content = $objNews->getContentByID($id, $this->database);
 
         if (!is_null($content)) {
