@@ -77,15 +77,13 @@ class Router
      */
     private function checksSession(): void
     {
-        $objModel = new Model();
+        $objModel = new Model;
 
         if (isset($_SESSION['id'])) {
             $statusUser = $objModel->checksExistenceRecord(Paths::DIR_BASE_USERS, $_SESSION['id']);
             $user = $objModel->checksUserRole(Paths::DIR_BASE_USERS, $_SESSION['id'], new User);
 
             if (!$statusUser) {
-                session_destroy();
-                session_start();
                 $_SESSION['role'] = Permissions::ROLE['GUEST'];
                 return;
             }
@@ -95,8 +93,6 @@ class Router
 
         }
         if (!isset($_SESSION['role'])) {
-            session_destroy();
-            session_start();
             $_SESSION['role'] = Permissions::ROLE['GUEST'];
         }
     }

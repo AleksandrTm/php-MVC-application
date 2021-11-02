@@ -38,6 +38,10 @@ class Model
         }
     }
 
+    function __clone()
+    {
+    }
+
     public function __destruct()
     {
         if ($this->appConfig['database'] === db::MYSQL) {
@@ -83,7 +87,6 @@ class Model
                 closedir($dir ?? null);
             }
         }
-
         return $this->allData;
     }
 

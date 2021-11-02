@@ -4,6 +4,7 @@ namespace Models;
 
 use Core\Model;
 use Enums\Content;
+use Enums\Database as db;
 use Exception;
 
 class ContentModel extends Model
@@ -19,16 +20,18 @@ class ContentModel extends Model
     {
         $this->getRecordsFromDatabase($typeContent, $this->appConfig['number_record_page']);
 
-        foreach ($this->allData as $idContent => $contentData) {
-            list($title, $text, $author, $date) = explode("\n", $contentData);
+        if ($this->appConfig['database'] === db::FILES) {
+            foreach ($this->allData as $idContent => $contentData) {
+                list($title, $text, $author, $date) = explode("\n", $contentData);
 
-            $this->allContentData[$idContent] = [
-                'id' => $idContent,
-                'title' => $title,
-                'text' => $short ? $this->getShortText($text) : $text,
-                'author' => $author,
-                'date' => $date
-            ];
+                $this->allContentData[$idContent] = [
+                    'id' => $idContent,
+                    'title' => $title,
+                    'text' => $short ? $this->getShortText($text) : $text,
+                    'author' => $author,
+                    'date' => $date
+                ];
+            }
         }
         return $this->allContentData;
     }
@@ -54,8 +57,7 @@ class ContentModel extends Model
     /**
      * Получить контент по id
      */
-    public
-    function getContentByID(int $id, string $database): ?array
+    public function getContentByID(int $id, string $database): ?array
     {
         $content = [];
         if ($this->checksExistenceRecord($database, $id)) {
@@ -79,8 +81,7 @@ class ContentModel extends Model
         return null;
     }
 
-    public
-    function removesContent(string $database, int $id): bool
+    public function removesContent(string $database, int $id): bool
     {
         /** Проверка на существования контента */
         if ($this->checksExistenceRecord($database, $id)) {
@@ -96,8 +97,7 @@ class ContentModel extends Model
     /**
      * Добавление контента в базу данных
      */
-    public
-    function addContent(object $object, string $database): void
+    public function addContent(object $object, string $database): void
     {
         if (empty($this->getLastId($database))) {
             $id = 1;
@@ -110,8 +110,7 @@ class ContentModel extends Model
     /**
      * Редактирование контента
      */
-    public
-    function editContent(object $object, int $id, string $database): void
+    public function editContent(object $object, int $id, string $database): void
     {
         if ($this->checksExistenceRecord($database, $id)) {
             $this->writeData($object, $id, $database);
@@ -121,7 +120,7 @@ class ContentModel extends Model
     /**
      * Записывает данные в базу данных ( добавление или редактирование )
      */
-    function writeData(object $object, int $id, string $database): void
+    public function writeData(object $object, int $id, string $database): void
     {
         $files = null;
         try {

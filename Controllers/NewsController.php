@@ -18,7 +18,7 @@ class NewsController extends Controller
      */
     public function getNewsPage(): void
     {
-        $objNews = new NewsModel();
+        $objNews = NewsModel::getInstance();
 
         $this->content['content'] = $objNews->getNewsFromTheLastDay();
 
@@ -33,7 +33,7 @@ class NewsController extends Controller
      */
     public function getFullNewsPage(int $id): void
     {
-        $objNews = new NewsModel();
+        $objNews = NewsModel::getInstance();
         $content = $objNews->getContentByID($id, $this->database);
 
         if (!is_null($content)) {
