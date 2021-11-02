@@ -9,27 +9,28 @@ use config\Paths;
  *
  * Нужные проверки и расчёты для пагинации
  */
-class Pagination
+class Pagination extends Model
 {
-    private Model $model;
     private View $view;
     public int $currentPage;
     public int $countPage;
     public int $beginWith;
-    private array $appConfig;
+    protected string $table;
 
-    public function __construct()
+    public function __construct(string $table)
     {
-        $this->model = new Model();
+        parent::__construct();
         $this->view = new View();
-        $this->appConfig = include '../config/app.php';
+        $this->table = $table;
+        $this->run();
     }
 
     public function run(): void
     {
         $limit = $this->appConfig['number_record_page'];
 
-        $this->countPage = ceil($this->model->getTheNumberOfRecords(Paths::DIR_BASE_USERS) / $limit);
+        $this->countPage = ceil($this->getTheNumberOfRecords($this->table) / $limit);
+
 
         if (!isset($_GET['page'])) {
             $_GET['page'] = 1;
@@ -41,6 +42,10 @@ class Pagination
         $this->currentPage = $_GET['page'];
         $this->beginWith = ($this->currentPage * $limit) - $limit;
 
-        $_GET['countPage'] = $this->countPage;
+        if ($this->countPage > 1) {
+            $_GET['countPage'] = $this->countPage;
+        } else {
+            $_GET['countPage'] = null;
+        }
     }
 }

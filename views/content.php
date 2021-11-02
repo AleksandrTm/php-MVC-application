@@ -27,8 +27,7 @@
             <?php } ?>
         </div>
     <?php } ?>
-
-    <?php if (isset($_GET['page'])) { ?>
+    <?php if (isset($_GET['countPage'])) { ?>
         <div class="page-numbers">
             <?php if ($_GET['page'] > 1) { ?>
                 <a href="/<?= $info['typeContent'] ?>?page=1" class="page-number"> << </a>

@@ -1,6 +1,6 @@
 <?php
 
-class MySQLConnection
+class MySQLConnection implements Connection
 {
 
 }

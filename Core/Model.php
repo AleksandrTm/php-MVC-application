@@ -51,7 +51,6 @@ class Model
     public function getRecordsFromDatabase(string $table, $limitRecordsPage = null): array
     {
         $pagination = new Pagination($table);
-        $pagination->run();
 
         if ($this->appConfig['database'] === db::MYSQL) {
             $this->resultQuery = $this->mysqlConnect->query("SELECT * FROM $table LIMIT $limitRecordsPage OFFSET $pagination->beginWith");

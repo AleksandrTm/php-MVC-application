@@ -25,7 +25,7 @@
     <?php } else { ?>
         <p><?= $info['statusRemove'] ?></p>
     <?php } ?>
-    <?php if (isset($_GET['page'])) { ?>
+    <?php if (isset($_GET['countPage'])) { ?>
         <div class="page-numbers">
             <?php if ($_GET['page'] > 1) { ?>
                 <a href="/view/users?page=1" class="page-number"> << </a>

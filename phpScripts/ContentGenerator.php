@@ -34,7 +34,7 @@ class ContentGenerator
         $start_time = microtime(true);
 
         $file = null;
-        $objModel = new Model();
+        $objModel = Model::getInstance();
         /** последний id */
         $lastId = $objModel->getLastId($type);
         /** цикл с надстройкой, сколько генерировать контента и чего */

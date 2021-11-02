@@ -20,6 +20,7 @@ class Authorization
             $usersData = $userModel->getDataForAuthorization($user->getLogin());
 
             if (!isset($usersData)) {
+
                 return false;
             }
             if ($usersData['login'] === $user->getLogin() && password_verify($user->getPassword(), $usersData['password'])) {

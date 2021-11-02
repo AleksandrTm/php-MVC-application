@@ -10,7 +10,7 @@ return [
     'name_project' => 'local-site',
 
     /** Тип базы данных для сайта */
-    'database' => db::FILES,
+    'database' => db::MYSQL,
 
     /** количество записей на страницу */
     'number_record_page' => 10,

@@ -27,7 +27,7 @@ class UserModel extends Model
                     'login' => $user['login'],
                     'password' => $user['password'],
                     'email' => $user['email'],
-                    'fullName' => $user['fullName'],
+                    'fullName' => $user['full_name'],
                     'date' => $user['date'],
                     'about' => $user['about'],
                     'role' => $user['role']
@@ -86,15 +86,31 @@ class UserModel extends Model
      */
     public function editUser(User $user, int $id): void
     {
-        if ($this->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
-            $this->writingDatabase($user, $id, Paths::DIR_BASE_USERS);
+        if ($this->appConfig['database'] === db::MYSQL) {
+            $login = $user->getLogin();
+            $password = password_hash($user->getPassword(), PASSWORD_DEFAULT);
+            $email = $user->getEmail();
+            $fullName = $user->getFullName();
+            $date = $user->getDate();
+            $about = $user->getAbout();
+
+            $this->mysqlConnect->query("
+                UPDATE users 
+                SET login = '$login', password ='$password', email = '$email', full_name = '$fullName', date = '$date', about = '$about'
+                WHERE user_id = '$id'");
+        }
+
+        if ($this->appConfig['database'] === db::FILES) {
+            if ($this->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
+                $this->writingDatabase($user, $id, Paths::DIR_BASE_USERS);
+            }
         }
     }
 
     /**
      * Записывает переданные данные в базу данных
      */
-    public function writingDatabase(User $user, int $id = null, string $database = null): void
+    public function writingDatabase(User $user, int $id = null, string $database = null, string $update = null): void
     {
         if ($this->appConfig['database'] === db::MYSQL) {
             $login = $user->getLogin();
@@ -104,7 +120,8 @@ class UserModel extends Model
             $date = $user->getDate();
             $about = $user->getAbout();
 
-            $this->writeToDatabase("INSERT INTO users (login, password, email, fullName, date, about)
+
+            $this->writeToDatabase("INSERT INTO users (login, password, email, full_name, date, about)
                                         VALUES ('$login', '$password', '$email', '$fullName', '$date', '$about')");
 
         }
