@@ -22,16 +22,10 @@ class Model
 
     public function __construct()
     {
-        $this->db = include "../config/database.php";
         $this->appConfig = include "../config/app.php";
 
         if ($this->appConfig['database'] === db::MYSQL) {
-            $this->mysqlConnect = new mysqli(
-                $this->db['mysql']['host'],
-                $this->db['mysql']['username'],
-                $this->db['mysql']['password'],
-                $this->db['mysql']['database'],
-            );
+            \MySQLConnection::getInstance();
         }
         if ($this->appConfig['database'] === db::FILES) {
             $this->filesConnect = $this->db['files']['database'];

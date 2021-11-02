@@ -1,6 +1,6 @@
 <?php
 
-class FilesConnection implements Connection
+class FilesConnection
 {
 
 }
