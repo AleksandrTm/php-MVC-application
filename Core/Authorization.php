@@ -2,28 +2,47 @@
 
 namespace Core;
 
+use Enums\Database as db;
 use Models\UserModel;
 use Entities\User;
 
 class Authorization
 {
+
     /**
      * Сверяет полученные данные из формы, с данными в базе данных
      */
     public function logInUser(User $user, UserModel $userModel): bool
     {
-        $usersData = $userModel->getDataUsers();
+        $appConfig = include "../config/app.php";
 
-        if (!isset($usersData)) {
-            return false;
-        }
-        foreach ($usersData as $key => $userData) {
-            if ($userData['login'] === $user->getLogin() && password_verify($user->getPassword(), $userData['password'])) {
+        if ($appConfig['database'] === db::MYSQL) {
+            $usersData = $userModel->getDataForAuthorization($user->getLogin());
+
+            if (!isset($usersData)) {
+                return false;
+            }
+            if ($usersData['login'] === $user->getLogin() && password_verify($user->getPassword(), $usersData['password'])) {
                 $_SESSION['login'] = $user->getLogin();
-                $_SESSION['role'] = $userData['role'];
-                $_SESSION['id'] = $key;
+                $_SESSION['role'] = $usersData['role'];
+                $_SESSION['id'] = $usersData['user_id'];
 
                 return true;
+            }
+        } else {
+            $usersData = $userModel->getDataUsers();
+
+            if (!isset($usersData)) {
+                return false;
+            }
+            foreach ($usersData as $key => $userData) {
+                if ($userData['login'] === $user->getLogin() && password_verify($user->getPassword(), $userData['password'])) {
+                    $_SESSION['login'] = $user->getLogin();
+                    $_SESSION['role'] = $userData['role'];
+                    $_SESSION['id'] = $key;
+
+                    return true;
+                }
             }
         }
 

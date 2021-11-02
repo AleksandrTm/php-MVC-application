@@ -50,7 +50,7 @@ class Model
      */
     public function getRecordsFromDatabase(string $table, $limitRecordsPage = null): array
     {
-        $pagination = new Pagination();
+        $pagination = new Pagination($table);
         $pagination->run();
 
         if ($this->appConfig['database'] === db::MYSQL) {
@@ -94,7 +94,7 @@ class Model
     public function checksExistenceRecord(string $database, int $id): bool
     {
         if ($this->appConfig['database'] === db::MYSQL) {
-            return ($this->mysqlConnect->query("SELECT * FROM users WHERE userId = $id")->num_rows == 1);
+            return ($this->mysqlConnect->query("SELECT * FROM users WHERE user_id = $id")->num_rows == 1);
         } else {
             return file_exists($database . $id);
         }
@@ -107,7 +107,7 @@ class Model
     {
         if ($this->checksExistenceRecord($database, $id)) {
             if ($this->appConfig['database'] === db::MYSQL) {
-                $result = $this->mysqlConnect->query("SELECT * FROM users WHERE userId = $id");
+                $result = $this->mysqlConnect->query("SELECT * FROM users WHERE user_id = $id");
                 while ($user = $result->fetch_assoc()) {
                     $object->setRole($user['role']);
                 }
@@ -142,7 +142,7 @@ class Model
     public function removeFromTheDatabase(int $id, string $database): void
     {
         if ($this->appConfig['database'] === db::MYSQL) {
-            $this->mysqlConnect->query("DELETE FROM users WHERE userId = $id");
+            $this->mysqlConnect->query("DELETE FROM users WHERE user_id = $id");
         }
         if ($this->appConfig['database'] === db::FILES) {
             try {
@@ -156,16 +156,16 @@ class Model
     /**
      * Получает количество значений из таблицы
      */
-    public function getTheNumberOfRecords(string $path = null): int
+    public function getTheNumberOfRecords(string $table = null): int
     {
         $count = 0;
 
         if ($this->appConfig['database'] === db::MYSQL) {
-            $count = $this->mysqlConnect->query('SELECT * FROM users')->num_rows;
+            $count = $this->mysqlConnect->query("SELECT * FROM $table")->num_rows;
         }
         if ($this->appConfig['database'] === db::FILES) {
             try {
-                if ($dir = opendir($path)) {
+                if ($dir = opendir($this->filesConnect . $table)) {
                     while (($file = readdir($dir)) !== false) {
                         if ($file == '.' || $file == '..') {
                             continue;

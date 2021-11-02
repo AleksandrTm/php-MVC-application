@@ -23,7 +23,7 @@ class UserModel extends Model
 
         if ($this->appConfig['database'] === db::MYSQL) {
             while ($user = $this->resultQuery->fetch_assoc()) {
-                $userInfo[$user['userId']] = [
+                $userInfo[$user['user_id']] = [
                     'login' => $user['login'],
                     'password' => $user['password'],
                     'email' => $user['email'],
@@ -51,6 +51,14 @@ class UserModel extends Model
         }
 
         return $userInfo;
+    }
+
+    /**
+     * Получаем данные о пользователе по логину
+     */
+    public function getDataForAuthorization(string $login): array
+    {
+        return $this->mysqlConnect->query("SELECT user_id, login, password, role FROM users WHERE login = '$login'")->fetch_assoc();
     }
 
     /**
