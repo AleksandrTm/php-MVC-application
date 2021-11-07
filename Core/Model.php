@@ -7,6 +7,7 @@ use Exception;
 use mysqli;
 use Enums\Database as db;
 use mysqli_result;
+use Core\Connections\MySQLConnection;
 
 /**
  * Базовая модель
@@ -25,22 +26,16 @@ class Model
         $this->appConfig = include "../config/app.php";
 
         if ($this->appConfig['database'] === db::MYSQL) {
-            \MySQLConnection::getInstance();
+            $this->mysqlConnect = MySQLConnection::getInstance()->getConnection();
         }
         if ($this->appConfig['database'] === db::FILES) {
+            $this->db = include "../config/database.php";
             $this->filesConnect = $this->db['files']['database'];
         }
     }
 
     function __clone()
     {
-    }
-
-    public function __destruct()
-    {
-        if ($this->appConfig['database'] === db::MYSQL) {
-            $this->mysqlConnect->close();
-        }
     }
 
     /**

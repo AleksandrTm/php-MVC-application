@@ -1,6 +1,12 @@
 <?php
 
+namespace Core\Connections;
 
+use mysqli;
+
+/**
+ * Создание подключения к базе данных на Singleton
+ */
 class MySQLConnection
 {
     private mysqli $connection;
@@ -12,7 +18,8 @@ class MySQLConnection
 
     private function __construct()
     {
-        $db = include_once "../../config/database.php";
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+        $db = include_once "../config/database.php";
 
         $this->host = $db['mysql']['host'];
         $this->username = $db['mysql']['username'];
@@ -24,6 +31,11 @@ class MySQLConnection
         if (mysqli_connect_error()) {
             trigger_error("Ошибка подключения MySQL: " . mysqli_connect_error());
         }
+    }
+
+    public function __destruct()
+    {
+        $this->connection->close();
     }
 
     public static function getInstance(): MySQLConnection
