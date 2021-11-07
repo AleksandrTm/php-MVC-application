@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-use config\Paths;
+use Enums\Paths;
 use Core\Controller;
 use Entities\User;
 use Core\Validations;

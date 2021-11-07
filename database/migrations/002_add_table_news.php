@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Таблица articles
+ * Таблица news
  */
-class Articles
+class News
 {
     /**
      * Создание таблицы
      */
     static function up(): string
     {
-        return "CREATE TABLE `articles`" .
-            "(`article_id` int PRIMARY KEY AUTO_INCREMENT," .
+        return "CREATE TABLE `news`" .
+            "(`news_id` int PRIMARY KEY AUTO_INCREMENT," .
             "`title`   varchar(50) NOT NULL," .
             "`text`    LONGTEXT    NOT NULL," .
             "`user_id` int         NOT NULL," .
@@ -23,10 +23,10 @@ class Articles
     /**
      * Удаление таблицы
      */
-    static function rollback(): string
+    static function down(): string
     {
-        return "DROP TABLE `articles`";
+        return "DROP TABLE `news`";
     }
 }
 
-return new Articles;
+return new News;

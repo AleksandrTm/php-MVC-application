@@ -147,7 +147,7 @@ class Console
         rsort($result);
         foreach ($result as $migrate) {
             $obj = include_once $this->pathMigrates . $migrate;
-            $this->mysqlConnect->query($obj->rollback());
+            $this->mysqlConnect->query($obj->down());
             $this->mysqlConnect->query("DELETE FROM migrates WHERE migrate = '$migrate'");
             print "Откат миграции " . $migrate . " успешен \n";
         }

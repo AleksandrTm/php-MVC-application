@@ -3,6 +3,7 @@
 namespace Core\Connections;
 
 use mysqli;
+use Enums\Database as path;
 
 /**
  * Создание подключения к базе данных на Singleton
@@ -19,7 +20,7 @@ class MySQLConnection
     private function __construct()
     {
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-        $db = include_once "../config/database.php";
+        $db = include_once path::PATH_DATABASE;
 
         $this->host = $db['mysql']['host'];
         $this->username = $db['mysql']['username'];

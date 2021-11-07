@@ -1,10 +1,9 @@
 <?php
 
-namespace config;
+namespace Enums;
 
 /**
- * уничтожить данный файл =\
- * перейти на конфиг БД
+ * Пути до папок
  */
 class Paths
 {

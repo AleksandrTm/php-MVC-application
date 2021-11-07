@@ -2,9 +2,10 @@
 
 namespace Core;
 
-use config\Paths;
+use Enums\Paths;
 use Entities\User;
 use Enums\Permissions;
+use Models\UserModel;
 
 /**
  * Обрабатывает URI и разбивает на параметры
@@ -77,7 +78,7 @@ class Router
      */
     private function checksSession(): void
     {
-        $objModel = new Model;
+        $objModel = new UserModel();
 
         if (isset($_SESSION['id'])) {
             $statusUser = $objModel->checksExistenceRecord(Paths::DIR_BASE_USERS, $_SESSION['id']);

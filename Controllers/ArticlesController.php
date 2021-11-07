@@ -6,7 +6,7 @@ use Core\Controller;
 use Core\Validations;
 use Entities\Content;
 use Models\ArticlesModel;
-use config\Paths;
+use Enums\Paths;
 
 /**
  * Контроллер Статей

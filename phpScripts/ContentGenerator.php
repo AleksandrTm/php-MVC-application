@@ -6,7 +6,7 @@ require_once "../Core/Autoload.php";;
 $dbConfig = require_once "../config/database.php";
 
 use Enums\Content;
-use config\Paths;
+use Enums\Paths;
 use Core\Model;
 use Exception;
 
@@ -34,7 +34,8 @@ class ContentGenerator
         $start_time = microtime(true);
 
         $file = null;
-        $objModel = Model::getInstance();
+
+        $objModel = new Model();
         /** последний id */
         $lastId = $objModel->getLastId($type);
         /** цикл с надстройкой, сколько генерировать контента и чего */

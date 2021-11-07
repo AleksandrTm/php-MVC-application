@@ -6,7 +6,7 @@ use Enums\Database as db;
 use Exception;
 use Entities\User;
 use Core\Model;
-use config\Paths;
+use Enums\Paths;
 
 
 class UserModel extends Model

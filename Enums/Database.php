@@ -13,6 +13,9 @@ class Database
     const ARTICLES = 'articles';
 
     /** Папки хранения миграций и сидеров */
-    const PATH_MIGRATES = '../database/migrates/';
+    const PATH_MIGRATES = '../database/migrations/';
     const PATH_SEEDERS = '../database/seeders/';
+
+    /** путь до конфигурации базы данных */
+    const PATH_DATABASE = "../config/database.php";
 }

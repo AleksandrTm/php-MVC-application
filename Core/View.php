@@ -2,7 +2,7 @@
 
 namespace Core;
 
-use config\Paths;
+use Enums\Paths;
 
 /**
  * Отдаём нужные шаблоны и передаём в них значения для отображения
