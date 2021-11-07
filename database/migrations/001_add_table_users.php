@@ -8,7 +8,7 @@ class Users
     /**
      * Создание таблицы
      */
-    static function up(): string
+    public function up(): string
     {
         return "CREATE TABLE `users`" .
             "(`user_id`   int PRIMARY KEY AUTO_INCREMENT," .
@@ -25,10 +25,10 @@ class Users
     /**
      * Удаление таблицы
      */
-    static function down(): string
+    public function down(): string
     {
         return "DROP TABLE `users`";
     }
 }
 
-return new Users;
+return new Users();

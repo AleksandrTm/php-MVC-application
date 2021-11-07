@@ -50,7 +50,7 @@ class Console
         $this->run();
     }
 
-    public function run()
+    public function run(): void
     {
         switch ($this->getFunction) {
             case 'migrate':
@@ -65,7 +65,7 @@ class Console
         }
     }
 
-    private function runMigratesCommand()
+    private function runMigratesCommand(): void
     {
         switch ($this->getCommand) {
             case 'list':
@@ -86,15 +86,23 @@ class Console
         }
     }
 
-    private function runSeedersCommand()
+    private function runSeedersCommand(): void
     {
         switch ($this->getCommand) {
             case 'install':
                 $this->installSeeders();
                 break;
+            case 'list':
+                $this->listSeeders();
+                break;
+            case '-g':
+                $this->generatesSeeders($_SERVER['argv'][3], $_SERVER['argv'][4]);
+                break;
             default:
                 print "Команды для ввода:
-    install : установка seeders\n";
+    install : установка seeders\n
+    list : список seeders\n
+    -g : установка seeders\n";
                 break;
         }
     }
@@ -141,7 +149,7 @@ class Console
     /**
      * Откатить установленные миграции
      */
-    private function rollbackMigrations()
+    private function rollbackMigrations(): void
     {
         $result = $this->getListInstalledMigrations();
         rsort($result);
@@ -188,14 +196,29 @@ class Console
         $result = $this->getListFiles($this->pathSeeders);
 
         try {
-            foreach ($result as $res) {
-                $sql = file_get_contents($this->pathSeeders . $res);
-                $this->mysqlConnect->query("$sql");
-                print "Сидер " . $res . " успешно установлен \n";
+            foreach ($result as $seeder) {
+                $obj = include_once $this->pathSeeders . $seeder;
+                $this->mysqlConnect->query($obj->defaultSeeder());
+                print "Сидер " . $seeder . " успешно установлен \n";
             }
         } catch (mysqli_sql_exception $exception) {
             print $exception;
         }
+    }
+
+    /**
+     * Сгенерировать сидер
+     */
+    private function generatesSeeders(string $seeder, int $count): void
+    {
+        $obj = include_once $this->pathSeeders . $seeder;
+        $arrSQL = $obj->generation($count);
+
+        foreach ($arrSQL as $sql) {
+            $this->mysqlConnect->query($sql);
+        }
+
+        print "Сгенерировано " . $count . " " . $seeder . " успешно\n";
     }
 
     /**
@@ -206,6 +229,22 @@ class Console
         $this->mysqlConnect->query("CREATE TABLE IF NOT EXISTS `migrates`(`migrate` varchar(50) NOT NULL)");
     }
 
+    /**
+     * Список доступных сидеров
+     */
+    private function listSeeders(): void
+    {
+        $result = $this->getListFiles($this->pathSeeders);
+
+        if (empty($result)) {
+            print "Список пуст \n";
+        } else {
+            print "Список сидеров:\n";
+            foreach ($result as $res) {
+                print $res . "\n";
+            }
+        }
+    }
 }
 
 new Console();
