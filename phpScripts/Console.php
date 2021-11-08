@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 
 namespace phpScripts;
@@ -7,7 +6,6 @@ use Core\Connections\MySQLConnection;
 use Enums\Database as db;
 use mysqli;
 use mysqli_sql_exception;
-
 
 include_once '../Core/Autoload.php';
 
@@ -27,12 +25,12 @@ class Console
     public function __construct()
     {
         /**
-         * Создание подключения к базе данных проекта
+         * Подключения к базе данных проекта
          */
         $this->mysqlConnect = MySQLConnection::getInstance()->getConnection();
 
         /**
-         * Пути до папок с sql запросами
+         * Пути до папок с миграциями и сидерами
          */
         $this->pathMigrates = db::PATH_MIGRATES;
         $this->pathSeeders = db::PATH_SEEDERS;
@@ -46,11 +44,13 @@ class Console
         }
 
         $this->checksMigrateTable();
-
         $this->run();
     }
 
-    public function run(): void
+    /**
+     * Основнное консольное меню
+     */
+    private function run(): void
     {
         switch ($this->getFunction) {
             case 'migrate':
@@ -65,6 +65,9 @@ class Console
         }
     }
 
+    /**
+     * Консольное меню миграций
+     */
     private function runMigratesCommand(): void
     {
         switch ($this->getCommand) {
@@ -86,6 +89,9 @@ class Console
         }
     }
 
+    /**
+     * Консольное меню сидеров
+     */
     private function runSeedersCommand(): void
     {
         switch ($this->getCommand) {
@@ -100,9 +106,9 @@ class Console
                 break;
             default:
                 print "Команды для ввода:
-    install : установка seeders\n
-    list : список seeders\n
-    -g : установка seeders\n";
+    install : установка сидеров
+    list : список сидеров
+    -g SeederName.php count : генерация сидеров\n";
                 break;
         }
     }

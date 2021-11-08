@@ -8,7 +8,7 @@ class News
     /**
      * Создание таблицы
      */
-    static function up(): string
+    public function up(): string
     {
         return "CREATE TABLE `news`" .
             "(`news_id` int PRIMARY KEY AUTO_INCREMENT," .
@@ -23,10 +23,10 @@ class News
     /**
      * Удаление таблицы
      */
-    static function down(): string
+    public function down(): string
     {
         return "DROP TABLE `news`";
     }
 }
 
-return new News;
+return new News();
