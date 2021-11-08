@@ -2,8 +2,6 @@
 
 namespace Core;
 
-use config\Paths;
-
 /**
  * Разбитие по страницам
  *
@@ -14,7 +12,7 @@ class Pagination extends Model
     private View $view;
     public int $currentPage;
     public int $countPage;
-    public int $beginWith;
+    public int $beginWith = 0;
     protected string $table;
 
     public function __construct(string $table)
@@ -27,6 +25,7 @@ class Pagination extends Model
 
     public function run(): void
     {
+
         $limit = $this->appConfig['number_record_page'];
 
         $this->countPage = ceil($this->getTheNumberOfRecords($this->table) / $limit);
@@ -35,6 +34,11 @@ class Pagination extends Model
         if (!isset($_GET['page'])) {
             $_GET['page'] = 1;
         }
+
+        if ($this->getTheNumberOfRecords($this->table) === 0) {
+            return;
+        }
+
         if ($_GET['page'] > $this->countPage || !($_GET['page'] > 0)) {
             $this->view->render('page-404', 'Страница не найдена');
         }

@@ -12,9 +12,4 @@ class Content
         'NEWS' => 'news',
         'USERS' => 'users',
     ];
-
-    /**
-     * Количество символов для краткой новости или статьи
-     */
-    const SHORT_TEXT = 100;
 }

@@ -20,7 +20,6 @@ class Authorization
             $usersData = $userModel->getDataForAuthorization($user->getLogin());
 
             if (!isset($usersData)) {
-
                 return false;
             }
             if ($usersData['login'] === $user->getLogin() && password_verify($user->getPassword(), $usersData['password'])) {
@@ -57,7 +56,6 @@ class Authorization
     {
         /** Убиваем данные сессии */
         session_destroy();
-        session_start();
 
         header('Location: http://localsite.ru');
         exit;

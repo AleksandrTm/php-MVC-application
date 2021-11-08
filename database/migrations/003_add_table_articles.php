@@ -3,7 +3,7 @@
 /**
  * Таблица articles
  */
-class Articles
+class TableArticles
 {
     /**
      * Создание таблицы
@@ -11,7 +11,7 @@ class Articles
     public function up(): string
     {
         return "CREATE TABLE `articles`" .
-            "(`article_id` int PRIMARY KEY AUTO_INCREMENT," .
+            "(`id` int PRIMARY KEY AUTO_INCREMENT," .
             "`title`   varchar(50) NOT NULL," .
             "`text`    LONGTEXT    NOT NULL," .
             "`user_id` int         NOT NULL," .
@@ -29,4 +29,4 @@ class Articles
     }
 }
 
-return new Articles();
+return new TableArticles();

@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use Enums\Database as db;
 use Enums\Paths;
 use Core\Controller;
 use Core\Validations;
@@ -18,10 +19,9 @@ class NewsController extends Controller
      */
     public function getNewsPage(): void
     {
-        $objNews = NewsModel::getInstance();
+        $objNews = new NewsModel();
 
         $this->content['content'] = $objNews->getNewsFromTheLastDay();
-
         $this->content['titleContent'] = 'Список новостей за последнии 24 часа';
         $this->content['typeContent'] = 'news';
 
@@ -31,13 +31,19 @@ class NewsController extends Controller
     /**
      * Получаем страницу с полной новостью
      */
-    public function getFullNewsPage(int $id): void
+    public function getFullNewsPage($id): void
     {
-        $objNews = NewsModel::getInstance();
-        $content = $objNews->getContentByID($id, $this->database);
+        $objNews = new NewsModel();
 
-        if (!is_null($content)) {
-            $this->view->render('full-content', 'Новость', $content);
+        $this->content = $objNews->getNewsFromTheLastDay();
+        if ($this->appConfig['database'] === db::FILES) {
+            $this->content = $objNews->getContentByID($id, $this->database);
+        } else {
+            $this->content = $objNews->getContentByID($id, 'news');
+        }
+
+        if (!is_null($this->content)) {
+            $this->view->render('full-content', 'Новость', $this->content);
         } else {
             $this->view->render('page-404', 'Статья не найдена');
         }
@@ -69,9 +75,13 @@ class NewsController extends Controller
      */
     public function removesNews(int $id): void
     {
-        $objArticles = new NewsModel();
+        $objNews = new NewsModel();
 
-        $result = $objArticles->removesContent($this->database, $id);
+        if ($this->appConfig['database'] === db::MYSQL) {
+            $result = $objNews->removesContent(db::NEWS, $id);
+        } else {
+            $result = $objNews->removesContent($this->database, $id);
+        }
         if ($result) {
             $this->content['resultDelete'] = 'Новость успешно удалена';
         } else {
@@ -94,8 +104,14 @@ class NewsController extends Controller
         if (isset($this->content)) {
             $this->content['result'] = 'Ошибка добавления статьи';
         } else {
-            $this->content = ['result' => 'Статья успешно добавлена'];
-            $objNewsModel->addContent($objContent, $this->database);
+            $this->content = ['result' => 'Новость успешно добавлена'];
+
+            if ($this->appConfig['database'] === db::FILES) {
+                $objNewsModel->addContent($objContent, $this->database);
+            } else {
+                $objNewsModel->writeData($objContent, db::NEWS);
+            }
+
         }
 
         $this->view->render('content-action', 'Добавление новости', $this->content);
@@ -118,7 +134,13 @@ class NewsController extends Controller
             $this->content['result'] = 'Ошибка редактирования новости';
         } else {
             $this->content = ['result' => 'Новость успешно отредактирована'];
-            $objNewsModel->editContent($objContent, $id, $this->database);
+
+            if ($this->appConfig['database'] === db::MYSQL) {
+                $objNewsModel->updateData($objContent, db::NEWS, $id);
+            } else {
+                $objNewsModel->editContent($objContent, $id, $this->database);
+            }
+
         }
 
         $this->view->render('content-action', 'Редактирование новости', $this->content);

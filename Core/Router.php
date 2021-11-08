@@ -2,10 +2,6 @@
 
 namespace Core;
 
-use Enums\Paths;
-use Entities\User;
-use Enums\Permissions;
-use Models\UserModel;
 
 /**
  * Обрабатывает URI и разбивает на параметры
@@ -29,7 +25,7 @@ class Router
     {
         $this->requestMethod = htmlspecialchars($_SERVER['REQUEST_METHOD']);
         $this->requestURI = htmlspecialchars(explode('?', $_SERVER['REQUEST_URI'])[0]);
-        $this->checksSession();
+        (new Sessions())->checksSession();
     }
 
     /**
@@ -67,34 +63,5 @@ class Router
         }
 
         $this->uri = is_null($this->path['param']) ? $this->path['url'] : $this->path['url'] . "/" . $this->path['param'];
-    }
-
-    /**
-     * Проверка текущей сессии пользователя
-     *
-     * Обновляет текущие права, если есть такая необходимость
-     *
-     * Права для не авторизованных пользователей: GUEST
-     */
-    private function checksSession(): void
-    {
-        $objModel = new UserModel();
-
-        if (isset($_SESSION['id'])) {
-            $statusUser = $objModel->checksExistenceRecord(Paths::DIR_BASE_USERS, $_SESSION['id']);
-            $user = $objModel->checksUserRole(Paths::DIR_BASE_USERS, $_SESSION['id'], new User);
-
-            if (!$statusUser) {
-                $_SESSION['role'] = Permissions::ROLE['GUEST'];
-                return;
-            }
-            if ($_SESSION['role'] != $user->getRole()) {
-                $_SESSION['role'] = $user->getRole();
-            }
-
-        }
-        if (!isset($_SESSION['role'])) {
-            $_SESSION['role'] = Permissions::ROLE['GUEST'];
-        }
     }
 }

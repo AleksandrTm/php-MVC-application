@@ -3,7 +3,7 @@
 /**
  * Таблица users
  */
-class Users
+class TableUsers
 {
     /**
      * Создание таблицы
@@ -31,4 +31,4 @@ class Users
     }
 }
 
-return new Users();
+return new TableUsers();

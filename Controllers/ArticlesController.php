@@ -5,6 +5,7 @@ namespace Controllers;
 use Core\Controller;
 use Core\Validations;
 use Entities\Content;
+use Enums\Database as db;
 use Models\ArticlesModel;
 use Enums\Paths;
 
@@ -38,12 +39,18 @@ class ArticlesController extends Controller
     /**
      * Получаем страницу с полной статьей
      */
-    public function getFullArticlePage(int $id): void
+    public function getFullArticlePage($id): void
     {
+
         $objArticle = new ArticlesModel();
 
-        $this->content = $objArticle->getContentByID($id, $this->database);
-        if(!is_null($this->content)){
+        if ($this->appConfig['database'] === db::FILES) {
+            $this->content = $objArticle->getContentByID($id, $this->database);
+        } else {
+            $this->content = $objArticle->getContentByID($id, 'articles');
+        }
+
+        if (!is_null($this->content)) {
             $this->view->render('full-content', 'Статья', $this->content);
         } else {
             $this->view->render('page-404', 'Статья не найдена');
@@ -87,7 +94,12 @@ class ArticlesController extends Controller
             $this->content['result'] = 'Ошибка редактирования';
         } else {
             $this->content = ['result' => 'Редактирование успешно'];
-            $objArticleModel->editContent($objContent, $id, $this->database);
+
+            if ($this->appConfig['database'] === db::MYSQL) {
+                $objArticleModel->updateData($objContent, db::ARTICLES, $id);
+            } else {
+                $objArticleModel->editContent($objContent, $id, $this->database);
+            }
         }
 
         $this->view->render('content-action', 'Редактирование статьи', $this->content);
@@ -96,11 +108,15 @@ class ArticlesController extends Controller
     /**
      * Удаляет нужную статью по id
      */
-    public function removesArticle(int $id): void
+    public function removesArticle($id): void
     {
         $objArticles = new ArticlesModel();
 
-        $result = $objArticles->removesContent($this->database, $id);
+        if ($this->appConfig['database'] === db::MYSQL) {
+            $result = $objArticles->removesContent(db::ARTICLES, $id);
+        } else {
+            $result = $objArticles->removesContent($this->database, $id);
+        }
         if ($result) {
             $this->content['resultDelete'] = 'Статья успешно удалена';
         } else {
@@ -124,7 +140,12 @@ class ArticlesController extends Controller
             $this->content['result'] = 'Ошибка добавления статьи';
         } else {
             $this->content = ['result' => 'Статья успешно добавлена'];
-            $objArticleModel->addContent($objContent, $this->database);
+
+            if ($this->appConfig['database'] === db::FILES) {
+                $objArticleModel->addContent($objContent, $this->database);
+            } else {
+                $objArticleModel->writeData($objContent, db::ARTICLES);
+            }
         }
 
         $this->view->render('content-action', 'Добавление статьи', $this->content);

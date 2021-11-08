@@ -2,11 +2,13 @@
 
 namespace Models;
 
+use Core\Pagination;
 use Enums\Database as db;
 use Exception;
 use Entities\User;
 use Core\Model;
 use Enums\Paths;
+use Throwable;
 
 
 class UserModel extends Model
@@ -19,9 +21,12 @@ class UserModel extends Model
     {
         $userInfo = [];
 
-        $this->getRecordsFromDatabase(db::USERS, $this->appConfig['number_record_page']);
+        $pagination = new Pagination(db::USERS);
 
         if ($this->appConfig['database'] === db::MYSQL) {
+            $this->resultQuery = $this->mysqlConnect->query("SELECT * FROM users ORDER BY user_id LIMIT " .
+                $this->appConfig['number_record_page'] . " OFFSET $pagination->beginWith");
+
             while ($user = $this->resultQuery->fetch_assoc()) {
                 $userInfo[$user['user_id']] = [
                     'login' => $user['login'],
@@ -33,8 +38,7 @@ class UserModel extends Model
                     'role' => $user['role']
                 ];
             }
-        }
-        if ($this->appConfig['database'] === db::FILES) {
+        } else {
             foreach ($this->allData as $userId => $userData) {
                 list($login, $password, $email, $fullName, $date, $about, $role) = explode("\n", $userData);
 
@@ -54,11 +58,39 @@ class UserModel extends Model
     }
 
     /**
+     * Получает текущую роль пользователя из базы данных по id
+     */
+    public function checksUserRole(string $database, int $id, User $object = null): ?User
+    {
+        if ($this->checksExistenceRecord($database, $id)) {
+            if ($this->appConfig['database'] === db::MYSQL) {
+                $result = $this->mysqlConnect->query("SELECT * FROM users WHERE user_id = $id");
+                while ($user = $result->fetch_assoc()) {
+                    $object->setRole($user['role']);
+                }
+            }
+            if ($this->appConfig['database'] === db::FILES) {
+                $file = file_get_contents($database . $id);
+                list($login, $password, $email, $fullName, $date, $about, $role) = explode("\n", $file);
+                $object->setRole($role);
+            }
+
+            return $object;
+        }
+
+        return null;
+    }
+
+    /**
      * Получаем данные о пользователе по логину
      */
-    public function getDataForAuthorization(string $login): array
+    public function getDataForAuthorization(string $login): ?array
     {
-        return $this->mysqlConnect->query("SELECT user_id, login, password, role FROM users WHERE login = '$login'")->fetch_assoc();
+        try {
+            return $this->mysqlConnect->query("SELECT user_id, login, password, role FROM users WHERE login = '$login'")->fetch_assoc();
+        } catch (Throwable $t) {
+            return null;
+        }
     }
 
     /**
@@ -98,9 +130,7 @@ class UserModel extends Model
                 UPDATE users 
                 SET login = '$login', password ='$password', email = '$email', full_name = '$fullName', date = '$date', about = '$about'
                 WHERE user_id = '$id'");
-        }
-
-        if ($this->appConfig['database'] === db::FILES) {
+        } else {
             if ($this->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
                 $this->writingDatabase($user, $id, Paths::DIR_BASE_USERS);
             }
@@ -124,8 +154,7 @@ class UserModel extends Model
             $this->writeToDatabase("INSERT INTO users (login, password, email, full_name, date, about)
                                         VALUES ('$login', '$password', '$email', '$fullName', '$date', '$about')");
 
-        }
-        if ($this->appConfig['database'] === db::FILES) {
+        } else {
             $files = null;
             try {
                 $files = fopen($database . $id, 'w');

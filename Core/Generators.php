@@ -15,11 +15,10 @@ class Generators
     public function generatesDate(bool $adult = false): string
     {
         if ($adult) {
-
             return rand(1950, date("Y") - 18) . "-" . rand(1, 12) . "-" . rand(1, 28);
         }
 
-        return rand(1950, 2021) . "-" . rand(1, 12) . "-" . rand(1, 28);
+        return rand(2020, 2022) . "-" . rand(1, 12) . "-" . rand(1, 28);
     }
 
     /**

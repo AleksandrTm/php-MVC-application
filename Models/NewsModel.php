@@ -4,54 +4,38 @@ namespace Models;
 
 use Core\Pagination;
 use Enums\Database as db;
+use Throwable;
 
 class NewsModel extends ContentModel
 {
-    protected static ?NewsModel $_instance = null;
-
-    /**
-     * Если объект не создан, создаем и отдаём
-     * Если объект создан, передаем уже существующий
-     */
-    public static function getInstance(): NewsModel
-    {
-        if (self::$_instance === null) {
-            self::$_instance = new self;
-        }
-
-        return self::$_instance;
-    }
     /** Новости за 24 часа */
-    protected array $currentLastDayNews = [];
+    public array $currentLastDayNews = [];
 
     /**
      * Получаем новости за последний 24 часа
      */
     public function getNewsFromTheLastDay(): array
     {
-
         if ($this->appConfig['database'] === db::MYSQL) {
-
-            $currentTime = date(("Y-m-d"));
-
-            $test = $this->appConfig['number_record_page'];
+            $currentTime = date(("Y-m-d H:i:s"));
             $pagination = new Pagination(db::NEWS);
 
-            $this->resultQuery = $this->mysqlConnect->query("SELECT * FROM news WHERE date >= '$currentTime' LIMIT $test OFFSET $pagination->beginWith");
-
+            $this->resultQuery = $this->mysqlConnect->query(
+                "SELECT n.id, n.title, n.text, u.full_name, n.date FROM " .
+                "news n JOIN users u on u.user_id = n.user_id WHERE n.date > '$currentTime' " .
+                "ORDER BY date DESC LIMIT " . $this->appConfig['number_record_page'] .
+                " OFFSET $pagination->beginWith");
 
             while ($content = $this->resultQuery->fetch_assoc()) {
                 $this->currentLastDayNews[] = [
-                    'id' => $content['news_id'],
+                    'id' => $content['id'],
                     'title' => $content['title'],
                     'text' => $this->getShortText($content['text']),
-                    'author' => $content['user_id'],
+                    'author' => $content['full_name'],
                     'date' => $content['date']
                 ];
             }
-        }
-
-        if ($this->appConfig['database'] === db::FILES) {
+        } else {
             /** Количество секунд в сутках */
             $secondsDay = 24 * 60 * 60;
 

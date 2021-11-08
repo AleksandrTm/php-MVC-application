@@ -18,8 +18,10 @@ class DeleteUserController extends Controller
         $userModel = new UserModel();
 
         if ($userModel->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
-            $userModel->removeFromTheDatabase($id, Paths::DIR_BASE_USERS);
-            $info['statusRemove'] = 'Пользователь успешно удалён';
+            $status = $userModel->removeFromTheDatabase($id, Paths::DIR_BASE_USERS);
+
+            $info['statusRemove'] = $status ? 'Пользователь успешно удалён' : 'Ошибка удаления';
+
             $this->view->render('views-users', 'Список пользователей', $info);
         } else {
             /** Если пользователь не найден в базе, отправляем на главную */

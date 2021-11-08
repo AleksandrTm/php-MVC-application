@@ -2,12 +2,12 @@
 
 namespace Core;
 
-use Entities\User;
 use Exception;
 use mysqli;
 use Enums\Database as db;
 use mysqli_result;
 use Core\Connections\MySQLConnection;
+use Throwable;
 
 /**
  * Базовая модель
@@ -19,7 +19,7 @@ class Model
     protected mysqli $mysqlConnect;
     protected mysqli_result $resultQuery;
     protected array $db;
-    protected array $appConfig;
+    public array $appConfig;
 
     public function __construct()
     {
@@ -34,85 +34,63 @@ class Model
         }
     }
 
-    function __clone()
-    {
-    }
+//    /**
+//     * Получить нужное количество записей из таблицы
+//     */
+//    public function getRecordsFromDatabase(string $table, $limitRecordsPage = null): array
+//    {
+//        $pagination = new Pagination($table);
+//
+//        if ($this->appConfig['database'] === db::MYSQL) {
+//            $this->resultQuery = $this->mysqlConnect->query("SELECT * FROM $table LIMIT $limitRecordsPage OFFSET $pagination->beginWith");
+//        }
+//        if ($this->appConfig['database'] === db::FILES) {
+//            try {
+//                $countFile = 0;
+//
+//                if ($dir = opendir($this->filesConnect . $table . '/')) {
+//                    while (($file = readdir($dir)) !== false) {
+//                        if ($file == '.' || $file == '..') {
+//                            continue;
+//                        }
+//                        /** До куда считываем файлы */
+//                        if ($limitRecordsPage === 0) {
+//                            break;
+//                        }
+//                        /** От куда начинаем считывать файлы */
+//                        $countFile++;
+//                        if ($pagination->beginWith > $countFile) {
+//                            continue;
+//                        }
+//                        $limitRecordsPage--;
+//                        $this->allData[$file] = file_get_contents($this->filesConnect . $table . '/' . $file);
+//                    }
+//                }
+//            } catch (Exception $e) {
+//                var_dump($e);
+//            } finally {
+//                closedir($dir ?? null);
+//            }
+//        }
+//        return $this->allData;
+//    }
 
     /**
-     * Получить нужное количество записей из таблицы
+     * Проверка наличия пользователя в базе по id
      */
-    public function getRecordsFromDatabase(string $table, $limitRecordsPage = null): array
+    public function checksExistenceRecord(string $database, $id): bool
     {
-        $pagination = new Pagination($table);
-
         if ($this->appConfig['database'] === db::MYSQL) {
-            $this->resultQuery = $this->mysqlConnect->query("SELECT * FROM $table LIMIT $limitRecordsPage OFFSET $pagination->beginWith");
-        }
-        if ($this->appConfig['database'] === db::FILES) {
             try {
-                $countFile = 0;
-
-                if ($dir = opendir($this->filesConnect . $table . '/')) {
-                    while (($file = readdir($dir)) !== false) {
-                        if ($file == '.' || $file == '..') {
-                            continue;
-                        }
-                        /** До куда считываем файлы */
-                        if ($limitRecordsPage === 0) {
-                            break;
-                        }
-                        /** От куда начинаем считывать файлы */
-                        $countFile++;
-                        if ($pagination->beginWith > $countFile) {
-                            continue;
-                        }
-                        $limitRecordsPage--;
-                        $this->allData[$file] = file_get_contents($this->filesConnect . $table . '/' . $file);
-                    }
-                }
-            } catch (Exception $e) {
-                var_dump($e);
-            } finally {
-                closedir($dir ?? null);
+                return ($this->mysqlConnect->query("SELECT * FROM users WHERE user_id = $id")->num_rows === 1);
+            } catch (Throwable $t) {
+                print true;
             }
-        }
-        return $this->allData;
-    }
-
-    /**
-     * Проверка наличия записи в базе по id
-     */
-    public function checksExistenceRecord(string $database, int $id): bool
-    {
-        if ($this->appConfig['database'] === db::MYSQL) {
-            return ($this->mysqlConnect->query("SELECT * FROM users WHERE user_id = $id")->num_rows == 1);
         } else {
             return file_exists($database . $id);
         }
-    }
 
-    /**
-     * Получает текущую роль пользователя из базы данных по id
-     */
-    public function checksUserRole(string $database, int $id, User $object = null): ?User
-    {
-        if ($this->checksExistenceRecord($database, $id)) {
-            if ($this->appConfig['database'] === db::MYSQL) {
-                $result = $this->mysqlConnect->query("SELECT * FROM users WHERE user_id = $id");
-                while ($user = $result->fetch_assoc()) {
-                    $object->setRole($user['role']);
-                }
-            }
-            if ($this->appConfig['database'] === db::FILES) {
-                $file = file_get_contents($database . $id);
-                list($login, $password, $email, $fullName, $date, $about, $role) = explode("\n", $file);
-                $object->setRole($role);
-            }
-
-            return $object;
-        }
-
-        return null;
+        return false;
     }
 
     /**
@@ -130,18 +108,25 @@ class Model
     /**
      * Удаление из базы данных записи по id
      */
-    public function removeFromTheDatabase(int $id, string $database): void
+    public function removeFromTheDatabase(int $id, string $database): string
     {
         if ($this->appConfig['database'] === db::MYSQL) {
-            $this->mysqlConnect->query("DELETE FROM users WHERE user_id = $id");
+            try {
+                $this->mysqlConnect->query("DELETE FROM users WHERE user_id = $id");
+            } catch (Throwable $t) {
+                return false;
+            }
         }
         if ($this->appConfig['database'] === db::FILES) {
             try {
                 unlink($database . $id);
             } catch (Exception $e) {
                 var_dump($e);
+                return false;
             }
         }
+
+        return true;
     }
 
     /**
@@ -150,9 +135,18 @@ class Model
     public function getTheNumberOfRecords(string $table = null): int
     {
         $count = 0;
+        $currentTime = date(("Y-m-d"));
 
         if ($this->appConfig['database'] === db::MYSQL) {
-            $count = $this->mysqlConnect->query("SELECT * FROM $table")->num_rows;
+            try {
+                if ($table === db::NEWS) {
+                    $count = $this->mysqlConnect->query("SELECT * FROM news WHERE date > '$currentTime'")->num_rows;
+                } else {
+                    $count = $this->mysqlConnect->query("SELECT * FROM $table")->num_rows;
+                }
+            } catch (Throwable $t) {
+                var_dump($t);
+            }
         }
         if ($this->appConfig['database'] === db::FILES) {
             try {

@@ -9,31 +9,70 @@ use Exception;
 
 class ContentModel extends Model
 {
-    protected array $allContentData = [];
+//    protected array $allContentData = [];
+//
+//    /**
+//     * Получаем данные всех новостей из базы данных и заносим в массив по ключам
+//     *
+//     * Флаг short, позволяет вывести краткий текст контента
+//     */
+//    public function getDataAllContent(string $typeContent, bool $short = true): array
+//    {
+//        $this->getRecordsFromDatabase($typeContent, $this->appConfig['number_record_page']);
+//
+//        if ($this->appConfig['database'] === db::FILES) {
+//            foreach ($this->allData as $idContent => $contentData) {
+//                list($title, $text, $author, $date) = explode("\n", $contentData);
+//
+//                $this->allContentData[$idContent] = [
+//                    'id' => $idContent,
+//                    'title' => $title,
+//                    'text' => $short ? $this->getShortText($text) : $text,
+//                    'author' => $author,
+//                    'date' => $date
+//                ];
+//            }
+//        }
+//        return $this->allContentData;
+//    }
+
 
     /**
-     * Получаем данные всех новостей из базы данных и заносим в массив по ключам
-     *
-     * Флаг short, позволяет вывести краткий текст контента
+     * Получить контент по id
      */
-    public function getDataAllContent(string $typeContent, bool $short = true): array
+    public function getContentByID($id, string $database): array
     {
-        $this->getRecordsFromDatabase($typeContent, $this->appConfig['number_record_page']);
+        $content = [];
 
-        if ($this->appConfig['database'] === db::FILES) {
-            foreach ($this->allData as $idContent => $contentData) {
-                list($title, $text, $author, $date) = explode("\n", $contentData);
+        if ($this->appConfig['database'] === db::MYSQL) {
+//            if ($this->checksExistenceRecord($database, $id)) {
+            $content[$id] = $this->mysqlConnect->query(
+                "SELECT a.title, a.text, u.full_name as author, a.date " .
+                " FROM $database a JOIN users u on u.user_id = a.user_id" .
+                " WHERE id = '$id'")->fetch_assoc();
 
-                $this->allContentData[$idContent] = [
-                    'id' => $idContent,
-                    'title' => $title,
-                    'text' => $short ? $this->getShortText($text) : $text,
-                    'author' => $author,
-                    'date' => $date
-                ];
+            //            }
+        } else {
+            if ($this->checksExistenceRecord($database, $id)) {
+                /** Весь контент по типу ( новости, статьи, ...) */
+                $fullContentById = $this->getRecordsFromDatabase($database);
+
+                foreach ($fullContentById as $idContent => $contentData) {
+                    list($title, $text, $author, $date) = explode("\n", $contentData);
+
+                    $content[$idContent] = [
+                        'id' => $idContent,
+                        'title' => $title,
+                        'text' => $text,
+                        'author' => $author,
+                        'date' => $date
+                    ];
+                }
+                /** Отдаём нужный контент по id */
             }
         }
-        return $this->allContentData;
+
+        return $content[$id];
     }
 
     /**
@@ -41,9 +80,12 @@ class ContentModel extends Model
      *
      * Обрезает по целое число на n-символов, добавляет троеточие
      */
-    public
-    function getShortText(string $text, int $number = Content::SHORT_TEXT): string
+    public function getShortText(string $text, int $number = null): string
     {
+        if ($number === null) {
+            $number = $this->appConfig['short_text'];
+        }
+
         /** Обрезать если длинна текста контента более $number символов */
         if (strlen($text) >= $number) {
             $text = substr($text, 0, $number);
@@ -54,41 +96,20 @@ class ContentModel extends Model
         return $text;
     }
 
-    /**
-     * Получить контент по id
-     */
-    public function getContentByID(int $id, string $database): ?array
+
+    public function removesContent(string $database, $id): bool
     {
-        $content = [];
-        if ($this->checksExistenceRecord($database, $id)) {
-            /** Весь контент по типу ( новости, статьи, ...) */
-            $fullContentById = $this->getRecordsFromDatabase($database);
-
-            foreach ($fullContentById as $idContent => $contentData) {
-                list($title, $text, $author, $date) = explode("\n", $contentData);
-
-                $content[$idContent] = [
-                    'id' => $idContent,
-                    'title' => $title,
-                    'text' => $text,
-                    'author' => $author,
-                    'date' => $date
-                ];
-            }
-            /** Отдаём нужный контент по id */
-            return $content[$id];
-        }
-        return null;
-    }
-
-    public function removesContent(string $database, int $id): bool
-    {
-        /** Проверка на существования контента */
-        if ($this->checksExistenceRecord($database, $id)) {
-            /** Удаляем контент, если такой имеется в базе данных по id */
-            $this->removeFromTheDatabase($id, $database);
-
+        if ($this->appConfig['database'] === db::MYSQL) {
+            $this->mysqlConnect->query("DELETE FROM $database WHERE id = '$id'");
             return true;
+        } else {
+            /** Проверка на существования контента */
+            if ($this->checksExistenceRecord($database, $id)) {
+                /** Удаляем контент, если такой имеется в базе данных по id */
+                $this->removeFromTheDatabase($id, $database);
+
+                return true;
+            }
         }
 
         return false;
@@ -120,19 +141,46 @@ class ContentModel extends Model
     /**
      * Записывает данные в базу данных ( добавление или редактирование )
      */
-    public function writeData(object $object, int $id, string $database): void
+    public function writeData(object $object, string $database, int $id = null): void
     {
-        $files = null;
-        try {
-            $files = fopen($database . $id, 'w');
-            fwrite($files, $object->getTitle() . "\n");
-            fwrite($files, $object->getText() . "\n");
-            fwrite($files, $_SESSION['login'] . "\n");
-            fwrite($files, date("d-m-Y H:i:s") . "\n");
-        } catch (Exception $e) {
-            var_dump($e);
-        } finally {
-            fclose($files);
+        if ($this->appConfig['database'] === db::MYSQL) {
+            $title = $object->getTitle();
+            $text = $object->getText();
+            $userId = $_SESSION['id'];
+            $date = date("Y-m-d H:i:s");
+
+            $this->writeToDatabase("INSERT INTO $database (title, text, user_id, date)
+                                        VALUES ('$title', '$text', '$userId', '$date')");
+        } else {
+            $files = null;
+            try {
+                $files = fopen($database . $id, 'w');
+                fwrite($files, $object->getTitle() . "\n");
+                fwrite($files, $object->getText() . "\n");
+                fwrite($files, $_SESSION['fullName'] . "\n");
+                fwrite($files, date("d-m-Y H:i:s") . "\n");
+            } catch (Exception $e) {
+                var_dump($e);
+            } finally {
+                fclose($files);
+            }
+        }
+    }
+
+    /**
+     * Записывает данные в базу данных ( добавление или редактирование )
+     */
+    public function updateData(object $object, string $database, int $id): void
+    {
+        if ($this->appConfig['database'] === db::MYSQL) {
+            $title = $object->getTitle();
+            $text = $object->getText();
+            $userId = $_SESSION['id'];
+            $date = date("Y-m-d H:i:s");
+
+            $this->writeToDatabase("UPDATE $database " .
+                "SET title = '$title', text = '$text', user_id = '$userId', date = '$date' " .
+                "WHERE  id = '$id'");
         }
     }
 }

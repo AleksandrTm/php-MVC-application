@@ -10,9 +10,11 @@ namespace Core;
 class Controller
 {
     protected ?View $view = null;
+    public array $appConfig;
 
     public function __construct()
     {
         $this->view = new View();
+        $this->appConfig = include "../config/app.php";
     }
 }

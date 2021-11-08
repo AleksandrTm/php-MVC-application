@@ -4,8 +4,10 @@ namespace phpScripts;
 
 use Core\Connections\MySQLConnection;
 use Enums\Database as db;
+use Exception;
 use mysqli;
 use mysqli_sql_exception;
+use Throwable;
 
 include_once '../Core/Autoload.php';
 
