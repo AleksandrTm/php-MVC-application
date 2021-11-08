@@ -6,7 +6,7 @@ use Core\Generators;
 
 class SeederArticles
 {
-    public function defaultSeeder(): string
+    public function installDefaultSeeders(): string
     {
         return "INSERT INTO articles (title, text, user_id, date)" .
             "VALUES ('Тестовая статья', " .
@@ -16,7 +16,7 @@ class SeederArticles
             "'1', '2021-10-10')";
     }
 
-    public function Generation(int $count): array
+    public function generate(int $count): array
     {
         $arr = [];
         $obj = new Generators();

@@ -39,6 +39,8 @@ class UserModel extends Model
                 ];
             }
         } else {
+            $this->getRecordsFromDatabase(db::USERS);
+
             foreach ($this->allData as $userId => $userData) {
                 list($login, $password, $email, $fullName, $date, $about, $role) = explode("\n", $userData);
 

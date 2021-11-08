@@ -206,7 +206,7 @@ class Console
         try {
             foreach ($result as $seeder) {
                 $obj = include_once $this->pathSeeders . $seeder;
-                $this->mysqlConnect->query($obj->defaultSeeder());
+                $this->mysqlConnect->query($obj->installDefaultSeeders());
                 print "Сидер " . $seeder . " успешно установлен \n";
             }
         } catch (mysqli_sql_exception $exception) {
@@ -220,7 +220,7 @@ class Console
     private function generatesSeeders(string $seeder, int $count): void
     {
         $obj = include_once $this->pathSeeders . $seeder;
-        $arrSQL = $obj->generation($count);
+        $arrSQL = $obj->generate($count);
 
         foreach ($arrSQL as $sql) {
             $this->mysqlConnect->query($sql);

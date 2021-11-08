@@ -6,7 +6,7 @@ use Core\Generators;
 
 class SeederUsers
 {
-    public function defaultSeeder(): string
+    public function installDefaultSeeders(): string
     {
         return "INSERT INTO users (login, password, email, full_name, date, role)" .
             "VALUES ('Aleksandr', '$2y$10\$HLqboUD5xDG75/WaClIKwu.yABfjRuQSbK0hOn22jkeE2ApSbLAuW'," .
@@ -15,7 +15,7 @@ class SeederUsers
             "'member@localsite.ru', 'Фелипов Андрей Анатольевич', '1965-10-03', 'member');";
     }
 
-    public function generation(int $count): array
+    public function generate(int $count): array
     {
         $arr = [];
         $obj = new Generators();

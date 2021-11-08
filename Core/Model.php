@@ -34,46 +34,43 @@ class Model
         }
     }
 
-//    /**
-//     * Получить нужное количество записей из таблицы
-//     */
-//    public function getRecordsFromDatabase(string $table, $limitRecordsPage = null): array
-//    {
-//        $pagination = new Pagination($table);
-//
-//        if ($this->appConfig['database'] === db::MYSQL) {
-//            $this->resultQuery = $this->mysqlConnect->query("SELECT * FROM $table LIMIT $limitRecordsPage OFFSET $pagination->beginWith");
-//        }
-//        if ($this->appConfig['database'] === db::FILES) {
-//            try {
-//                $countFile = 0;
-//
-//                if ($dir = opendir($this->filesConnect . $table . '/')) {
-//                    while (($file = readdir($dir)) !== false) {
-//                        if ($file == '.' || $file == '..') {
-//                            continue;
-//                        }
-//                        /** До куда считываем файлы */
-//                        if ($limitRecordsPage === 0) {
-//                            break;
-//                        }
-//                        /** От куда начинаем считывать файлы */
-//                        $countFile++;
-//                        if ($pagination->beginWith > $countFile) {
-//                            continue;
-//                        }
-//                        $limitRecordsPage--;
-//                        $this->allData[$file] = file_get_contents($this->filesConnect . $table . '/' . $file);
-//                    }
-//                }
-//            } catch (Exception $e) {
-//                var_dump($e);
-//            } finally {
-//                closedir($dir ?? null);
-//            }
-//        }
-//        return $this->allData;
-//    }
+    /**
+     * Получить нужное количество записей из таблицы
+     */
+    public function getRecordsFromDatabase(string $table): array
+    {
+        $limitRecordsPage = $this->appConfig['number_record_page'];
+        $pagination = new Pagination($table);
+
+        try {
+            $countFile = 0;
+
+            if ($dir = opendir($this->filesConnect . $table . '/')) {
+                while (($file = readdir($dir)) !== false) {
+                    if ($file == '.' || $file == '..') {
+                        continue;
+                    }
+                    /** До куда считываем файлы */
+                    if ($limitRecordsPage === 0) {
+                        break;
+                    }
+                    /** От куда начинаем считывать файлы */
+                    $countFile++;
+                    if ($pagination->beginWith > $countFile) {
+                        continue;
+                    }
+                    $limitRecordsPage--;
+                    $this->allData[$file] = file_get_contents($this->filesConnect . $table . '/' . $file);
+                }
+            }
+        } catch (Exception $e) {
+            var_dump($e);
+        } finally {
+            closedir($dir ?? null);
+        }
+
+        return $this->allData;
+    }
 
     /**
      * Проверка наличия пользователя в базе по id
@@ -135,7 +132,7 @@ class Model
     public function getTheNumberOfRecords(string $table = null): int
     {
         $count = 0;
-        $currentTime = date(("Y-m-d"));
+        $currentTime = date(("Y-m-d H:i:s"));
 
         if ($this->appConfig['database'] === db::MYSQL) {
             try {
