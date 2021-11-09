@@ -125,7 +125,7 @@ class Routes extends Router
             case "news/edit":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $obj = new NewsController();
-                $obj->getEditNewsForm();
+                $obj->getEditNewsForm($this->path['id']);
                 break;
             case "news/delete":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
@@ -152,7 +152,7 @@ class Routes extends Router
             case "articles/edit":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $obj = new ArticlesController();
-                $obj->getEditArticleForm();
+                $obj->getEditArticleForm($this->path['id']);
                 break;
             case "articles/delete":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);

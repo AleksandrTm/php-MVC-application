@@ -1,8 +1,8 @@
 <div class="table">
-    <?php foreach ($info ?? null as $result) { ?>
-        <div><?php echo $result; ?></div>
+    <?php if (array_key_exists('valid', $info)) { ?>
+<?php var_dump($info['valid']); ?>
     <?php } ?>
-    <?php if(!array_key_exists('userNotFound', $info)) { ?>
+    <?php if (!array_key_exists('userNotFound', $info)) { ?>
     <div class="forms">
         <h3>Редактирование пользователя</h3>
         <form id="send" method="post" action="">
@@ -11,12 +11,12 @@
 
             <div class="form-line">
                 <label for="login">Login: </label>
-                <input id="login" type="text" name="login" value="" required/>
+                <input id="login" type="text" name="login" value="<?= $info['data']['login'] ?? null ?>" required/>
             </div>
 
             <div class="form-line">
                 <label for="email">E-mail</label>
-                <input id="email" type="email" name="email" value="" required/>
+                <input id="email" type="email" name="email" value="<?= $info['data']['email'] ?? null ?>" required/>
             </div>
 
             <div class="form-line">
@@ -31,17 +31,17 @@
 
             <div class="form-line">
                 <label for="fullName">ФИО</label>
-                <input id="fullName" type="text" name="fullName" value=""/>
+                <input id="fullName" type="text" name="fullName" value="<?= $info['data']['full_name'] ?? null ?>"/>
             </div>
 
             <div class="form-line">
                 <label for="date">Дата рождения</label>
-                <input id="date" type="date" name="date" value=""/>
+                <input id="date" type="date" name="date" value="<?= $info['data']['date'] ?? null ?>"/>
             </div>
 
             <div class="form-line" id="text-area">
                 <label for="about">Описание</label>
-                <textarea name="about" id="about" cols="30" rows="10"></textarea>
+                <textarea name="about" id="about" cols="30" rows="10"><?= $info['data']['about'] ?? null ?></textarea>
             </div>
 
             <button id="submit" type="submit">Сохранить изменения</button>

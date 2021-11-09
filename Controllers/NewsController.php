@@ -63,8 +63,15 @@ class NewsController extends Controller
     /**
      * Получаем страницу с формой редактирования новости
      */
-    public function getEditNewsForm(): void
+    public function getEditNewsForm(int $id): void
     {
+        $objNews = new NewsModel();
+
+        if ($this->appConfig['database'] === db::FILES) {
+            $this->content['data'] = $objNews->getContentByID($id, $this->database);
+        } else {
+            $this->content['data'] = $objNews->getContentByID($id, db::NEWS);
+        }
         $this->content['title'] = 'Редактирование новости';
 
         $this->view->render('content-action', $this->content['title'], $this->content);
@@ -143,6 +150,6 @@ class NewsController extends Controller
 
         }
 
-        $this->view->render('content-action', 'Редактирование новости', $this->content);
+        $this->getEditNewsForm($id);
     }
 }

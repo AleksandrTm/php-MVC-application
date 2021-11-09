@@ -70,8 +70,16 @@ class ArticlesController extends Controller
     /**
      * Получаем страницу с формой редактирования статьи
      */
-    public function getEditArticleForm(): void
+    public function getEditArticleForm(int $id): void
     {
+        $objArticle = new ArticlesModel();
+
+        if ($this->appConfig['database'] === db::FILES) {
+            $this->content['data'] = $objArticle->getContentByID($id, $this->database);
+        } else {
+            $this->content['data'] = $objArticle->getContentByID($id, db::ARTICLES);
+        }
+
         $this->content['title'] = 'Редактирование статьи';
 
         $this->view->render('content-action', $this->content['title'], $this->content);
@@ -102,7 +110,7 @@ class ArticlesController extends Controller
             }
         }
 
-        $this->view->render('content-action', 'Редактирование статьи', $this->content);
+        $this->getEditArticleForm($id);
     }
 
     /**

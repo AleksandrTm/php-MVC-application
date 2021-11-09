@@ -95,6 +95,17 @@ class UserModel extends Model
             return null;
         }
     }
+    /**
+     * Получаем данные о пользователе по логину
+     */
+    public function getDataUser(int $id): ?array
+    {
+        try {
+            return $this->mysqlConnect->query("SELECT * FROM users WHERE user_id = '$id'")->fetch_assoc();
+        } catch (Throwable $t) {
+            return null;
+        }
+    }
 
     /**
      * Добавление пользователя
