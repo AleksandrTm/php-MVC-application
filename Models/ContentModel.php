@@ -3,40 +3,11 @@
 namespace Models;
 
 use Core\Model;
-use Enums\Content;
 use Enums\Database as db;
 use Exception;
 
 class ContentModel extends Model
 {
-//    protected array $allContentData = [];
-//
-//    /**
-//     * Получаем данные всех новостей из базы данных и заносим в массив по ключам
-//     *
-//     * Флаг short, позволяет вывести краткий текст контента
-//     */
-//    public function getDataAllContent(string $typeContent, bool $short = true): array
-//    {
-//        $this->getRecordsFromDatabase($typeContent, $this->appConfig['number_record_page']);
-//
-//        if ($this->appConfig['database'] === db::FILES) {
-//            foreach ($this->allData as $idContent => $contentData) {
-//                list($title, $text, $author, $date) = explode("\n", $contentData);
-//
-//                $this->allContentData[$idContent] = [
-//                    'id' => $idContent,
-//                    'title' => $title,
-//                    'text' => $short ? $this->getShortText($text) : $text,
-//                    'author' => $author,
-//                    'date' => $date
-//                ];
-//            }
-//        }
-//        return $this->allContentData;
-//    }
-
-
     /**
      * Получить контент по id
      */
@@ -45,13 +16,10 @@ class ContentModel extends Model
         $content = [];
 
         if ($this->appConfig['database'] === db::MYSQL) {
-//            if ($this->checksExistenceRecord($database, $id)) {
             $content[$id] = $this->mysqlConnect->query(
                 "SELECT a.title, a.text, u.full_name as author, a.date " .
                 " FROM $database a JOIN users u on u.user_id = a.user_id" .
                 " WHERE id = '$id'")->fetch_assoc();
-
-            //            }
         } else {
             if ($this->checksExistenceRecord($database, $id)) {
                 /** Весь контент по типу ( новости, статьи, ...) */
@@ -125,7 +93,7 @@ class ContentModel extends Model
         } else {
             $id = ($this->getLastId($database) + 1);
         }
-        $this->writeData($object, $id, $database);
+        $this->writeData($object, $database, $id);
     }
 
     /**
@@ -134,7 +102,7 @@ class ContentModel extends Model
     public function editContent(object $object, int $id, string $database): void
     {
         if ($this->checksExistenceRecord($database, $id)) {
-            $this->writeData($object, $id, $database);
+            $this->writeData($object, $database, $id);
         }
     }
 

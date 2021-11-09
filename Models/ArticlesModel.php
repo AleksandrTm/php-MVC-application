@@ -4,6 +4,7 @@ namespace Models;
 
 use Core\Pagination;
 use Enums\Database as db;
+use Throwable;
 
 class ArticlesModel extends ContentModel
 {
@@ -17,12 +18,16 @@ class ArticlesModel extends ContentModel
         $pagination = new Pagination(db::ARTICLES);
 
         if ($this->appConfig['database'] === db::MYSQL) {
-            $this->resultQuery = $this->mysqlConnect->query(
-                "SELECT a.id, a.title, a.text, u.full_name, a.date " .
-                "FROM articles a JOIN users u on u.user_id = a.user_id " .
-                "ORDER BY date DESC LIMIT " . $this->appConfig['number_record_page'] .
-                " OFFSET $pagination->beginWith");
-
+            try {
+                $this->resultQuery = $this->mysqlConnect->query(
+                    "SELECT a.id, a.title, a.text, u.full_name, a.date " .
+                    "FROM articles a JOIN users u on u.user_id = a.user_id " .
+                    "ORDER BY date DESC LIMIT " . $this->appConfig['number_record_page'] .
+                    " OFFSET $pagination->beginWith");
+            } catch (Throwable $t) {
+                $this->articlesData['error'] = true;
+                return $this->articlesData;
+            }
             while ($content = $this->resultQuery->fetch_assoc()) {
                 $this->articlesData[] = [
                     'id' => $content['id'],
@@ -31,6 +36,22 @@ class ArticlesModel extends ContentModel
                     'author' => $content['full_name'],
                     'date' => $content['date']
                 ];
+            }
+        } else {
+            $this->getRecordsFromDatabase(db::ARTICLES);
+
+            if ($this->appConfig['database'] === db::FILES) {
+                foreach ($this->allData as $idContent => $contentData) {
+                    list($title, $text, $author, $date) = explode("\n", $contentData);
+
+                    $this->articlesData[] = [
+                        'id' => $idContent,
+                        'title' => $title,
+                        'text' => $this->getShortText($text),
+                        'author' => $author,
+                        'date' => $date
+                    ];
+                }
             }
         }
 

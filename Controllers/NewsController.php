@@ -109,7 +109,7 @@ class NewsController extends Controller
             if ($this->appConfig['database'] === db::FILES) {
                 $objNewsModel->addContent($objContent, $this->database);
             } else {
-                $objNewsModel->writeData($objContent, db::NEWS);
+                $objNewsModel->addContent($objContent, db::NEWS);
             }
 
         }

@@ -26,7 +26,12 @@ class RegistrationController extends Controller
             $info[] = 'Ошибка регистрации';
         } else {
             $info = ['Регистрация успешна'];
-            $objUsers->addUser($user);
+            $status = $objUsers->addUser($user);
+
+            if(!$status) {
+                $info = [];
+                $info[] = "ошибка подключения к таблице";
+            }
         }
         $this->view->render('registration','Регистрация', $info);
     }

@@ -25,6 +25,7 @@ class Authorization
             if ($usersData['login'] === $user->getLogin() && password_verify($user->getPassword(), $usersData['password'])) {
                 $_SESSION['login'] = $user->getLogin();
                 $_SESSION['role'] = $usersData['role'];
+                $_SESSION['fullName'] = $usersData['full_name'];
                 $_SESSION['id'] = $usersData['user_id'];
 
                 return true;
@@ -39,6 +40,7 @@ class Authorization
                 if ($userData['login'] === $user->getLogin() && password_verify($user->getPassword(), $userData['password'])) {
                     $_SESSION['login'] = $user->getLogin();
                     $_SESSION['role'] = $userData['role'];
+                    $_SESSION['fullName'] = $userData['fullName'];
                     $_SESSION['id'] = $key;
 
                     return true;

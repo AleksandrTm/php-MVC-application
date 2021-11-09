@@ -56,6 +56,7 @@ class UserModel extends Model
             }
         }
 
+
         return $userInfo;
     }
 
@@ -89,7 +90,7 @@ class UserModel extends Model
     public function getDataForAuthorization(string $login): ?array
     {
         try {
-            return $this->mysqlConnect->query("SELECT user_id, login, password, role FROM users WHERE login = '$login'")->fetch_assoc();
+            return $this->mysqlConnect->query("SELECT user_id, login, password, full_name, role FROM users WHERE login = '$login'")->fetch_assoc();
         } catch (Throwable $t) {
             return null;
         }
@@ -98,10 +99,12 @@ class UserModel extends Model
     /**
      * Добавление пользователя
      */
-    public function addUser(User $user): void
+    public function addUser(User $user): bool
     {
+        $status = false;
+
         if ($this->appConfig['database'] === db::MYSQL) {
-            $this->writingDatabase($user);
+            $status = $this->writingDatabase($user);
         }
         if ($this->appConfig['database'] === db::FILES) {
             if (empty($this->getLastId(Paths::DIR_BASE_USERS))) {
@@ -109,8 +112,9 @@ class UserModel extends Model
             } else {
                 $userId = ($this->getLastId(Paths::DIR_BASE_USERS) + 1);
             }
-            $this->writingDatabase($user, $userId, Paths::DIR_BASE_USERS);
+            $status = $this->writingDatabase($user, $userId, Paths::DIR_BASE_USERS);
         }
+        return $status;
     }
 
     /**
@@ -142,7 +146,7 @@ class UserModel extends Model
     /**
      * Записывает переданные данные в базу данных
      */
-    public function writingDatabase(User $user, int $id = null, string $database = null, string $update = null): void
+    public function writingDatabase(User $user, int $id = null, string $database = null, string $update = null): bool
     {
         if ($this->appConfig['database'] === db::MYSQL) {
             $login = $user->getLogin();
@@ -152,10 +156,12 @@ class UserModel extends Model
             $date = $user->getDate();
             $about = $user->getAbout();
 
-
-            $this->writeToDatabase("INSERT INTO users (login, password, email, full_name, date, about)
+            try {
+                $this->writeToDatabase("INSERT INTO users (login, password, email, full_name, date, about)
                                         VALUES ('$login', '$password', '$email', '$fullName', '$date', '$about')");
-
+            } catch (Throwable $t) {
+                return false;
+            }
         } else {
             $files = null;
             try {
@@ -169,9 +175,11 @@ class UserModel extends Model
                 fwrite($files, 'member');
             } catch (Exception $e) {
                 var_dump($e);
+                return false;
             } finally {
                 fclose($files);
             }
         }
+        return true;
     }
 }

@@ -39,36 +39,38 @@ class Model
      */
     public function getRecordsFromDatabase(string $table): array
     {
-        $limitRecordsPage = $this->appConfig['number_record_page'];
-        $pagination = new Pagination($table);
+        if ($this->appConfig['database'] === db::FILES) {
+            $limitRecordsPage = $this->appConfig['number_record_page'];
+            $pagination = new Pagination($table);
 
-        try {
-            $countFile = 0;
+            try {
+                $countFile = 0;
 
-            if ($dir = opendir($this->filesConnect . $table . '/')) {
-                while (($file = readdir($dir)) !== false) {
-                    if ($file == '.' || $file == '..') {
-                        continue;
+                if ($dir = opendir($this->filesConnect . $table . '/')) {
+                    while (($file = readdir($dir)) !== false) {
+                        if ($file == '.' || $file == '..') {
+                            continue;
+                        }
+                        /** До куда считываем файлы */
+                        if ($limitRecordsPage === 0) {
+                            break;
+                        }
+                        /** От куда начинаем считывать файлы */
+                        $countFile++;
+                        if ($pagination->beginWith > $countFile) {
+                            continue;
+                        }
+                        $limitRecordsPage--;
+                        $this->allData[$file] = file_get_contents($this->filesConnect . $table . '/' . $file);
                     }
-                    /** До куда считываем файлы */
-                    if ($limitRecordsPage === 0) {
-                        break;
-                    }
-                    /** От куда начинаем считывать файлы */
-                    $countFile++;
-                    if ($pagination->beginWith > $countFile) {
-                        continue;
-                    }
-                    $limitRecordsPage--;
-                    $this->allData[$file] = file_get_contents($this->filesConnect . $table . '/' . $file);
                 }
+            } catch (Exception $e) {
+                var_dump($e);
+            } finally {
+                closedir($dir ?? null);
             }
-        } catch (Exception $e) {
-            var_dump($e);
-        } finally {
-            closedir($dir ?? null);
-        }
 
+        }
         return $this->allData;
     }
 
@@ -81,7 +83,6 @@ class Model
             try {
                 return ($this->mysqlConnect->query("SELECT * FROM users WHERE user_id = $id")->num_rows === 1);
             } catch (Throwable $t) {
-                print true;
             }
         } else {
             return file_exists($database . $id);
@@ -95,11 +96,9 @@ class Model
      */
     public function getLastId(string $type): int
     {
-        $this->getRecordsFromDatabase($type);
-        $data = array_keys($this->allData);
-        rsort($data);
-
-        return (int)array_shift($data);
+        $arr = array_diff(scandir($this->filesConnect . $type), array('..', '.'));
+        rsort($arr);
+        return (int)array_shift($arr);
     }
 
     /**
@@ -142,7 +141,7 @@ class Model
                     $count = $this->mysqlConnect->query("SELECT * FROM $table")->num_rows;
                 }
             } catch (Throwable $t) {
-                var_dump($t);
+//                var_dump($t);
             }
         }
         if ($this->appConfig['database'] === db::FILES) {
