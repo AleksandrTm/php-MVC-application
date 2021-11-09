@@ -80,8 +80,8 @@ class ContentGenerator
 }
 
 /* Генерирует 25 статей */
-//(new ContentGenerator())->generatesContent(Paths::DIR_BASE_ARTICLES, Content::TYPE['ARTICLES'], 100);
+//(new ContentGenerator())->generatesContent(Paths::DIR_BASE_ARTICLES, Content::TYPE['ARTICLES'], 25);
 /* Генерирует 25 новостей */
-//(new ContentGenerator())->generatesContent(Paths::DIR_BASE_NEWS, Content::TYPE['NEWS'], 15);
+(new ContentGenerator())->generatesContent(Paths::DIR_BASE_NEWS, Content::TYPE['NEWS'], 50);
 /* Генерирует 25 пользователей */
-(new ContentGenerator())->generatesContent(Paths::DIR_BASE_USERS, Content::TYPE['USERS'], 10);
+//(new ContentGenerator())->generatesContent(Paths::DIR_BASE_USERS, Content::TYPE['USERS'], 15);

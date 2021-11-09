@@ -6,11 +6,11 @@ use Enums\Database as db;
  * Конфигурация проекта
  */
 return [
-    /** Имя проекта */
-    'name_project' => 'local-site',
+    /** Включить полный вывод ошибок на сайте */
+    'debug' => false,
 
     /** Тип базы данных для сайта */
-    'database' => db::FILES,
+    'database' => db::MYSQL,
 
     /** количество записей на страницу */
     'number_record_page' => 10,

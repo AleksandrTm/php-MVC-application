@@ -144,7 +144,7 @@ class ArticlesController extends Controller
             if ($this->appConfig['database'] === db::FILES) {
                 $objArticleModel->addContent($objContent, $this->database);
             } else {
-                $objArticleModel->addContent($objContent, db::ARTICLES);
+                $objArticleModel->writeData($objContent, db::ARTICLES);
             }
         }
 

@@ -160,6 +160,9 @@ class UserModel extends Model
                 $this->writeToDatabase("INSERT INTO users (login, password, email, full_name, date, about)
                                         VALUES ('$login', '$password', '$email', '$fullName', '$date', '$about')");
             } catch (Throwable $t) {
+                if ($this->appConfig['debug'] === true) {
+                    var_dump($t);
+                }
                 return false;
             }
         } else {

@@ -25,6 +25,9 @@ class ArticlesModel extends ContentModel
                     "ORDER BY date DESC LIMIT " . $this->appConfig['number_record_page'] .
                     " OFFSET $pagination->beginWith");
             } catch (Throwable $t) {
+                if ($this->appConfig['debug'] === true) {
+                    var_dump($t);
+                }
                 $this->articlesData['error'] = true;
                 return $this->articlesData;
             }

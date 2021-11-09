@@ -33,6 +33,9 @@ class NewsModel extends ContentModel
                     " OFFSET $pagination->beginWith");
 
             } catch (Throwable $t) {
+                if ($this->appConfig['debug'] === true) {
+                    var_dump($t);
+                }
                 $this->currentLastDayNews['error'] = true;
                 return $this->currentLastDayNews;
             }
@@ -49,6 +52,7 @@ class NewsModel extends ContentModel
         } else {
             /** Количество секунд в сутках */
             $secondsDay = 24 * 60 * 60;
+
 
             /** Текущее unix время */
             $currentUnixTime = time();
@@ -74,8 +78,9 @@ class NewsModel extends ContentModel
                 }
             }
         }
+        $pagination = new Pagination(db::NEWS, count($this->currentLastDayNews));
 
-        return $this->currentLastDayNews;
+        return array_slice($this->currentLastDayNews, $pagination->beginWith, $this->appConfig['number_record_page']);
     }
 
     private function getDataAllContent(): void
@@ -94,7 +99,7 @@ class NewsModel extends ContentModel
         } finally {
             closedir($dir ?? null);
         }
-        foreach ($this->allData as $idContent => $contentData) {
+        foreach ($this->newsData as $idContent => $contentData) {
             list($title, $text, $author, $date) = explode("\n", $contentData);
 
             $this->allNews[] = [

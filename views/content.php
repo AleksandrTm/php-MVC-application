@@ -29,7 +29,7 @@
             </div>
         <?php } ?>
     <?php } else {
-        print 'ошибка подключения к таблице,<br> возможно таблица отсутствует';
+        print 'ошибка подключения к таблице';
     } ?>
     <?php if (isset($_GET['countPage'])) { ?>
         <div class="page-numbers">
