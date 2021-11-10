@@ -11,6 +11,7 @@ class Paths
     const DIR_BASE_NEWS = "../database/news/";
     const DIR_BASE_ARTICLES = "../database/articles/";
     const DIR_VIEWS = "../views/";
+    const DIR_RESOURCE = "../resource/items/";
 }
 
 
