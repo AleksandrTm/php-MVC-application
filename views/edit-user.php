@@ -1,6 +1,13 @@
 <div class="table">
-    <?php if (array_key_exists('valid', $info)) { ?>
-<?php var_dump($info['valid']); ?>
+    <?php
+    if (array_key_exists('resultEdit', $info)) {
+        print $info['resultEdit'];
+    }
+
+    if (array_key_exists('valid', $info) && !is_null($info['valid'])) { ?>
+        <?php foreach ($info['valid'] as $result) { ?>
+            <div><?= $result ?></div>
+        <?php } ?>
     <?php } ?>
     <?php if (!array_key_exists('userNotFound', $info)) { ?>
     <div class="forms">

@@ -40,8 +40,7 @@ class EditUsersController extends Controller
         $objUser = new User();
 
         $this->content['valid'] = $objValidation->validatesForms($objUser);
-
-        if (isset($info)) {
+        if (isset($this->content['valid'])) {
             $this->content['resultEdit'] = 'Ошибка редактирования';
         } else {
             $this->content['resultEdit'] = 'Редактирование успешно';
