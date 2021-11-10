@@ -22,18 +22,15 @@ class Console
     private ?string $getCommand = null;
     private string $pathMigrates;
     private string $pathSeeders;
+    private array $appConfig;
 
 
     public function __construct()
     {
-        /**
-         * Подключения к базе данных проекта
-         */
+        $this->appConfig = include "../config/app.php";
+
         $this->mysqlConnect = MySQLConnection::getInstance()->getConnection();
 
-        /**
-         * Пути до папок с миграциями и сидерами
-         */
         $this->pathMigrates = db::PATH_MIGRATES;
         $this->pathSeeders = db::PATH_SEEDERS;
 
@@ -161,8 +158,13 @@ class Console
     {
         $result = $this->getListInstalledMigrations();
         rsort($result);
+
+        if (empty($result)) {
+            print "Нет установленных миграций \n";
+        }
+
         foreach ($result as $migrate) {
-            $obj = include_once $this->pathMigrates . $migrate;
+            $obj = require_once $this->pathMigrates . $migrate;
             $this->mysqlConnect->query($obj->down());
             $this->mysqlConnect->query("DELETE FROM migrates WHERE migrate = '$migrate'");
             print "Откат миграции " . $migrate . " успешен \n";
@@ -205,12 +207,15 @@ class Console
 
         try {
             foreach ($result as $seeder) {
-                $obj = include_once $this->pathSeeders . $seeder;
+                $obj = require_once $this->pathSeeders . $seeder;
                 $this->mysqlConnect->query($obj->installDefaultSeeders());
                 print "Сидер " . $seeder . " успешно установлен \n";
             }
-        } catch (mysqli_sql_exception $exception) {
-            print $exception;
+        } catch (Throwable $throwable) {
+            if ($this->appConfig['debug'] === true) {
+                print $throwable;
+            }
+            print "Ошибка установки сидеров \n";
         }
     }
 
