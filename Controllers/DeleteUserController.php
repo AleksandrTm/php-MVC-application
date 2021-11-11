@@ -2,9 +2,12 @@
 
 namespace Controllers;
 
+use Core\Model;
+use Enums\Database as db;
 use Enums\Paths;
 use Core\Controller;
 use Models\UserModel;
+use Models\UserModelSQL;
 
 /**
  * Удаление пользователя по его id
@@ -13,12 +16,22 @@ use Models\UserModel;
  */
 class DeleteUserController extends Controller
 {
+    private Model $model;
+
+    public function __construct()
+    {
+        parent::__construct();
+        if ($this->appConfig['database'] === db::MYSQL) {
+            $this->model = new UserModelSQL();
+        } else {
+            $this->model = new UserModel();
+        }
+    }
+
     public function removesUser(int $id): void
     {
-        $userModel = new UserModel();
-
-        if ($userModel->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
-            $status = $userModel->removeFromTheDatabase($id, Paths::DIR_BASE_USERS);
+        if ($this->model->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
+            $status = $this->model->removeFromTheDatabase($id, Paths::DIR_BASE_USERS);
 
             $info['statusRemove'] = $status ? 'Пользователь успешно удалён' : 'Ошибка удаления';
 

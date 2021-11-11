@@ -4,6 +4,8 @@ namespace Core;
 
 use Enums\Paths;
 
+include_once '../Core/Autoload.php';
+
 /**
  * Импорт предметов из csv в базу данных
  */
@@ -12,17 +14,62 @@ class ImportingItems
     private string $path;
     public array $data;
 
+    public string $name;
+    public string $brand;
+    public string $color;
+    public string $code;
+    public string $tempateCode = "([(])([A-Z0-9]{0,})([)])";
+
     public function __construct()
     {
-        $this->path = require_once Paths::DIR_RESOURCE;
+        $this->path = Paths::DIR_RESOURCE;
+
     }
 
     /**
-     * Парсит данные из файла
+     * Разбивает файл на массив без
      */
-    private function parsesData(string $file): void
+    public function parsesData(): void
     {
+        $files = $this->getAllFiles();
+        $allItems = [];
 
+        if (empty($files)) {
+            print "Список пуст \n";
+        } else {
+            foreach ($files as $file) {
+                $file = file_get_contents($this->path . $file);
+                $file = str_replace('"', '', $file);
+                $file = preg_replace('/("\')/i', '', $file);
+
+                $file = preg_replace('/[ ]{2,}/im', ' ', $file);
+                $file = preg_replace('/[( ]{2,}/im', '(', $file);
+
+//             $file =    preg_replace('/([(])([A-Z0-9]*([)]))/im', '', $file);
+
+
+//             $file =    preg_replace('/[a-zA-Z]/im', '', $file);
+//
+//                $file = preg_replace('/[ ]{2,}/im', ' ', $file);
+
+                // разбиваем файл на массив по строчно
+                $allItems = explode("\n", $file);
+                // удаляем пустые строки ( последняя пустая )
+                $allItems = array_diff($allItems, array(''));
+                // удаляем пробелы в начале и конце значений
+                $allItems = array_map('trim', $allItems);
+
+                foreach ($allItems as $item){
+                    preg_match("/([(])([A-Z0-9]*([)]))/im", $item, $test);
+                    if (!empty($test[0])) {
+                        print_r($test[0] . "\n");
+                    }
+                }
+            }
+        }
+
+
+//        var_dump($allItems);
     }
 
     /**
@@ -30,8 +77,9 @@ class ImportingItems
      */
     private function getAllFiles(): array
     {
-
-        return [];
+        return array_diff(scandir($this->path), array('..', '.'));
     }
 
 }
+
+(new ImportingItems())->parsesData();

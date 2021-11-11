@@ -2,10 +2,13 @@
 
 namespace Controllers;
 
+use Core\Model;
 use Entities\User;
 use Core\Controller;
 use Core\Authorization;
+use Enums\Database as db;
 use Models\UserModel;
+use Models\UserModelSQL;
 
 /**
  * Контроллер Сессии пользователя ( авторизация, выход )
@@ -14,11 +17,17 @@ class LoginController extends Controller
 {
     protected Authorization $authorization;
     protected bool $authorizationStatus;
+    private Model $model;
 
     public function __construct()
     {
         parent::__construct();
         $this->authorization = new Authorization();
+        if ($this->appConfig['database'] === db::MYSQL) {
+            $this->model = new UserModelSQL();
+        } else {
+            $this->model = new UserModel();
+        }
     }
 
     /**
@@ -34,10 +43,9 @@ class LoginController extends Controller
      */
     public function getResultAuthorizationUser(): void
     {
-        $objUserModel = new UserModel();
         $objUser = new User();
 
-        $this->authorizationStatus = $this->authorization->logInUser($objUser, $objUserModel);
+        $this->authorizationStatus = $this->authorization->logInUser($objUser, $this->model);
 
         $info = ['statusAuthorization' => $this->authorizationStatus];
 

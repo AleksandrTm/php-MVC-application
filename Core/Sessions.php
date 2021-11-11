@@ -7,6 +7,7 @@ use Enums\Database as db;
 use Enums\Paths;
 use Enums\Permissions;
 use Models\UserModel;
+use Models\UserModelSQL;
 
 class Sessions
 {
@@ -19,7 +20,13 @@ class Sessions
      */
     public function checksSession(): void
     {
-        $objModel = new UserModel();
+        $appConfig = require_once "../config/app.php";
+
+        if ($appConfig['database'] === db::MYSQL) {
+            $objModel = new UserModelSQL();
+        } else {
+            $objModel = new UserModel();
+        }
 
         if (isset($_SESSION['id'])) {
 

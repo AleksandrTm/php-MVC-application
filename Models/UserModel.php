@@ -8,10 +8,11 @@ use Exception;
 use Entities\User;
 use Core\Model;
 use Enums\Paths;
+use Interfaces\UserInterface;
 use Throwable;
 
 
-class UserModel extends Model
+class UserModel extends Model implements UserInterface
 {
     /**
      * Отдаёт многомерный массив со всеми пользователями и данными
@@ -21,41 +22,21 @@ class UserModel extends Model
     {
         $userInfo = [];
 
-        $pagination = new Pagination(db::USERS);
+        $this->getRecordsFromDatabase(db::USERS);
 
-        if ($this->appConfig['database'] === db::MYSQL) {
-            $this->resultQuery = $this->mysqlConnect->query("SELECT * FROM users ORDER BY user_id LIMIT " .
-                $this->appConfig['number_record_page'] . " OFFSET $pagination->beginWith");
+        foreach ($this->allData as $userId => $userData) {
+            list($login, $password, $email, $fullName, $date, $about, $role) = explode("\n", $userData);
 
-            while ($user = $this->resultQuery->fetch_assoc()) {
-                $userInfo[$user['user_id']] = [
-                    'login' => $user['login'],
-                    'password' => $user['password'],
-                    'email' => $user['email'],
-                    'fullName' => $user['full_name'],
-                    'date' => $user['date'],
-                    'about' => $user['about'],
-                    'role' => $user['role']
-                ];
-            }
-        } else {
-            $this->getRecordsFromDatabase(db::USERS);
-
-            foreach ($this->allData as $userId => $userData) {
-                list($login, $password, $email, $fullName, $date, $about, $role) = explode("\n", $userData);
-
-                $userInfo[$userId] = [
-                    'login' => $login,
-                    'password' => $password,
-                    'email' => $email,
-                    'fullName' => $fullName,
-                    'date' => $date,
-                    'about' => $about,
-                    'role' => $role,
-                ];
-            }
+            $userInfo[$userId] = [
+                'login' => $login,
+                'password' => $password,
+                'email' => $email,
+                'fullName' => $fullName,
+                'date' => $date,
+                'about' => $about,
+                'role' => $role,
+            ];
         }
-
 
         return $userInfo;
     }
@@ -66,12 +47,6 @@ class UserModel extends Model
     public function checksUserRole(string $database, int $id, User $object = null): ?User
     {
         if ($this->checksExistenceRecord($database, $id)) {
-            if ($this->appConfig['database'] === db::MYSQL) {
-                $result = $this->mysqlConnect->query("SELECT * FROM users WHERE user_id = $id");
-                while ($user = $result->fetch_assoc()) {
-                    $object->setRole($user['role']);
-                }
-            }
             if ($this->appConfig['database'] === db::FILES) {
                 $file = file_get_contents($database . $id);
                 list($login, $password, $email, $fullName, $date, $about, $role) = explode("\n", $file);
@@ -89,22 +64,15 @@ class UserModel extends Model
      */
     public function getDataForAuthorization(string $login): ?array
     {
-        try {
-            return $this->mysqlConnect->query("SELECT user_id, login, password, full_name, role FROM users WHERE login = '$login'")->fetch_assoc();
-        } catch (Throwable $t) {
-            return null;
-        }
+        return [];
     }
+
     /**
      * Получаем данные о пользователе по логину
      */
     public function getDataUser(int $id): ?array
     {
-        try {
-            return $this->mysqlConnect->query("SELECT * FROM users WHERE user_id = '$id'")->fetch_assoc();
-        } catch (Throwable $t) {
-            return null;
-        }
+        return [];
     }
 
     /**
@@ -114,9 +82,6 @@ class UserModel extends Model
     {
         $status = false;
 
-        if ($this->appConfig['database'] === db::MYSQL) {
-            $status = $this->writingDatabase($user);
-        }
         if ($this->appConfig['database'] === db::FILES) {
             if (empty($this->getLastId(Paths::DIR_BASE_USERS))) {
                 $userId = 1;
@@ -125,6 +90,7 @@ class UserModel extends Model
             }
             $status = $this->writingDatabase($user, $userId, Paths::DIR_BASE_USERS);
         }
+
         return $status;
     }
 
@@ -135,22 +101,8 @@ class UserModel extends Model
      */
     public function editUser(User $user, int $id): void
     {
-        if ($this->appConfig['database'] === db::MYSQL) {
-            $login = $user->getLogin();
-            $password = password_hash($user->getPassword(), PASSWORD_DEFAULT);
-            $email = $user->getEmail();
-            $fullName = $user->getFullName();
-            $date = $user->getDate();
-            $about = $user->getAbout();
-
-            $this->mysqlConnect->query("
-                UPDATE users 
-                SET login = '$login', password ='$password', email = '$email', full_name = '$fullName', date = '$date', about = '$about'
-                WHERE user_id = '$id'");
-        } else {
-            if ($this->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
-                $this->writingDatabase($user, $id, Paths::DIR_BASE_USERS);
-            }
+        if ($this->checksExistenceRecord(Paths::DIR_BASE_USERS, $id)) {
+            $this->writingDatabase($user, $id, Paths::DIR_BASE_USERS);
         }
     }
 
@@ -159,41 +111,24 @@ class UserModel extends Model
      */
     public function writingDatabase(User $user, int $id = null, string $database = null, string $update = null): bool
     {
-        if ($this->appConfig['database'] === db::MYSQL) {
-            $login = $user->getLogin();
-            $password = password_hash($user->getPassword(), PASSWORD_DEFAULT);
-            $email = $user->getEmail();
-            $fullName = $user->getFullName();
-            $date = $user->getDate();
-            $about = $user->getAbout();
+        $files = null;
 
-            try {
-                $this->writeToDatabase("INSERT INTO users (login, password, email, full_name, date, about)
-                                        VALUES ('$login', '$password', '$email', '$fullName', '$date', '$about')");
-            } catch (Throwable $t) {
-                if ($this->appConfig['debug'] === true) {
-                    var_dump($t);
-                }
-                return false;
-            }
-        } else {
-            $files = null;
-            try {
-                $files = fopen($database . $id, 'w');
-                fwrite($files, $user->getLogin() . "\n");
-                fwrite($files, password_hash($user->getPassword(), PASSWORD_DEFAULT) . "\n");
-                fwrite($files, $user->getEmail() . "\n");
-                fwrite($files, $user->getFullName() . "\n");
-                fwrite($files, $user->getDate() . "\n");
-                fwrite($files, $user->getAbout() . "\n");
-                fwrite($files, 'member');
-            } catch (Exception $e) {
-                var_dump($e);
-                return false;
-            } finally {
-                fclose($files);
-            }
+        try {
+            $files = fopen($database . $id, 'w');
+            fwrite($files, $user->getLogin() . "\n");
+            fwrite($files, password_hash($user->getPassword(), PASSWORD_DEFAULT) . "\n");
+            fwrite($files, $user->getEmail() . "\n");
+            fwrite($files, $user->getFullName() . "\n");
+            fwrite($files, $user->getDate() . "\n");
+            fwrite($files, $user->getAbout() . "\n");
+            fwrite($files, 'member');
+        } catch (Exception $e) {
+            var_dump($e);
+            return false;
+        } finally {
+            fclose($files);
         }
+
         return true;
     }
 }
