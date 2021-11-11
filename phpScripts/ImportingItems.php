@@ -5,7 +5,6 @@ namespace phpScripts;
 use Enums\Paths;
 use Core\Connections\MySQLConnection;
 use mysqli;
-use mysqli_result;
 
 include_once '../Core/Autoload.php';
 
@@ -26,11 +25,14 @@ class ImportingItems
     private array $size;
     private array $color;
 
+    private array $allItems;
+
     public function __construct()
     {
         $this->path = Paths::DIR_RESOURCE;
         $this->connection = MySQLConnection::getInstance()->getConnection();
         $this->fillingData();
+        $this->parsesData();
     }
 
     /**
@@ -46,6 +48,54 @@ class ImportingItems
                 $this->{$key}[] = $data['name'];
             }
         }
+    }
+
+    /**
+     * Осуществляет поиск в строке наличие Бренда
+     */
+    private function lookingForBrands()
+    {
+
+    }
+
+    /**
+     * Осуществляет поиск в строке наличие Цвета
+     */
+    private function lookingForColor()
+    {
+
+    }
+
+    /**
+     * Осуществляет поиск в строке наличие Категории
+     */
+    private function lookingForCatalog()
+    {
+
+    }
+
+    /**
+     * Осуществляет поиск в строке наличие Под Категории
+     */
+    private function lookingForSubCatalog()
+    {
+
+    }
+
+    /**
+     * Осуществляет поиск в строке наличие Размеров
+     */
+    private function lookingForSize()
+    {
+
+    }
+
+    /**
+     * Список всех файлов в каталоге
+     */
+    private function getAllFiles(): array
+    {
+        return array_diff(scandir($this->path), array('..', '.'));
     }
 
     /**
@@ -75,12 +125,12 @@ class ImportingItems
                 // удаляем пустые строки ( последняя пустая )
                 $allItems = array_diff($allItems, array(''));
                 // удаляем пробелы в начале и конце значений
-                $allItems = array_map('trim', $allItems);
+                $this->allItems = array_map('trim', $allItems);
 
 
-                foreach ($allItems as $item) {
+//                foreach ($allItems as $item) {
 //                    print $item . "\n";
-                }
+//                }
 //                var_dump($this->resultQuery->fetch_assoc());
 //                while ($brand = $this->resultQuery->fetch_assoc()) {
 //                    $reg = $brand['name'];
@@ -92,26 +142,13 @@ class ImportingItems
 //                }
 //                foreach ($allItems as $item) {
 //                    preg_match("/([(])([A-Z0-9]*([)]))/im", $item, $test);
-
 //                    if (!empty($test[0])) {
 //                        $this->item[] = $test[0];
 //                    }
 //                }
             }
         }
-
-//        var_dump($allItems);
-//        var_dump($this->item);
     }
-
-    /**
-     * Список всех файлов в каталоге
-     */
-    private function getAllFiles(): array
-    {
-        return array_diff(scandir($this->path), array('..', '.'));
-    }
-
 }
 
-(new ImportingItems())->parsesData();
+(new ImportingItems());
