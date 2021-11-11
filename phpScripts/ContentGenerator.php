@@ -43,7 +43,7 @@ class ContentGenerator
             try {
                 if (!$file = fopen("../database/$contentType/" . $i, 'w+')) {
                     print "Не могу открыть файл ($file)";
-                    exit;
+                    return;
                 }
                 /**
                  * Что генерируем? Пользователей или контент ( новости, статьи )

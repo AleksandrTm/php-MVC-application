@@ -3,7 +3,6 @@
 namespace Core;
 
 use Enums\Database as db;
-use Models\UserModel;
 use Entities\User;
 
 class Authorization
@@ -12,7 +11,7 @@ class Authorization
     /**
      * Сверяет полученные данные из формы, с данными в базе данных
      */
-    public function logInUser(User $user, UserModel $userModel): bool
+    public function logInUser(User $user, Object $userModel): bool
     {
         $appConfig = include "../config/app.php";
 
@@ -60,6 +59,5 @@ class Authorization
         session_destroy();
 
         header('Location: http://localsite.ru');
-        exit;
     }
 }

@@ -3,16 +3,16 @@
 /**
  * Таблица users
  */
-class AddTableSubCatalogItems
+class AddTableCatalogItems
 {
     /**
      * Создание таблицы
      */
     public function up(): string
     {
-        return "CREATE TABLE `sub_catalog`" .
+        return "CREATE TABLE `catalog`" .
             "(`id`          int             PRIMARY KEY AUTO_INCREMENT," .
-            "`name`         varchar(255)    NOT NULL" .
+            "`name`         varchar(255)    NOT NULL UNIQUE" .
             ") DEFAULT CHARSET = utf8;";
     }
 
@@ -21,8 +21,8 @@ class AddTableSubCatalogItems
      */
     public function down(): string
     {
-        return "DROP TABLE `sub_catalog`";
+        return "DROP TABLE `catalog`";
     }
 }
 
-return new AddTableSubCatalogItems();
+return new AddTableCatalogItems();

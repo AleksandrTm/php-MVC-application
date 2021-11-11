@@ -3,16 +3,16 @@
 /**
  * Таблица users
  */
-class AddTableCatalogItems
+class AddTableColor
 {
     /**
      * Создание таблицы
      */
     public function up(): string
     {
-        return "CREATE TABLE `catalog`" .
+        return "CREATE TABLE `color`" .
             "(`id`          int             PRIMARY KEY AUTO_INCREMENT," .
-            "`name`         varchar(255)    NOT NULL" .
+            "`name`         varchar(255)    NOT NULL UNIQUE" .
             ") DEFAULT CHARSET = utf8;";
     }
 
@@ -21,8 +21,8 @@ class AddTableCatalogItems
      */
     public function down(): string
     {
-        return "DROP TABLE `catalog`";
+        return "DROP TABLE `color`";
     }
 }
 
-return new AddTableCatalogItems();
+return new AddTableColor();

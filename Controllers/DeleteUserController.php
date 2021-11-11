@@ -39,7 +39,6 @@ class DeleteUserController extends Controller
         } else {
             /** Если пользователь не найден в базе, отправляем на главную */
             header('Location: http://localsite.ru');
-            exit();
         }
     }
 }

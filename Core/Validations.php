@@ -135,7 +135,7 @@ class Validations
      */
     protected function checksAboutField(string $about): void
     {
-        if (!(preg_match("/[а-яА-Яa-zA-Z0-9 ]{0,200}/", $about))) {
+        if (!(preg_match("/^[а-яА-Яa-zA-Z0-9 ]{0,200}$/", $about))) {
             $this->validationErrors[] = "- Описание не может быть более 200 символов";
         }
     }
@@ -145,7 +145,7 @@ class Validations
      */
     protected function checksTitleField(string $getTitle): void
     {
-        if (empty($getTitle)) {
+        if (!(preg_match("/^[а-яА-Яa-zA-Z0-9 ]{0,200}$/", $getTitle))) {
             $this->validationErrors[] = "- Поле заголовок не может быть пустым";
         }
     }
@@ -155,7 +155,7 @@ class Validations
      */
     protected function checksTextField(string $getText): void
     {
-        if (empty($getText)) {
+        if (!(preg_match("/[a-zA-Zа-яА-Я ]{0,100}/im", $getText))) {
             $this->validationErrors[] = "- Поле текст не может быть пустым";
         }
     }
