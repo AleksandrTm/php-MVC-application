@@ -2,8 +2,6 @@
 
 namespace database\seeders;
 
-use Core\Generators;
-
 class SeederSubCatalogData
 {
     public function installDefaultSeeders(): string
@@ -17,6 +15,7 @@ class SeederSubCatalogData
             "('Спортивная')," .
             "('Женская')," .
             "('Мужская')," .
+            "('Тренера')," .
             "('Хоккейная');";
     }
 

@@ -19,6 +19,9 @@ class ImportingItems
     private array $tables = ['brand' => 'brand', 'size' => 'size', 'catalog' => 'catalog',
         'subCatalog' => 'sub_catalog', 'color' => 'color'];
 
+    /**
+     * Параметры товаров
+     */
     private array $brand;
     private array $subCatalog;
     private array $catalog;
@@ -26,6 +29,8 @@ class ImportingItems
     private array $color;
 
     private array $allItems;
+
+    private array $items;
 
     public function __construct()
     {
@@ -40,7 +45,7 @@ class ImportingItems
      *
      * Из базы в массивы для дальнейшей работы
      */
-    private function fillingData()
+    private function fillingData(): void
     {
         foreach ($this->tables as $key => $table) {
             $resultQuery = $this->connection->query("SELECT * FROM $table;");
@@ -51,11 +56,30 @@ class ImportingItems
     }
 
     /**
-     * Осуществляет поиск в строке наличие Бренда
+     * Отправляет товар в базу с параметрами
      */
-    private function lookingForBrands()
+    private function sellToDatabaseItem(string $name, string $vendorCode = null, int $catalog = null, int $subCatalog = null, int $brand = null,
+                                        string $model = null, int $size = null, int $color = null, string $orient = null)
     {
 
+    }
+
+    /**
+     * Осуществляет поиск в строке наличие Бренда
+     */
+    private function lookingForBrands(string $string): array
+    {
+        $data = null;
+        foreach ($this->brand as $value) {
+            $res = preg_match("/({$value['name']})/", $string, $matches);
+            if ($res) {
+                $data['string'] = preg_replace("/({$value['name']})/", "", $string);
+                $data['string'] = preg_replace('/[ ]{2,}/im', " ", $data['string']);
+                $data['brand'] = ['id' => $value['id'], 'name' => $value['name']];
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -104,21 +128,22 @@ class ImportingItems
     public function parsesData(): void
     {
         $files = $this->getAllFiles();
-        $allItems = [];
 
         if (empty($files)) {
             print "Список пуст \n";
         } else {
             foreach ($files as $file) {
                 $file = file_get_contents($this->path . $file);
-                $file = str_replace('"', '', $file);
-                $file = preg_replace('/("\')/i', '', $file);
+
+//                $file = preg_replace('/(")/i', ' ', $file);
+//                $file = preg_replace('/[(]/im', ' ', $file);
+//                $file = preg_replace('/[)]/im', ' ', $file);
+
+                $file = preg_replace('/([")( ])/im', ' ', $file);
                 $file = preg_replace('/[ ]{2,}/im', ' ', $file);
-                $file = preg_replace('/[( ]{2,}/im', '(', $file);
 
 //             $file = preg_replace('/([(])([A-Z]{,2})([0-9]{,2})([)])/im', '', $file);
 //             $file = preg_replace('/[a-zA-Z]/im', '', $file);
-//             $file = preg_replace('/[ ]{2,}/im', ' ', $file);
 
                 // разбиваем файл на массив по строчно
                 $allItems = explode("\n", $file);
@@ -127,6 +152,16 @@ class ImportingItems
                 // удаляем пробелы в начале и конце значений
                 $this->allItems = array_map('trim', $allItems);
 
+
+//                foreach ($this->allItems as $item) {
+//                    var_dump($item);
+//                    if (!empty($test[0])) {
+//                        var_dump($test[0]);
+//                    }
+//                }
+
+
+//var_dump($this->allItems);
 
 //                foreach ($allItems as $item) {
 //                    print $item . "\n";
@@ -140,12 +175,14 @@ class ImportingItems
 //                foreach ($result as $brand){
 //                    echo $brand['name'] . "\n";
 //                }
-//                foreach ($allItems as $item) {
-//                    preg_match("/([(])([A-Z0-9]*([)]))/im", $item, $test);
+//                foreach ($this->allItems as $item) {
+//                    preg_match("/[A-Z0-9]/im", $item, $test);
+//                    preg_replace('/(")/i', '', $this->allItems);
 //                    if (!empty($test[0])) {
-//                        $this->item[] = $test[0];
+//                        var_dump($test[0]);
 //                    }
 //                }
+//                var_dump($this->allItems);
             }
         }
     }
