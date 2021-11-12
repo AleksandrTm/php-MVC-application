@@ -43,9 +43,9 @@ class ImportingItems
     private function fillingData()
     {
         foreach ($this->tables as $key => $table) {
-            $resultQuery = $this->connection->query("SELECT name FROM $table;");
+            $resultQuery = $this->connection->query("SELECT * FROM $table;");
             while ($data = $resultQuery->fetch_assoc()) {
-                $this->{$key}[] = $data['name'];
+                $this->{$key}[] = $data;
             }
         }
     }
