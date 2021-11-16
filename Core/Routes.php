@@ -177,6 +177,10 @@ class Routes extends Router
     public function sendPostController(): void
     {
         switch ($this->uri) {
+            case "":
+                $objIndex = new IndexController();
+                $objIndex->getIndexPagePost();
+                break;
             case "view/users":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
                 $objViewsUsers = new ViewUsersController();

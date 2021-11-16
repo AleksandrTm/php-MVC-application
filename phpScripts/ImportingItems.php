@@ -28,20 +28,46 @@ class ImportingItems
     private array $size;
     private array $color;
 
+    private string $regCode = "\w*?\d{5,}";
+    private string $regBrand = "";
+
     private array $allItems;
 
-    private array $items;
+    private ?array $item = null;
 
     public function __construct()
     {
         $this->path = Paths::DIR_RESOURCE;
         $this->connection = MySQLConnection::getInstance()->getConnection();
         $this->fillingData();
-        $this->parsesData();
+
+//        $str = "Гамаши хоккейные SR Вашингтон т-син/крас/бел";
+        $str = "Коньки Reebok детс. раздвижные Expandable (H449007100)";
+//
+        print "исходная : " . $str . "\n";
+//        $str = $this->lookingForBrands($str);
+//        print "без бренда : " . $str . "\n";
+//        $str = $this->lookingForVendorCode($str);
+//        print "без кода : " . $str . "\n";
+//        $str = $this->lookingForCatalog($str);
+//        print "без catalog : " . $str . "\n";
+//        $str = $this->lookingForSubCatalog($str);
+//        print "без subCatalog : " . $str . "\n";
+        $str = $this->lookingForSize($str);
+        print "без размера : " . $str . "\n";
+//
+//        $name = $this->item['catalog']['name'] . " " . $str;
+//
+//        $this->sendItemToDatabase($name, $this->item['vendorCode'], $this->item['catalog']['id'],
+//            $this->item['subCatalog']['id'], $this->item['brand']['id']);
+
+
+//        $this->parsesData();
+        var_dump($this->item);
     }
 
     /**
-     * Данные из базы по параметрам товаров
+     * Данные из базы по параметрам товаров ( проходит по всем таблицам с параметрами )
      *
      * Из базы в массивы для дальнейшей работы
      */
@@ -58,60 +84,153 @@ class ImportingItems
     /**
      * Отправляет товар в базу с параметрами
      */
-    private function sellToDatabaseItem(string $name, string $vendorCode = null, int $catalog = null, int $subCatalog = null, int $brand = null,
-                                        string $model = null, int $size = null, int $color = null, string $orient = null)
+    private function sendItemToDatabase(
+        string $name,
+        string $vendorCode = '',
+        int    $catalog = null,
+        int    $subCatalog = null,
+        int    $brand = null,
+        string $model = '',
+        int    $size = null,
+        int    $color = null,
+        string $orient = ''
+    ): void
     {
-
-    }
-
-    /**
-     * Осуществляет поиск в строке наличие Бренда
-     */
-    private function lookingForBrands(string $string): array
-    {
-        $data = null;
-        foreach ($this->brand as $value) {
-            $res = preg_match("/({$value['name']})/", $string, $matches);
-            if ($res) {
-                $data['string'] = preg_replace("/({$value['name']})/", "", $string);
-                $data['string'] = preg_replace('/[ ]{2,}/im', " ", $data['string']);
-                $data['brand'] = ['id' => $value['id'], 'name' => $value['name']];
-            }
-        }
-
-        return $data;
+        $catalog = $catalog ?? 'NULL';
+        $subCatalog = $subCatalog ?? 'NULL';
+        $brand = $brand ?? 'NULL';
+        $size = $size ?? 'NULL';
+        $color = $color ?? 'NULL';
+        $this->connection->query("INSERT INTO items (name, vendor_code, catalog, sub_catalog, brand, model, size, color, orientation) " .
+            "VALUES ('$name', '$vendorCode', $catalog, $subCatalog, $brand, '$model', $size, $color, '$orient');");
     }
 
     /**
      * Осуществляет поиск в строке наличие Цвета
      */
-    private function lookingForColor()
+    private function lookingForColor(string $string): string
     {
+        foreach ($this->color as $value) {
+            $string = mb_strtolower($string);
+            $color = mb_strtolower($value['name']);
+            $res = preg_match("/({$color})/", $string, $matches);
+            if ($res) {
+                $string = preg_replace("/({$color})/", "", $string);
+                $string = preg_replace('/\s{2,}/im', " ", $string);
+                $this->item['color'] = ['id' => $value['id'], 'name' => $value['name']];
+            }
+        }
 
+        return $string;
     }
 
     /**
-     * Осуществляет поиск в строке наличие Категории
+     * Осуществляет поиск в строке наличие Размера
      */
-    private function lookingForCatalog()
+    private function lookingForSize(string $string): string
     {
+        foreach ($this->size as $value) {
+            $string = mb_strtolower($string);
+            $size = mb_strtolower($value['name']);
 
+            $res = preg_match("/({$size}(^\S+))/", $string, $matches);
+// |взросл|перех|юниор|детс
+            if ($size === 'yth' && !$res) {
+                $res = preg_match("/(детс)/", $string, $matches);
+                $size = 'детс';
+            }
+
+            if ($res) {
+                $string = preg_replace("/({$size}\S+)/", "", $string);
+                $string = preg_replace('/\s{2,}/im', " ", $string);
+                $this->item['size'] = ['id' => $value['id'], 'name' => $value['name']];
+
+                return $string;
+            }
+        }
+
+        return $string;
     }
 
     /**
-     * Осуществляет поиск в строке наличие Под Категории
+     * Осуществляет поиск в строке наличие Бренда
      */
-    private function lookingForSubCatalog()
+    private function lookingForBrands(string $string): string
     {
+        foreach ($this->brand as $value) {
+            $brand = $value['name'];
+            $res = preg_match("/({$brand})/", $string, $matches);
 
+            if ($brand === 'Reebok' && !$res) {
+                $res = preg_match("/(RBK)/", $string, $matches);
+                $brand = 'RBK';
+            }
+
+            if ($res) {
+                $string = preg_replace("/({$brand})/", "", $string);
+                $string = preg_replace('/\s{2,}/im', " ", $string);
+                $this->item['brand'] = ['id' => $value['id'], 'name' => $value['name']];
+
+                return $string;
+            }
+        }
+
+        return $string;
     }
 
     /**
-     * Осуществляет поиск в строке наличие Размеров
+     * Осуществляет поиск в строке наличие Каталога
      */
-    private function lookingForSize()
+    private function lookingForCatalog(string $string): string
     {
+        foreach ($this->catalog as $value) {
+            $string = mb_strtolower($string);
+            $catalog = mb_strtolower($value['name']);
+            $catalogSubStr = mb_substr($catalog, 0, -1);
+            $res = preg_match("/({$catalogSubStr})/", $string, $matches);
+            if ($res) {
+                $string = preg_replace("/({$catalogSubStr}\S+)/", "", $string);
+                $string = preg_replace('/\s{2,}/im', " ", $string);
+                $this->item['catalog'] = ['id' => $value['id'], 'name' => $value['name']];
+            }
+        }
 
+        return $string;
+    }
+
+    /**
+     * Осуществляет поиск в строке наличие Под Каталога
+     */
+    private function lookingForSubCatalog(string $string): string
+    {
+        foreach ($this->subCatalog as $value) {
+            $string = mb_strtolower($string);
+            $subCatalog = mb_strtolower($value['name']);
+            $subCatalogSubStr = mb_substr($subCatalog, 0, -3);
+            $res = preg_match("/({$subCatalogSubStr})/i", $string, $matches);
+            if ($res) {
+                $string = preg_replace("/({$subCatalogSubStr}\S+)/", "", $string);
+                $string = preg_replace('/\s{2,}/im', " ", $string);
+                $this->item['subCatalog'] = ['id' => $value['id'], 'name' => $value['name']];
+            }
+        }
+
+        return $string;
+    }
+
+    /**
+     * Осуществляет поиск в строке наличие Артикла товара
+     */
+    private function lookingForVendorCode(string $string): string
+    {
+        $res = preg_match("/({$this->regCode})/", $string, $matches);
+        if ($res) {
+            $string = preg_replace("/({$this->regCode})/", "", $string);
+            $string = preg_replace('/\s{2,}/im', " ", $string);
+            $this->item['vendorCode'] = $matches[0] ?? null;
+        }
+
+        return $string;
     }
 
     /**
@@ -123,7 +242,7 @@ class ImportingItems
     }
 
     /**
-     * Разбивает файл на массив без
+     * Парсит строки по фильтрам из базы данных
      */
     public function parsesData(): void
     {
@@ -131,58 +250,37 @@ class ImportingItems
 
         if (empty($files)) {
             print "Список пуст \n";
-        } else {
-            foreach ($files as $file) {
-                $file = file_get_contents($this->path . $file);
+            return;
+        }
+        foreach ($files as $file) {
+            $file = file_get_contents($this->path . $file);
+            $file = preg_replace('/([")( ])/im', ' ', $file);
+            $file = preg_replace('/[ ]{2,}/im', ' ', $file);
 
-//                $file = preg_replace('/(")/i', ' ', $file);
-//                $file = preg_replace('/[(]/im', ' ', $file);
-//                $file = preg_replace('/[)]/im', ' ', $file);
+            // разбиваем файл на массив по строчно
+            $allItems = explode("\n", $file);
+            // удаляем пустые строки ( последняя пустая )
+            $allItems = array_diff($allItems, array(''));
+            // удаляем пробелы в начале и конце значений
+            $this->allItems = array_map('trim', $allItems);
 
-                $file = preg_replace('/([")( ])/im', ' ', $file);
-                $file = preg_replace('/[ ]{2,}/im', ' ', $file);
+            foreach ($this->allItems as $item) {
+                $item = $this->lookingForBrands($item);
+                $item = $this->lookingForCatalog($item);
+                $item = $this->lookingForVendorCode($item);
+                $item = $this->lookingForSubCatalog($item);
+                $item = $this->lookingForSize($item);
 
-//             $file = preg_replace('/([(])([A-Z]{,2})([0-9]{,2})([)])/im', '', $file);
-//             $file = preg_replace('/[a-zA-Z]/im', '', $file);
+                $vendorCode = $this->item['vendorCode'] ?? null;
+                $brand = $this->item['brand']['id'] ?? null;
+                $catalog = $this->item['catalog']['id'] ?? null;
+                $subCatalog = $this->item['subCatalog']['id'] ?? null;
+                $size = $this->item['size']['id'] ?? null;
 
-                // разбиваем файл на массив по строчно
-                $allItems = explode("\n", $file);
-                // удаляем пустые строки ( последняя пустая )
-                $allItems = array_diff($allItems, array(''));
-                // удаляем пробелы в начале и конце значений
-                $this->allItems = array_map('trim', $allItems);
+                $name = $item;
+                $this->sendItemToDatabase($name, "$vendorCode", $catalog, $subCatalog, $brand, 'null', $size);
 
-
-//                foreach ($this->allItems as $item) {
-//                    var_dump($item);
-//                    if (!empty($test[0])) {
-//                        var_dump($test[0]);
-//                    }
-//                }
-
-
-//var_dump($this->allItems);
-
-//                foreach ($allItems as $item) {
-//                    print $item . "\n";
-//                }
-//                var_dump($this->resultQuery->fetch_assoc());
-//                while ($brand = $this->resultQuery->fetch_assoc()) {
-//                    $reg = $brand['name'];
-//                        preg_match("/$reg/i", $item, $test);
-//                        print $test;
-//                }
-//                foreach ($result as $brand){
-//                    echo $brand['name'] . "\n";
-//                }
-//                foreach ($this->allItems as $item) {
-//                    preg_match("/[A-Z0-9]/im", $item, $test);
-//                    preg_replace('/(")/i', '', $this->allItems);
-//                    if (!empty($test[0])) {
-//                        var_dump($test[0]);
-//                    }
-//                }
-//                var_dump($this->allItems);
+                $this->item = null;
             }
         }
     }

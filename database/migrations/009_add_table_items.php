@@ -12,15 +12,15 @@ class AddTableItems
     {
         return "CREATE TABLE `items`" .
             "(`id`          int             PRIMARY KEY AUTO_INCREMENT," .
-            "`name`         varchar(255)    NOT NULL UNIQUE," .
-            "`vendor_code`  varchar(20)    NULL," .
+            "`name`         varchar(255)    NOT NULL," .
+            "`vendor_code`  varchar(20)     NULL DEFAULT NULL," .
             "`catalog`      int             NULL," .
             "`sub_catalog`  int             NULL," .
             "`brand`        int             NULL," .
-            "`model`        varchar(255)    NULL," .
+            "`model`        varchar(255)    NULL DEFAULT NULL," .
             "`size`         int             NULL," .
             "`color`        int             NULL," .
-            "`orientation`  ENUM('R', 'L')  NULL," .
+            "`orientation`  varchar(1)      NULL DEFAULT NULL," .
             "FOREIGN KEY (catalog) REFERENCES catalog (id)," .
             "FOREIGN KEY (sub_catalog) REFERENCES sub_catalog (id)," .
             "FOREIGN KEY (brand) REFERENCES brand (id)," .
