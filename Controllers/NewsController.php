@@ -109,7 +109,7 @@ class NewsController extends Controller
         $this->content = $objValidation->validatesFormsContent($objContent);
 
         if (isset($this->content)) {
-            $this->content['result'] = 'Ошибка добавления статьи';
+            $this->content['result'] = 'Ошибка добавления новости';
         } else {
             $this->content = ['result' => 'Новость успешно добавлена'];
 

@@ -11,6 +11,11 @@ use Models\UserModelSQL;
 
 class Sessions
 {
+    public function __destruct()
+    {
+        $objModel = null;
+    }
+
     /**
      * Проверка текущей сессии пользователя
      *

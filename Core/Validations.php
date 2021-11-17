@@ -145,7 +145,7 @@ class Validations
      */
     protected function checksTitleField(string $getTitle): void
     {
-        if (!(preg_match("/^[а-яА-Яa-zA-Z0-9 ]{0,200}$/", $getTitle))) {
+        if (!(preg_match("/[a-zA-Zа-яА-Я ]{0,50}/", $getTitle))) {
             $this->validationErrors[] = "- Поле заголовок не может быть пустым";
         }
     }
@@ -155,7 +155,7 @@ class Validations
      */
     protected function checksTextField(string $getText): void
     {
-        if (!(preg_match("/[a-zA-Zа-яА-Я ]{0,100}/im", $getText))) {
+        if (!(preg_match("/[a-zA-Zа-яА-Я ]{0,200}/", $getText))) {
             $this->validationErrors[] = "- Поле текст не может быть пустым";
         }
     }

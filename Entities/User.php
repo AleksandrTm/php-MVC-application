@@ -23,8 +23,14 @@ class User
             $data = $_POST;
         }
         foreach ($data as $key => $value) {
+            $value = strip_tags($value);
+            $value = htmlentities($value, ENT_QUOTES, "UTF-8");
+            $value = htmlspecialchars($value, ENT_QUOTES);
+            if (!property_exists($this, $key)) {
+//                header('Location: /error1');
+            }
             if (property_exists($this, $key)) {
-                $this->$key = htmlspecialchars($value);
+                $this->$key = $value;
             }
         }
     }

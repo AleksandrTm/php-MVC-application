@@ -6,7 +6,6 @@
         <h3>Регистрация</h3>
         <form id="send" method="post" action="">
 
-            <input type="hidden" name="type-form" value="registration">
 
             <div class="form-line">
                 <label for="login">Login: </label>

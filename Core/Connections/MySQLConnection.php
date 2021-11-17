@@ -2,8 +2,11 @@
 
 namespace Core\Connections;
 
+use Error;
+use Exception;
 use mysqli;
 use Enums\Database as path;
+use Throwable;
 
 /**
  * Создание подключения к базе данных на Singleton
@@ -12,23 +15,32 @@ class MySQLConnection
 {
     private mysqli $connection;
     private static ?MySQLConnection $_instance = null;
-    private string $host;
-    private string $username;
-    private string $password;
-    private string $database;
+    private ?string $host = null;
+    private ?string $username = null;
+    private ?string $password = null;
+    private ?string $database = null;
 
     private function __construct()
     {
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-        $db = include_once path::PATH_DATABASE;
+        try {
+            if (file_exists(path::PATH_DATABASE) && is_readable(path::PATH_DATABASE)) {
+                $db = require_once path::PATH_DATABASE;
+            } else {
+                $db = NULL;
+            }
+            if (!empty($db)) {
+                $this->host = $db['mysql']['host'];
+                $this->username = $db['mysql']['username'];
+                $this->password = $db['mysql']['password'];
+                $this->database = $db['mysql']['database'];
+            }
 
-        $this->host = $db['mysql']['host'];
-        $this->username = $db['mysql']['username'];
-        $this->password = $db['mysql']['password'];
-        $this->database = $db['mysql']['database'];
+            $this->connection = new mysqli($this->host, $this->username, $this->password, $this->database);
 
-        $this->connection = new mysqli($this->host, $this->username, $this->password, $this->database);
+        } catch (Error | Exception | Throwable $t) {
 
+        }
         if (mysqli_connect_error()) {
             trigger_error("Ошибка подключения MySQL: " . mysqli_connect_error());
         }
@@ -36,7 +48,9 @@ class MySQLConnection
 
     public function __destruct()
     {
-        $this->connection->close();
+        if (!mysqli_connect_error()) {
+            $this->connection->close();
+        }
     }
 
     public static function getInstance(): MySQLConnection

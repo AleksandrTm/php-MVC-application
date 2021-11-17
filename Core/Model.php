@@ -2,6 +2,7 @@
 
 namespace Core;
 
+use Error;
 use Exception;
 use mysqli;
 use Enums\Database as db;
@@ -23,14 +24,18 @@ class Model
 
     public function __construct()
     {
-        $this->appConfig = include "../config/app.php";
+        try {
+            $this->appConfig = include "../config/app.php";
 
-        if ($this->appConfig['database'] === db::MYSQL) {
-            $this->mysqlConnect = MySQLConnection::getInstance()->getConnection();
-        }
-        if ($this->appConfig['database'] === db::FILES) {
-            $this->db = include "../config/database.php";
-            $this->filesConnect = $this->db['files']['database'];
+            if ($this->appConfig['database'] === db::MYSQL) {
+                $this->mysqlConnect = MySQLConnection::getInstance()->getConnection();
+
+            }
+            if ($this->appConfig['database'] === db::FILES) {
+                $this->db = include "../config/database.php";
+                $this->filesConnect = $this->db['files']['database'];
+            }
+        } catch (Error | Exception | Throwable $t) {
         }
     }
 
