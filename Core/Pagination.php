@@ -34,7 +34,7 @@ class Pagination extends Model
 
         $limit = $this->appConfig['number_record_page'];
 
-        if ($this->table === db::NEWS && $this->appConfig['database'] === db::FILES) {
+        if ($this->table === 'items' || $this->table === db::NEWS && $this->appConfig['database'] === db::FILES) {
             $this->countPage = ceil($this->count / $limit);
             if ($this->count === 0) {
                 return;

@@ -51,8 +51,6 @@
                     <option value="<?= $key ?>"><?= $value ?></option>
                 <?php } ?>
             </select>
-            <input name= "searchName" value="" type="text" size="50">
-            <input name= "searchVendorCode" value="" type="text" size="50">
             <button class="search" type="submit">Найти</button>
         </div>
     </form>
@@ -86,4 +84,17 @@
             </div>
         <?php }
     } ?>
+    <?php if (isset($_GET['countPage'])) { ?>
+        <div class="page-numbers">
+            <?php if ($_GET['page'] > 1) { ?>
+                <a href="/items?page=1" class="page-number"> << </a>
+                <a href="/items?page=<?= $_GET['page'] - 1 ?>" class="page-number"><?= $_GET['page'] - 1 ?></a>
+            <?php } ?>
+            <div class="page-number"><?= $_GET['page'] ?></div>
+            <?php if ($_GET['page'] < $_GET['countPage']) { ?>
+                <a href="/items?page=<?= $_GET['page'] + 1 ?>" class="page-number"><?= $_GET['page'] + 1 ?></a>
+                <a href="/items?page=<?= $_GET['countPage'] ?>" class="page-number"> >> </a>
+            <?php } ?>
+        </div>
+    <?php } ?>
 </div>

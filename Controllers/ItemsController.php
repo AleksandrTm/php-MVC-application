@@ -3,14 +3,15 @@
 namespace Controllers;
 
 use Core\Controller;
-use Models\IndexModel;
+use Entities\Items;
+use Models\ItemsModel;
 
 /**
  * Главная страница сайта по URI /
  */
-class IndexController extends Controller
+class ItemsController extends Controller
 {
-    private IndexModel $items;
+    private ItemsModel $items;
     private array $content;
 
 //    private Items $itemsPost;
@@ -18,7 +19,7 @@ class IndexController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->items = new IndexModel();
+        $this->items = new ItemsModel();
 //        $this->itemsPost = new Items();
 
         $this->content['catalog'] = $this->items->getList('catalog');
@@ -34,19 +35,19 @@ class IndexController extends Controller
 //        $this->content['color'] = $this->itemsPost->getColor();
     }
 
-    public function getIndexPage(): void
+    public function getItemsPage(): void
     {
 
         $this->view->render('index', 'Главная страница', $this->content);
     }
 
-    public function getIndexPagePost(): void
+    public function getItemsPagePost(): void
     {
-        $catalog = htmlentities(strip_tags($_POST['catalog']));
-        $subCatalog = htmlentities(strip_tags($_POST['subCatalog']));
-        $brand = htmlentities(strip_tags($_POST['brand']));
-        $size = htmlentities(strip_tags($_POST['size']));
-        $color = htmlentities(strip_tags($_POST['color']));
+        $catalog = htmlentities(strip_tags($_POST['catalog'] ?? 'NULL'));
+        $subCatalog = htmlentities(strip_tags($_POST['subCatalog'] ?? 'NULL'));
+        $brand = htmlentities(strip_tags($_POST['brand'] ?? 'NULL'));
+        $size = htmlentities(strip_tags($_POST['size'] ?? 'NULL'));
+        $color = htmlentities(strip_tags($_POST['color'] ?? 'NULL'));
 
         if (!($catalog === 'NULL' || ctype_digit($catalog)) ||
             !($subCatalog === 'NULL' || ctype_digit($subCatalog)) ||
@@ -54,7 +55,7 @@ class IndexController extends Controller
             !($size === 'NULL' || ctype_digit($size)) ||
             !($color === 'NULL' || ctype_digit($color))) {
             $this->content['error'] = true;
-            $this->view->render('index', 'Главная страница', $this->content);
+            $this->view->render('items', 'Каталог товаров', $this->content);
             return;
         }
 
@@ -72,6 +73,6 @@ class IndexController extends Controller
 //            $this->itemsPost->getSize() ?? 'NULL',
 //            $this->itemsPost->getColor() ?? 'NULL');
 
-        $this->view->render('index', 'Главная страница', $this->content);
+        $this->view->render('items', 'Каталог товаров', $this->content);
     }
 }

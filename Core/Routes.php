@@ -7,6 +7,7 @@ use Controllers\ArticlesController;
 use Controllers\DeleteUserController;
 use Controllers\EditUsersController;
 use Controllers\IndexController;
+use Controllers\ItemsController;
 use Controllers\LoginController;
 use Controllers\NewsController;
 use Controllers\ViewUsersController;
@@ -81,6 +82,10 @@ class Routes extends Router
             case "":
                 $objIndex = new IndexController();
                 $objIndex->getIndexPage();
+                break;
+            case "items":
+                $objIndex = new ItemsController();
+                $objIndex->getItemsPagePost();
                 break;
             case "user/delete":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);
@@ -180,6 +185,10 @@ class Routes extends Router
             case "":
                 $objIndex = new IndexController();
                 $objIndex->getIndexPagePost();
+                break;
+            case "items":
+                $objIndex = new ItemsController();
+                $objIndex->getItemsPagePost();
                 break;
             case "view/users":
                 $this->middleware->definesAccessRights([access::ROLE['ADMIN']]);

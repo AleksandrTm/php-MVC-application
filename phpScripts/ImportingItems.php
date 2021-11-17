@@ -41,7 +41,7 @@ class ImportingItems
         $this->connection = MySQLConnection::getInstance()->getConnection();
         $this->fillingData();
 
-//        $str = "Гамаши хоккейные SR Вашингтон т-син/крас/бел";
+//        $str = "3075 на молнии - sr";
 //        $str = "Коньки Reebok детс. раздвижные Expandable L (H449007100)";
 //
 //        print "исходная : " . $str . "\n";
@@ -55,6 +55,8 @@ class ImportingItems
 //        print "без subCatalog : " . $str . "\n";
 //        $str = $this->lookingForSize($str);
 //        print "без размера : " . $str . "\n";
+//        $str = $this->lookingForColor($str);
+//        print "без цвета : " . $str . "\n";
 //
 //        $name = $this->item['catalog']['name'] . " " . $str;
 //
@@ -74,7 +76,7 @@ class ImportingItems
     private function fillingData(): void
     {
         foreach ($this->tables as $key => $table) {
-            $resultQuery = $this->connection->query("SELECT * FROM $table;");
+            $resultQuery = $this->connection->query("SELECT * FROM $table ORDER BY name DESC;");
             while ($data = $resultQuery->fetch_assoc()) {
                 $this->{$key}[] = $data;
             }
@@ -90,7 +92,7 @@ class ImportingItems
         int    $catalog = null,
         int    $subCatalog = null,
         int    $brand = null,
-        string $model = '',
+        string $model = null,
         int    $size = null,
         int    $color = null,
         string $orient = ''
@@ -102,7 +104,7 @@ class ImportingItems
         $size = $size ?? 'NULL';
         $color = $color ?? 'NULL';
         $this->connection->query("INSERT INTO items (name, vendor_code, catalog, sub_catalog, brand, model, size, color, orientation) " .
-            "VALUES ('$name', '$vendorCode', $catalog, $subCatalog, $brand, '$model', $size, $color, '$orient');");
+            "VALUES ('$name', '$vendorCode', $catalog, $subCatalog, $brand, $model, $size, $color, '$orient');");
     }
 
     /**
@@ -115,7 +117,7 @@ class ImportingItems
             $color = mb_strtolower($value['name']);
             $res = preg_match("/({$color})/", $string, $matches);
             if ($res) {
-                $string = preg_replace("/({$color})/", "", $string);
+                $string = preg_replace("/({$color}(^\S+))/", "", $string);
                 $string = preg_replace('/\s{2,}/im', " ", $string);
                 $this->item['color'] = ['id' => $value['id'], 'name' => $value['name']];
             }
@@ -132,8 +134,7 @@ class ImportingItems
         foreach ($this->size as $value) {
             $string = mb_strtolower($string);
             $size = mb_strtolower($value['name']);
-
-            $res = preg_match("/({$size}\S+)/", $string, $matches);
+            $res = preg_match("/({$size})/", $string, $matches);
             if ($res) {
                 $string = preg_replace("/({$size})/", "", $string);
                 $string = preg_replace('/\s{2,}/im', " ", $string);

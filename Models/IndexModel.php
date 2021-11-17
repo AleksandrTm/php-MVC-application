@@ -6,19 +6,18 @@ use Core\Model;
 use Core\Pagination;
 use Throwable;
 
-class ItemsModel extends Model
+class IndexModel extends Model
 {
     private ?array $list = null;
-    private ?array $listTable = null;
 
     public function getList(string $table): ?array
     {
         try {
             $result = $this->mysqlConnect->query("SELECT * FROM $table ORDER BY name;");
             while ($row = $result->fetch_assoc()) {
-                $this->listTable[$row['id']] = $row['name'];
+                $list[$row['id']] = $row['name'];
             }
-            return $this->listTable;
+            return $list ?? null;
         } catch (Throwable $t) {
             return null;
         }
@@ -29,16 +28,19 @@ class ItemsModel extends Model
         $subCatalog = null,
         $brand = null,
         $size = null,
-        $color = null): ?array {
-
+        $color = null
+    ): ?array {
         $catalog = htmlentities(strip_tags($catalog), ENT_QUOTES, "UTF-8") ?? 'NULL';
         $subCatalog = htmlentities(strip_tags($subCatalog), ENT_QUOTES, "UTF-8") ?? 'NULL';
         $brand = htmlentities(strip_tags($brand), ENT_QUOTES, "UTF-8") ?? 'NULL';
         $size = htmlentities(strip_tags($size), ENT_QUOTES, "UTF-8") ?? 'NULL';
         $color = htmlentities(strip_tags($color), ENT_QUOTES, "UTF-8") ?? 'NULL';
+//        $searchName = htmlentities(strip_tags($searchName), ENT_QUOTES, "UTF-8") ?? 'NULL';
+//        $searchVendorCode = htmlentities(strip_tags($searchVendorCode), ENT_QUOTES, "UTF-8") ?? 'NULL';
 
         try {
-            $result = $this->mysqlConnect->query("SELECT i.name as itemName, i.vendor_code,
+            $result = $this->mysqlConnect->query(
+                "SELECT i.name as itemName, i.vendor_code,
                 c.name as catalog, c.id as idCatalog,
                 b.name as brand, b.id as idBrand,
                 ss.name as size, ss.id as idSize,
@@ -54,21 +56,20 @@ class ItemsModel extends Model
                 "AND ($catalog IS NULL OR (i.catalog = $catalog)) " .
                 "AND ($subCatalog IS NULL OR (i.sub_catalog = $subCatalog)) " .
                 "AND ($color IS NULL OR (i.color = $color)) " .
-                "AND ($size IS NULL OR (i.size = $size));");
+                "AND ($size IS NULL OR (i.size = $size)) AND CONCAT(i.name) LIKE '%154%';"
+            );
 
             while ($row = $result->fetch_assoc()) {
-                $this->list[] = ['itemName' => $row['itemName'],
+                $this->list[] = [
+                    'itemName' => $row['itemName'],
                     'catalog' => $row['catalog'],
                     'subCatalog' => $row['subCatalog'],
                     'vendorCode' => $row['vendorCode'],
                     'size' => $row['size'],
                     'color' => $row['color'],
-                    'brand' => $row['brand']];
+                    'brand' => $row['brand']
+                ];
             }
-
-            $count = count($this->list);
-            $pagination = new Pagination('items', $count);
-            $this->list =  array_slice($this->list, $pagination->beginWith, $this->appConfig['number_record_page']);
 
             return $this->list;
         } catch (Throwable $t) {
