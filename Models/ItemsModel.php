@@ -3,10 +3,12 @@
 namespace Models;
 
 use Core\Model;
+use Core\Pagination;
 use Throwable;
 
 class ItemsModel extends Model
 {
+    private ?array $list = null;
     public function getList(string $table): ?array
     {
         try {
@@ -26,11 +28,13 @@ class ItemsModel extends Model
         $brand = null,
         $size = null,
         $color = null): ?array {
-        $catalog = $catalog ?? 'NULL';
-        $subCatalog = $subCatalog ?? 'NULL';
-        $brand = $brand ?? 'NULL';
-        $size = $size ?? 'NULL';
-        $color = $color ?? 'NULL';
+        $pagination = new Pagination('items');
+
+        $catalog = htmlentities(strip_tags($catalog), ENT_QUOTES, "UTF-8") ?? 'NULL';
+        $subCatalog = htmlentities(strip_tags($subCatalog), ENT_QUOTES, "UTF-8") ?? 'NULL';
+        $brand = htmlentities(strip_tags($brand), ENT_QUOTES, "UTF-8") ?? 'NULL';
+        $size = htmlentities(strip_tags($size), ENT_QUOTES, "UTF-8") ?? 'NULL';
+        $color = htmlentities(strip_tags($color), ENT_QUOTES, "UTF-8") ?? 'NULL';
 
         try {
             $result = $this->mysqlConnect->query("SELECT i.name as itemName, i.vendor_code,
@@ -39,7 +43,7 @@ class ItemsModel extends Model
                 ss.name as size, ss.id as idSize,
                 cc.name as color, cc.id as idColor,
                 sc.name as subCatalog, sc.id as idSubCatalog,
-                i.vendor_code as vendorCode  " .
+                i.vendor_code as vendorCode " .
                 "FROM items i LEFT JOIN brand b ON i.brand = b.id " .
                 "LEFT JOIN `catalog` c ON i.`catalog` = c.id " .
                 "LEFT JOIN sub_catalog sc ON i.sub_catalog = sc.id " .
@@ -52,7 +56,7 @@ class ItemsModel extends Model
                 "AND ($size IS NULL OR (i.size = $size));");
 
             while ($row = $result->fetch_assoc()) {
-                $list[] = ['itemName' => $row['itemName'],
+                $this->list[] = ['itemName' => $row['itemName'],
                     'catalog' => $row['catalog'],
                     'subCatalog' => $row['subCatalog'],
                     'vendorCode' => $row['vendorCode'],
@@ -60,8 +64,9 @@ class ItemsModel extends Model
                     'color' => $row['color'],
                     'brand' => $row['brand']];
             }
+//            $this->list =  array_slice($this->list, $pagination->beginWith, $this->appConfig['number_record_page']);
 
-            return $list ?? null;
+            return $this->list;
         } catch (Throwable $t) {
             print $t;
             return null;

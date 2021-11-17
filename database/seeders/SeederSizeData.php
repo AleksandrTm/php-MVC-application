@@ -7,11 +7,7 @@ class SeederSizeData
     public function installDefaultSeeders(): string
     {
         return "INSERT INTO size (name)" .
-            "VALUES ('SR'), /* Взрослые */" .
-            "('INT'), /* Переходная */" .
-            "('JR'), /* Юниорские */" .
-            "('YTH'), /* Детская */" .
-            "('XS')," .
+            "VALUES ('XS')," .
             "('M')," .
             "('L')," .
             "('XL')," .

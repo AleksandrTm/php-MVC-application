@@ -7,8 +7,8 @@
             <div>Размер</div>
             <div>Цвет</div>
             <select name="catalog" id="catalog">
-                <?php if($_POST['catalog'] > 0) { ?>
-                    <option value="<?= $_POST['catalog'] ?>"><?=$info['catalog'][$_POST['catalog']]?></option>
+                <?php if (ctype_digit($_POST['catalog'])) { ?>
+                    <option value="<?= $_POST['catalog'] ?>"><?= $info['catalog'][$_POST['catalog']] ?></option>
                 <?php } ?>
                 <option value="NULL">Все</option>
                 <?php foreach ($info['catalog'] as $key => $value) { ?>
@@ -16,8 +16,8 @@
                 <?php } ?>
             </select>
             <select name="subCatalog" id="sub-catalog">
-                <?php if($_POST['subCatalog'] > 0) { ?>
-                    <option value="<?= $_POST['subCatalog'] ?>"><?=$info['subCatalog'][$_POST['subCatalog']]?></option>
+                <?php if (ctype_digit($_POST['subCatalog'])) { ?>
+                    <option value="<?= $_POST['subCatalog'] ?>"><?= $info['subCatalog'][$_POST['subCatalog']] ?></option>
                 <?php } ?>
                 <option value="NULL">Все</option>
                 <?php foreach ($info['subCatalog'] as $key => $value) { ?>
@@ -25,8 +25,8 @@
                 <?php } ?>
             </select>
             <select name="brand" id="brand">
-                <?php if($_POST['brand'] > 0) { ?>
-                    <option value="<?= $_POST['brand'] ?>"><?=$info['brand'][$_POST['brand']]?></option>
+                <?php if (ctype_digit($_POST['brand'])) { ?>
+                    <option value="<?= $_POST['brand'] ?>"><?= $info['brand'][$_POST['brand']] ?></option>
                 <?php } ?>
                 <option value="NULL">Все</option>
                 <?php foreach ($info['brand'] as $key => $value) { ?>
@@ -34,8 +34,8 @@
                 <?php } ?>
             </select>
             <select name="size" id="size">
-                <?php if($_POST['size'] > 0) { ?>
-                    <option value="<?= $_POST['size'] ?>"><?=$info['size'][$_POST['size']]?></option>
+                <?php if (ctype_digit($_POST['size'])) { ?>
+                    <option value="<?= $_POST['size'] ?>"><?= $info['size'][$_POST['size']] ?></option>
                 <?php } ?>
                 <option value="NULL">Все</option>
                 <?php foreach ($info['size'] as $key => $value) { ?>
@@ -43,8 +43,8 @@
                 <?php } ?>
             </select>
             <select name="color" id="color">
-                <?php if($_POST['color'] > 0) { ?>
-                    <option value="<?= $_POST['color'] ?>"><?=$info['color'][$_POST['color']]?></option>
+                <?php if (ctype_digit($_POST['color'])) { ?>
+                    <option value="<?= $_POST['color'] ?>"><?= $info['color'][$_POST['color']] ?></option>
                 <?php } ?>
                 <option value="NULL">Все</option>
                 <?php foreach ($info['color'] as $key => $value) { ?>
@@ -54,7 +54,6 @@
             <button class="search" type="submit">Найти</button>
         </div>
     </form>
-
     <div class="sort__table">
         <div class="sort__column">Название</div>
         <div class="sort__column">Артикул</div>
@@ -66,9 +65,12 @@
         <div class="sort__column">Цвет</div>
         <div class="sort__column">Ориентация для клюшек</div>
     </div>
+    <?php if ((array_key_exists('error', $info) && $info['error'])) {
+        print "ОШИБКА ВЫБОРА ФИЛЬТРОВ, ВЫБЕРИТЕ КОРРЕКТНЫЕ ФИЛЬТРЫ";
+    }; ?>
     <?php if (!empty($info['items'])) {
         foreach ($info['items'] as $key => $item) { ?>
-            <?php if($key === 'post') continue; ?>
+            <?php if ($key === 'post') continue; ?>
             <div class="sort__items">
                 <div class="sort__column"><?= $item['itemName'] ?></div>
                 <div class="sort__column"><?= !empty($item['vendorCode']) ? $item['vendorCode'] : '-' ?></div>

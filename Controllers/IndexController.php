@@ -13,6 +13,7 @@ class IndexController extends Controller
 {
     private ItemsModel $items;
     private array $content;
+
 //    private Items $itemsPost;
 
     public function __construct()
@@ -42,6 +43,22 @@ class IndexController extends Controller
 
     public function getIndexPagePost(): void
     {
+        $catalog = htmlentities(strip_tags($_POST['catalog']));
+        $subCatalog = htmlentities(strip_tags($_POST['subCatalog']));
+        $brand = htmlentities(strip_tags($_POST['brand']));
+        $size = htmlentities(strip_tags($_POST['size']));
+        $color = htmlentities(strip_tags($_POST['color']));
+
+        if (!($catalog === 'NULL' || ctype_digit($catalog)) ||
+            !($subCatalog === 'NULL' || ctype_digit($subCatalog)) ||
+            !($brand === 'NULL' || ctype_digit($brand)) ||
+            !($size === 'NULL' || ctype_digit($size)) ||
+            !($color === 'NULL' || ctype_digit($color))) {
+            $this->content['error'] = true;
+            $this->view->render('index', 'Главная страница', $this->content);
+            return;
+        }
+
         $this->content['items'] = $this->items->getItems(
             $_POST['catalog'] ?? 'NULL',
             $_POST['subCatalog'] ?? 'NULL',

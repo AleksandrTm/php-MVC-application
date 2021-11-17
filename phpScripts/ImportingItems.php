@@ -42,9 +42,9 @@ class ImportingItems
         $this->fillingData();
 
 //        $str = "Гамаши хоккейные SR Вашингтон т-син/крас/бел";
-        $str = "Коньки Reebok детс. раздвижные Expandable (H449007100)";
+//        $str = "Коньки Reebok детс. раздвижные Expandable L (H449007100)";
 //
-        print "исходная : " . $str . "\n";
+//        print "исходная : " . $str . "\n";
 //        $str = $this->lookingForBrands($str);
 //        print "без бренда : " . $str . "\n";
 //        $str = $this->lookingForVendorCode($str);
@@ -53,8 +53,8 @@ class ImportingItems
 //        print "без catalog : " . $str . "\n";
 //        $str = $this->lookingForSubCatalog($str);
 //        print "без subCatalog : " . $str . "\n";
-        $str = $this->lookingForSize($str);
-        print "без размера : " . $str . "\n";
+//        $str = $this->lookingForSize($str);
+//        print "без размера : " . $str . "\n";
 //
 //        $name = $this->item['catalog']['name'] . " " . $str;
 //
@@ -62,8 +62,8 @@ class ImportingItems
 //            $this->item['subCatalog']['id'], $this->item['brand']['id']);
 
 
-//        $this->parsesData();
-        var_dump($this->item);
+        $this->parsesData();
+//        var_dump($this->item);
     }
 
     /**
@@ -133,15 +133,9 @@ class ImportingItems
             $string = mb_strtolower($string);
             $size = mb_strtolower($value['name']);
 
-            $res = preg_match("/({$size}(^\S+))/", $string, $matches);
-// |взросл|перех|юниор|детс
-            if ($size === 'yth' && !$res) {
-                $res = preg_match("/(детс)/", $string, $matches);
-                $size = 'детс';
-            }
-
+            $res = preg_match("/({$size}\S+)/", $string, $matches);
             if ($res) {
-                $string = preg_replace("/({$size}\S+)/", "", $string);
+                $string = preg_replace("/({$size})/", "", $string);
                 $string = preg_replace('/\s{2,}/im', " ", $string);
                 $this->item['size'] = ['id' => $value['id'], 'name' => $value['name']];
 

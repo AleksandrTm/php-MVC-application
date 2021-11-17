@@ -15,7 +15,7 @@ class Content
         foreach ($_POST as $key => $value) {
             $value = strip_tags($value);
             $value = htmlentities($value, ENT_QUOTES, "UTF-8");
-            $value = htmlspecialchars($value, ENT_QUOTES);
+
             if (!property_exists($this, $key)) {
                 header('Location: /error');
             }
