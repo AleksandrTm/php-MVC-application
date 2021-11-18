@@ -12,17 +12,21 @@ class IndexController extends Controller
 {
     private IndexModel $items;
     private array $content;
+    private array $params = ['catalog', 'subCatalog', 'brand', 'size', 'color'];
 
     public function __construct()
     {
         parent::__construct();
         $this->items = new IndexModel();
 
-        $this->content['catalog'] = $this->items->getList('catalog');
-        $this->content['subCatalog'] = $this->items->getList('sub_catalog');
-        $this->content['brand'] = $this->items->getList('brand');
-        $this->content['size'] = $this->items->getList('size');
-        $this->content['color'] = $this->items->getList('color');
+        /** Обрабатываем фильтры select */
+        foreach ($this->params as $param) {
+            if ($param === 'subCatalog') {
+                $this->content[$param] = $this->items->getList('sub_catalog');
+                continue;
+            }
+            $this->content[$param] = $this->items->getList($param);
+        }
     }
 
     public function getIndexPage(): void
