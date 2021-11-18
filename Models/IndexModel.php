@@ -56,7 +56,8 @@ class IndexModel extends Model
                 "AND ($catalog IS NULL OR (i.catalog = $catalog)) " .
                 "AND ($subCatalog IS NULL OR (i.sub_catalog = $subCatalog)) " .
                 "AND ($color IS NULL OR (i.color = $color)) " .
-                "AND ($size IS NULL OR (i.size = $size)) AND CONCAT(i.name) LIKE '%154%';"
+                "AND ($size IS NULL OR (i.size = $size));"
+                //  AND CONCAT(i.name) LIKE '%154%'
             );
 
             while ($row = $result->fetch_assoc()) {
