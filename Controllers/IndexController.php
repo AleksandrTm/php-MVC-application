@@ -57,13 +57,6 @@ class IndexController extends Controller
             $_POST['color'] ?? 'NULL'
         );
 
-//        $this->content['items'] = $this->items->getItems(
-//            $this->itemsPost->getCatalog() ?? 'NULL',
-//            $this->itemsPost->getSubCatalog() ?? 'NULL',
-//            $this->itemsPost->getBrand() ?? 'NULL',
-//            $this->itemsPost->getSize() ?? 'NULL',
-//            $this->itemsPost->getColor() ?? 'NULL');
-
         $this->view->render('index', 'Главная страница', $this->content);
     }
 }
