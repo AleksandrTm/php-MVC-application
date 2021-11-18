@@ -13,6 +13,7 @@ class IndexController extends Controller
     private IndexModel $items;
     private array $content;
     private array $params = ['catalog', 'subCatalog', 'brand', 'size', 'color'];
+    private array $selects = [];
 
     public function __construct()
     {
@@ -36,32 +37,16 @@ class IndexController extends Controller
 
     public function getIndexPagePost(): void
     {
-//        foreach ($this->params as $param) {
-//            $this->content[$param] = htmlentities(strip_tags($_POST[$param]));
-//        }
-        $catalog = htmlentities(strip_tags($_POST['catalog']));
-        $subCatalog = htmlentities(strip_tags($_POST['subCatalog']));
-        $brand = htmlentities(strip_tags($_POST['brand']));
-        $size = htmlentities(strip_tags($_POST['size']));
-        $color = htmlentities(strip_tags($_POST['color']));
+        foreach ($this->params as $param) {
+            $this->selects[] = htmlentities(strip_tags($_POST[$param]));
+        }
 
-
-//        foreach ($this->content as $param) {
-//            if (!($param === 'NULL' || ctype_digit($param))) {
-//                $this->content['error'] = true;
-//                $this->view->render('index', 'Главная страница', $this->content);
-//                return;
-//            }
-//        }
-
-        if (!($catalog === 'NULL' || ctype_digit($catalog)) ||
-            !($subCatalog === 'NULL' || ctype_digit($subCatalog)) ||
-            !($brand === 'NULL' || ctype_digit($brand)) ||
-            !($size === 'NULL' || ctype_digit($size)) ||
-            !($color === 'NULL' || ctype_digit($color))) {
-            $this->content['error'] = true;
-            $this->view->render('index', 'Главная страница', $this->content);
-            return;
+        foreach ($this->selects as $select) {
+            if (!($select === 'NULL' || ctype_digit($select))) {
+                $this->content['error'] = true;
+                $this->view->render('index', 'Главная страница', $this->content);
+                return;
+            }
         }
 
         $this->content['items'] = $this->items->getItems(
